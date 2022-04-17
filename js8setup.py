@@ -15,7 +15,7 @@ import locals as lc
 import template as tp
 import DBHandler as dbh
 
-js8msg_net_db = "js8msg_net.db"
+js8msg_db = "js8msg.db"
 
 def setup():
     
@@ -104,7 +104,7 @@ def setup():
         if not os.path.exists(iconCheck):
             shutil.copy2(iconFile,desktopDir)
             
-        filename = os.path.join(extLocalPath,js8msg_net_db)
+        filename = os.path.join(extLocalPath,js8msg_db)
         if not os.path.exists(filename):
             # create an empty file
             with open(filename,mode='w'):pass
@@ -134,7 +134,7 @@ def setup():
         if not os.path.exists(iconCheck):
             shutil.copy2(iconFile,desktopDir)
             os.chmod(iconCheck,0o755)
-        filename = os.path.join(linuxLocalPath,js8msg_net_db)
+        filename = os.path.join(linuxLocalPath,js8msg_db)
         if not os.path.exists(filename):
             # create an empty file
             with open(filename,mode='w'):pass
@@ -153,7 +153,7 @@ def init_database():
 
     creation_flag = True
 
-    db_obj = dbh.DB_object(js8msg_net_db)
+    db_obj = dbh.DB_object(js8msg_db)
 
     for data in message:
         db_obj.set_SQL(data)
