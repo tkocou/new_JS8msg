@@ -40,10 +40,19 @@ class DB_object():
             ## return SQL error
             return False, sqlite3.OperationalError
         
-    def fetch_SQL(self):
+    def fetch_all_SQL(self):
         try:
             self.cur.execute(self.SQL_message)
             self.SQL_result = self.cur.fetchall()
+            return True, self.SQL_result
+        except:
+            ## return SQL error
+            return False, sqlite3.OperationalError
+        
+    def fetch_once_SQL(self):
+        try:
+            self.cur.execute(self.SQL_message)
+            self.SQL_result = self.cur.fetchone()
             return True, self.SQL_result
         except:
             ## return SQL error
