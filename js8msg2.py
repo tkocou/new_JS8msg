@@ -25,18 +25,40 @@ class App(tk.Frame):
     search_strings = []
     bgsearch_strings = []
     current_profile_id = 0
+    widget_list = []
     
     def __init__(self,parent):
         super().__init__(parent)
         self.sock = get_socket()
         self.receiver = None
         self.db_conn = ut.get_db_connection()
+        self.frame = parent
 
-
-
-
-        cg.create_gui(parent)
-
+        ## older GUI uses Notebook style of GUI
+        ## switching to menu driven GUI
+    
+        self.title("JS8msg Version 2")
+        self.geometry('800x600')
+        self.resizable(width=False,height=False)
+        self.menubar = Menu(self)
+        
+        ## File menu
+        self.filemenu = Menu(self.menubar, tearoff=0)
+        self.filemenu.add_separator()
+        self.filemenu.add_command(label='JS8msg Communication', command = lambda: switch_frame(Tab1))
+        self.filename.add_command(label='Config', command = lambda: switch_frame(Tab2))
+        self.filename.add_command(label='ICS-213', command = lambda: switch_frame(Tab3))
+        self.filename.add_command(label='JS8 Net', command = lambda: switch_frame(Tab4))
+        self.filename.add_separator()
+        self.filename.add_command(label='Exit', command = self.shutting_down)
+        
+        ## Help menu
+        self.helpmenu = Menu(self.menubar, tearoff=0)
+        self.helpmenu.add_command(label='About',command = self.about)
+        
+        self.menubar.add_cascade(label='File', menu = self.filemenu)
+        self.menubar.add_cascade(label='Help', menu = self.helpmenu)
+        
 
 
 
@@ -75,6 +97,18 @@ class App(tk.Frame):
         self.stop_receiving()
         ## destroy all existing widgets and then exit tkinter mainloop
         self.destroy()
+        
+    def switch_frame(self,frame_class):
+        new_frame = frame_class(self)
+        if self._frame is not None:
+            self._frame.destroy()
+        self._frame = new_frame
+        self._frame.grid()
+
+
+
+
+
 
 def main():
     root = tk.TK()
