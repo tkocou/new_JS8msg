@@ -114,7 +114,7 @@ class App(tk.Frame):
 
 
 def main():
-    root = tk.TK()
+    root = tk.Tk()
     app = App(parent = root)
     app.protocol("WM_DELETE_WINDOW",app.shutting_down)
     app.mainloop()
