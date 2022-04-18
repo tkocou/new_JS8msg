@@ -12,7 +12,7 @@ import threaded_listening as tl
 import tkinter as tk
 from tkinter import ttk, messagebox
 from threading import *
-import create_main_gui as cg
+import js8setup as js
 
 
 
@@ -29,10 +29,11 @@ class App(tk.Frame):
     
     def __init__(self,parent):
         super().__init__(parent)
-        self.sock = get_socket()
+        self.sock = ut.get_socket()
         self.receiver = None
         self.db_conn = ut.get_db_connection()
         self.frame = parent
+        
 
         ## older GUI uses Notebook style of GUI
         ## switching to menu driven GUI
@@ -114,6 +115,7 @@ class App(tk.Frame):
 
 
 def main():
+    js.setup()
     root = tk.Tk()
     app = App(parent = root)
     app.protocol("WM_DELETE_WINDOW",app.shutting_down)

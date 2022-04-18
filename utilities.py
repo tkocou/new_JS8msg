@@ -276,9 +276,11 @@ def get_settings():
     result = db_obj.exec_SQL()
     dbsettings = db_obj.fetch_all_SQL()
     db_obj.close_SQL()
+    print(dbsettings)
     ## let's make a dictionary from the settings
     settings = {}
     for setting in dbsettings:
+        print(setting)
         settings[setting[1]]=setting[2]
     return settings
 
