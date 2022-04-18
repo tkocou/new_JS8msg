@@ -1,16 +1,23 @@
+#!/usr/bin/python3
+##
+## JS8msg Version 2 is a copyrighted program written by Thomas Kocourek, N4FWD
+## This program is released under the GPL v3 license
+## 
 ## Main program
+
 import DBHandler as dbh 
 import socket
 import utilities as ut
 import threaded_listening as tl
-import tkinter as tk
+import tkinter
 from tkinter import ttk, messagebox
 from threading import *
+import create_main_gui as cg
 
 
 
 
-class App(tk.Tk):
+class App(tk.Frame):
     ## event was moved here to create a class variable
     ## which can be referenced by other classes
     event = Event()
@@ -19,13 +26,16 @@ class App(tk.Tk):
     bgsearch_strings = []
     current_profile_id = 0
     
-    def __init__(self,sock):
-        super().__init__()
-        self.sock = sock
+    def __init__(self,parent):
+        super().__init__(parent)
+        self.sock = get_socket()
         self.receiver = None
         self.db_conn = ut.get_db_connection()
 
 
+
+
+        cg.create_gui(parent)
 
 
 
@@ -38,7 +48,7 @@ class App(tk.Tk):
         info += "Parts were borrowed with permission\n\n"
         info += "from js8spotter written by\n\n"
         info += "Joseph D Lyman, KF7MIX\n\n"
-        info += "All copyrights are applicable"
+        info += "All copyrights are reserved."
         messagebox.showinfo("About JS8msg",info)
                 
     def start_receiver(self):
@@ -67,8 +77,8 @@ class App(tk.Tk):
         self.destroy()
 
 def main():
-    tcp_socket = get_socket()
-    app = App(tcp_socket)
+    root = tk.TK()
+    app = App(parent = root)
     app.protocol("WM_DELETE_WINDOW",app.shutting_down)
     app.mainloop()
     
