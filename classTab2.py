@@ -84,9 +84,9 @@ class Tab2(Frame):
         self.blankLabel.config(text = '     ')
         self.blankLabel.grid(column=2,row=0, sticky="w")
 
-        quitButton = Button(self, text="Quit", command=lambda:self.quitProgram())
-        quitButton.grid(column=4,row=0, sticky = "e")
-        quitButton.configure(bg="blue", fg="white")
+        #quitButton = Button(self, text="Quit", command=lambda:self.quitProgram())
+        #quitButton.grid(column=4,row=0, sticky = "e")
+        #quitButton.configure(bg="blue", fg="white")
 
         def personalConf():
             ## Table Entry Area

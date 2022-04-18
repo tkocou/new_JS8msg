@@ -59,6 +59,9 @@ class App(tk.Frame):
         self.menubar.add_cascade(label='File', menu = self.filemenu)
         self.menubar.add_cascade(label='Help', menu = self.helpmenu)
         
+        ## initialize GUI to first frame
+        self.switch_frame(Tab1)
+        
 
 
 

@@ -168,10 +168,10 @@ class Tab3_Frame1(Frame):
         self.chooseFile.bind('<<ComboboxSelected>>', selectFileOption)
 
         ## Quit Button
-        self.quitButton = Button(self, text="Quit", command=lambda:master.quitProgram())
-        self.widgets.append(self.quitButton)
-        self.quitButton.grid(column=3,row=0, sticky="e")
-        self.quitButton.configure(bg="blue", fg="white")
+        #self.quitButton = Button(self, text="Quit", command=lambda:master.quitProgram())
+        #self.widgets.append(self.quitButton)
+        #self.quitButton.grid(column=3,row=0, sticky="e")
+        #self.quitButton.configure(bg="blue", fg="white")
 
         #### Text sizing variables
         normText = 42
@@ -711,10 +711,10 @@ class Tab3_Frame2(Frame):
         self.chooseRespFile.bind('<<ComboboxSelected>>', selectRespFileOption)
 
         ## Quit button
-        quitButton = Button(self, text="Quit", command=lambda:master.quitProgram())
-        self.widgets.append(quitButton)
-        quitButton.grid(column=3,row=0, sticky = "e")
-        quitButton.configure(bg="blue", fg="white")
+        #quitButton = Button(self, text="Quit", command=lambda:master.quitProgram())
+        #self.widgets.append(quitButton)
+        #quitButton.grid(column=3,row=0, sticky = "e")
+        #quitButton.configure(bg="blue", fg="white")
 
         #### Text sizing variable
         normText = 40

@@ -360,9 +360,9 @@ class Tab1(Frame):
 
 
         ## Quit program button
-        quitButton = Button(self, text="Quit", command=lambda:self.quitProgram())
-        quitButton.configure(bg="blue", fg="white")
-        quitButton.grid(column=1,row=topRow, sticky = "w", padx=10)
+        #quitButton = Button(self, text="Quit", command=lambda:self.quitProgram())
+        #quitButton.configure(bg="blue", fg="white")
+        #quitButton.grid(column=1,row=topRow, sticky = "w", padx=10)
 
         ## set the height of the scrollbars
         vertPad = 32
