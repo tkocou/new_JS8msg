@@ -9,7 +9,7 @@ import DBHandler as dbh
 import socket
 import utilities as ut
 import threaded_listening as tl
-import tkinter
+import tkinter as tk
 from tkinter import ttk, messagebox
 from threading import *
 import create_main_gui as cg
