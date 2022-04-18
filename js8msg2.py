@@ -1,57 +1,70 @@
 ## Main program
 import DBHandler as dbh 
 import socket
-
-js8msg_db = "js8msg.db"
-
-def get_db_connection():
-    ## database was initialized during setup
-    return dbh.DB_object(js8msg_db)
-
-def get_settings():
-    ## database was initialized during setup
-    message = "SELECT * FROM setting"
-    db_obj = get_db_connection()
-    db_obj.set_SQL(message)
-    result = db_obj.exec_SQL()
-    dbsettings = db_obj.fetch_all_SQL()
-    db_obj.close_SQL()
-    ## let's make a dictionary from the settings
-    settings = {}
-    for setting in dbsettings:
-        settings[setting[1]]=setting[2]
-    return settings
-
-def get_socket():
-    ## fetch settings
-    settings = get_settings()
-    ## set up network connection
-    sock = socket.socket(socket.AR_INET, socket.SOCK_STREAM)
-    sock.connect((settings['tcp_ip'], int(settings['tcp_port'])))
-    return sock
+import utilities as ut
+import threaded_listening as tl
+import tkinter as tk
+from tkinter import ttk, messagebox
+from threading import *
 
 
 
 
 class App(tk.Tk):
+    ## event was moved here to create a class variable
+    ## which can be referenced by other classes
+    event = Event()
+    ## Other class variables
+    search_strings = []
+    bgsearch_strings = []
+    current_profile_id = 0
+    
     def __init__(self,sock):
         super().__init__()
         self.sock = sock
         self.receiver = None
-        db_conn = get_db_connection()
+        self.db_conn = ut.get_db_connection()
 
 
-    def shutting_down(self,db_conn):
-        db_conn.close()
-        self.stop_receiving()
-        self.destroy()
+
+
+
+
+
+    def about(self):
+        info = "JS8msg Version 2 \n\n"
+        info += "Open Source GNU3 License\n\n"
+        info += "written by Thomas Kocourek, N4FWD\n\n"
+        info += "Parts were borrowed with permission\n\n"
+        info += "from js8spotter written by\n\n"
+        info += "Joseph D Lyman, KF7MIX\n\n"
+        info += "All copyrights are applicable"
+        messagebox.showinfo("About JS8msg",info)
+                
+    def start_receiver(self):
+        self.receiver = tl.TCP_rx(self.sock)
+        self.receiver.start()
+        
+    def stop_receiver(self):
+        self.receiver.stop()
+        self.receiver.join()
+        self.receiver = None
         
     def mainloop(self,*args):
+        ## inherit properties from tk.mainloop()
         super().mainloop(*args)
+        ## if a threaded receiver is still running, kill it
         if self.receiver:
             self.receiver.stop()
         
-
+    def shutting_down(self):
+        ## db_conn is assigned in __init__()
+        ## close the database connection
+        self.db_conn.close()
+        ## do a proper shutdown of threaded receivers
+        self.stop_receiving()
+        ## destroy all existing widgets and then exit tkinter mainloop
+        self.destroy()
 
 def main():
     tcp_socket = get_socket()

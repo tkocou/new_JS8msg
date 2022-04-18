@@ -14,6 +14,7 @@ import re
 import os
 import time
 import globalVariables as gv
+import DBHandler as dbh
 
 
 def dateAndTime(formatDate, formatTime, UTC):
@@ -259,3 +260,32 @@ def outputHtml(formData, formKeys, templateFilename):
 def clearConsole():
     time.sleep(1)
     os.system(gv.clearConsoleCmd)
+
+## database functions
+
+def get_db_connection():
+    ## database was initialized during setup
+    ## 'js8msg_db' is defined in file 'globalVariables.py'
+    return dbh.DB_object(gv.js8msg_db)
+
+def get_settings():
+    ## database was initialized during setup
+    message = "SELECT * FROM setting"
+    db_obj = get_db_connection()
+    db_obj.set_SQL(message)
+    result = db_obj.exec_SQL()
+    dbsettings = db_obj.fetch_all_SQL()
+    db_obj.close_SQL()
+    ## let's make a dictionary from the settings
+    settings = {}
+    for setting in dbsettings:
+        settings[setting[1]]=setting[2]
+    return settings
+
+def get_socket():
+    ## fetch settings
+    settings = get_settings()
+    ## set up network connection
+    sock = socket.socket(socket.AR_INET, socket.SOCK_STREAM)
+    sock.connect((settings['tcp_ip'], int(settings['tcp_port'])))
+    return sock
