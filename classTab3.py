@@ -1,3 +1,4 @@
+import tkinter as tk
 from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox as mb
@@ -15,8 +16,8 @@ respIcs213FormData = gv.respIcs213FormData
 
 ## ICS-213 Form =================== (dual frame tab) =======================
 class Tab3(Frame):
-    def __init__(self, master):
-        Frame.__init__(self, master)
+    def __init__(self, parent):
+        tk.Frame.__init__(self, parent)
 
         ## Global StringVar used in both subFrames
         self.entryInc = StringVar()

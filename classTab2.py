@@ -1,3 +1,4 @@
+import tkinter as tk
 from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox as mb
@@ -13,8 +14,8 @@ commonConfData = gv.commonConfData
 
 ## Common Configuration Data
 class Tab2(Frame):
-    def __init__(self, master):
-        Frame.__init__(self, master)
+    def __init__(self, parent):
+        tk.Frame.__init__(self, parent)
 
         # Keep track of widgets added to frame
         self.widgets = []

@@ -1,3 +1,4 @@
+import tkinter as tk
 from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox as mb
@@ -9,7 +10,7 @@ import globalVariables as gv
 import utilities as ut
 import js8API as api
 
-ics309FormData = gv.ics309FieldsData 
+#ics309FormData = gv.ics309FieldsData 
 commonConfData =gv.commonConfData
 whichFormUsedExt = gv.whichForm
 readDataFlag = gv.readDataFlag
@@ -18,8 +19,8 @@ readConfFlag = gv.readConfFlag
 
 #### ======================= ICS-309 Dual Frame Tab ================================
 class Tab4(Frame):
-    def __init__(self, master):
-        Frame.__init__(self, master)
+    def __init__(self, parent):
+        tk.Frame.__init__(self, parent)
 
         self.entryInc = StringVar()
         self.entryNC_Callsign = StringVar()
@@ -58,7 +59,7 @@ class Tab4_Frame1(Frame):
         ## Init configuration dictionary
         self.commonConfData = gv.commonConfData
         # overall form structure
-        self.ics309FieldsData = gv.ics309FieldsData
+        #self.ics309FieldsData = gv.ics309FieldsData
         self.entryLogTime = StringVar()
         self.msgCallsignFrom = StringVar()
         self.msgCallsignTo = StringVar()
@@ -71,7 +72,7 @@ class Tab4_Frame1(Frame):
             master.switch_frame(frame_class)
 
         ## Which sub-frame are we in?
-        self.labelFrame = Label(self, text="Inc", bg="d8f8d8")
+        self.labelFrame = Label(self, text="Inc", bg="#d8f8d8")
         self.widgets.append(self.labelFrame)
         self.labelFrame.grid(column=0,row=0,sticky="w")
 

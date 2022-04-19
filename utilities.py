@@ -299,5 +299,8 @@ def get_socket():
     settings = get_settings()
     ## set up network connection
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.connect((settings['tcp_ip'], int(settings['tcp_port'])))
-    return sock
+    try:
+        sock.connect((settings['tcp_ip'], int(settings['tcp_port'])))
+        return sock
+    except:
+        return None

@@ -1,3 +1,4 @@
+import tkinter as tk
 from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox as mb
@@ -13,8 +14,8 @@ import henkankun as hn
 
 #### ======================== JS8msg Control =============================
 class Tab1(Frame):
-    def __init__(self, master):
-        Frame.__init__(self, master)
+    def __init__(self,parent):
+        tk.Frame.__init__(self,parent)
 
         ## JS8msg always starts with this frame
         ## Let's check for directory structure
