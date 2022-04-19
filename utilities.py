@@ -15,6 +15,7 @@ import os
 import time
 import globalVariables as gv
 import DBHandler as dbh
+import socket
 
 
 def dateAndTime(formatDate, formatTime, UTC):
@@ -276,18 +277,27 @@ def get_settings():
     result = db_obj.exec_SQL()
     dbsettings = db_obj.fetch_all_SQL()
     db_obj.close_SQL()
-    print(dbsettings)
+    # remove boolean from answer
+    dbset = dbsettings[1:]
+    #print("dbsettings type is: ",type(dbsettings))
+    #print(dbset)
     ## let's make a dictionary from the settings
     settings = {}
-    for setting in dbsettings:
-        print(setting)
-        settings[setting[1]]=setting[2]
+    for sett in dbset:
+        #print("setting type is: ",type(setting))
+        #print(sett)
+        for setting in sett:
+            try:
+                settings[setting[1]]=setting[2]
+            except:
+                pass
+    print(settings)
     return settings
 
 def get_socket():
     ## fetch settings
     settings = get_settings()
     ## set up network connection
-    sock = socket.socket(socket.AR_INET, socket.SOCK_STREAM)
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.connect((settings['tcp_ip'], int(settings['tcp_port'])))
     return sock
