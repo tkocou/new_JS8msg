@@ -19,9 +19,10 @@ readConfFlag = gv.readConfFlag
 
 #### ======================= ICS-309 Dual Frame Tab ================================
 class Tab4(Frame):
-    def __init__(self, parent):
-        tk.Frame.__init__(self, parent)
-
+    def __init__(self, parent,controller):
+        tk.Frame.__init__(self, parent,controller)
+        self.controller = controller
+        
         self.entryInc = StringVar()
         self.entryNC_Callsign = StringVar()
         self.entryFromDate = StringVar()

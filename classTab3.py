@@ -16,9 +16,9 @@ respIcs213FormData = gv.respIcs213FormData
 
 ## ICS-213 Form =================== (dual frame tab) =======================
 class Tab3(Frame):
-    def __init__(self, parent):
-        tk.Frame.__init__(self, parent)
-
+    def __init__(self, parent,controller):
+        tk.Frame.__init__(self, parent,controller)
+        self.controller = controller
         ## Global StringVar used in both subFrames
         self.entryInc = StringVar()
         self.entryTo = StringVar()

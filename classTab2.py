@@ -14,9 +14,9 @@ commonConfData = gv.commonConfData
 
 ## Common Configuration Data
 class Tab2(Frame):
-    def __init__(self, parent):
-        tk.Frame.__init__(self, parent)
-
+    def __init__(self, parent,controller):
+        tk.Frame.__init__(self, parent,controller)
+        self.controller = controller
         # Keep track of widgets added to frame
         self.widgets = []
 

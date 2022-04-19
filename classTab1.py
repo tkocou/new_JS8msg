@@ -13,10 +13,10 @@ import henkankun as hn
 
 
 #### ======================== JS8msg Control =============================
-class Tab1(Frame):
-    def __init__(self,parent):
-        tk.Frame.__init__(self,parent)
-
+class Tab1(tk.Frame):
+    def __init__(self,parent,controller):
+        tk.Frame.__init__(self,parent,controller)
+        self.controller = controller
         ## JS8msg always starts with this frame
         ## Let's check for directory structure
         ## GitHub won't upload an empty directory

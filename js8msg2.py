@@ -21,8 +21,6 @@ import classTab3 as T3
 import classTab4 as T4
 
 
-
-
 class App(tk.Frame):
     ## event was moved here to create a class variable
     ## which can be referenced by other classes
@@ -43,9 +41,23 @@ class App(tk.Frame):
         self.receiver = None
         self.db_conn = ut.get_db_connection()
         self.frame = master
-            
-        self.container = tk.Frame(self.frame)
+        
+        self.container = tk.Frame(self)
         self.container.grid()
+        ## create dictionary with frames
+        self.frames = {}
+        for F in (T1.Tab1,T2.Tab2,T3.Tab3,T4.Tab4):
+            page_name = F.__name__
+            print(page_name)
+            frame_cont = F(parent=self.container,controller=self)
+            #frame_cont = frm(parent=self.container)
+            self.frames[page_name] = frame_cont 
+        initial_frame = "Tab1"
+
+        #self.tab1 = T1.Tab1(parent)
+        #self.tab2 = T2.Tab2(parent)
+        #self.tab3 = T3.Tab3(parent)
+        #self.tab4 = T4.Tab4(parent)
 
         ## older GUI uses Notebook style of GUI
         ## switching to menu driven GUI
@@ -53,15 +65,19 @@ class App(tk.Frame):
         self.frame.title("JS8msg Version 2")
         self.frame.geometry('800x600')
         self.frame.resizable(width=False,height=False)
-        self.menubar = tk.Menu(self.con)
+        self.menubar = tk.Menu(self.container)
         
         ## File menu
         self.filemenu = tk.Menu(self.menubar, tearoff=0)
         self.filemenu.add_separator()
-        self.filemenu.add_command(label='JS8msg Communication', command = lambda: switch_frame(self.tab1))
-        self.filemenu.add_command(label='Config', command = lambda: switch_frame(self.tab2))
-        self.filemenu.add_command(label='ICS-213', command = lambda: switch_frame(self.tab3))
-        self.filemenu.add_command(label='JS8 Net', command = lambda: switch_frame(self.tab4))
+        #self.filemenu.add_command(label='JS8msg Communication', command = lambda: switch_frame(self.tab1))
+        self.filemenu.add_command(label='JS8msg Communication', command = lambda: show_frame("Tab1"))
+        #self.filemenu.add_command(label='Config', command = lambda: switch_frame(self.tab2))
+        self.filemenu.add_command(label='Config', command = lambda: show_frame("Tab2"))
+        #self.filemenu.add_command(label='ICS-213', command = lambda: switch_frame(self.tab3))
+        self.filemenu.add_command(label='ICS-213', command = lambda: show_frame("Tab3"))
+        #self.filemenu.add_command(label='JS8 Net', command = lambda: switch_frame(self.tab4))
+        self.filemenu.add_command(label='JS8 Net', command = lambda: show_frame("Tab4"))
         self.filemenu.add_separator()
         self.filemenu.add_command(label='Exit', command = self.shutting_down)
         
@@ -74,25 +90,8 @@ class App(tk.Frame):
         
         self.config(menu = self.menubar)
         
-        self.container = tk.Frame(self)
-        self.container.grid()
-        self.frames = {}
-        for frm in (T1.Tab1,T2.Tab2,T3.Tab3,T4.Tab4):
-            if frm == T1.Tab1:
-                page_name = 'JS8msg Communication'
-            elif frm == T2.Tab2:
-                page_name = 'Config'
-            elif frm == T3.Tab3:
-                page_name = 'ICS-213'
-            elif frm == T4.Tab4:
-                page_name = 'JS8 Net'
-            #frame = frm(parent=container,controller=self)
-            frame_cont = frm(parent=self.container)
-            self.frames[page_name] = frame_cont
-        self.show_frame('JS8msg Communication')
-        ## initialize GUI to first frame
-        #self.switch_frame(self.tab1)
-        self.show_frame('JS8msg Communication')
+
+
 
 
 
