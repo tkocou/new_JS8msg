@@ -151,15 +151,14 @@ def init_database():
            "INSERT INTO profile(title, def) VALUES ('Default', 1)",
            "INSERT INTO setting (name, value) VALUES ('udp_ip','127.0.0.1'),('udp_port','2242'),('tcp_ip','127.0.0.1'),('tcp_port','2442'),('hide_heartbeat',0),('dark_theme',0)"]
 
-    creation_flag = True
-
     db_obj = dbh.DB_object(js8msg_db)
 
     for data in message:
         db_obj.set_SQL(data)
         result = db_obj.exec_SQL()
         if result[0] == False:
-            creation_flag = False
-    if not creation_flag:
-        print("Problem with initializing database.")        
+            ## ignore errors as database may already exist
+            pass
+
+       
     

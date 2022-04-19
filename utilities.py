@@ -291,7 +291,7 @@ def get_settings():
                 settings[setting[1]]=setting[2]
             except:
                 pass
-    print(settings)
+    #print(settings)
     return settings
 
 def get_socket():
