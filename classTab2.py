@@ -17,6 +17,7 @@ class Tab2(Frame):
     def __init__(self, parent,controller):
         tk.Frame.__init__(self, parent,controller)
         self.controller = controller
+        self.frame = parent
         # Keep track of widgets added to frame
         self.widgets = []
 
@@ -73,21 +74,21 @@ class Tab2(Frame):
         ## Keep track of which configuration area is being filled in
         self.tableArea = ""
 
-        self.label = Label(self, text="Select =-> ")
+        self.label = Label(self.frame, text="Select =-> ")
         self.label.grid(column=0,row=0, sticky="w")
-        self.chooseConfig = ttk.Combobox(self, width=colWidth, textvariable = self.dropdown)
+        self.chooseConfig = ttk.Combobox(self.frame, width=colWidth, textvariable = self.dropdown)
         self.chooseConfig['values'] = ["Personal","Date/Time","Radiogram","Save Configuration to file","Load Configuration from file","Clear Configuration"]
         self.chooseConfig.grid(column=0,row=0, sticky="w",padx=80)
         ## Note callback function must preceed the combobox widget
         self.chooseConfig.bind('<<ComboboxSelected>>', selectAction)
 
-        self.blankLabel = Label(self)
+        self.blankLabel = Label(self.frame)
         self.blankLabel.config(text = '     ')
         self.blankLabel.grid(column=2,row=0, sticky="w")
 
-        #quitButton = Button(self, text="Quit", command=lambda:self.quitProgram())
-        #quitButton.grid(column=4,row=0, sticky = "e")
-        #quitButton.configure(bg="blue", fg="white")
+        quitButton = Button(self.frame, text="Quit", command=lambda:self.controller.shutting_down())
+        quitButton.grid(column=4,row=0, sticky = "e")
+        quitButton.configure(bg="blue", fg="white")
 
         def personalConf():
             ## Table Entry Area
@@ -101,11 +102,11 @@ class Tab2(Frame):
 
             ## Callsign
             callsignRow = 1
-            personalCallsignLabel = Label(self,text=self.commonConfText["call"])
+            personalCallsignLabel = Label(self.frame,text=self.commonConfText["call"])
             self.widgets.append(personalCallsignLabel)
             personalCallsignLabel.grid(column=0, row= callsignRow, sticky ="w")
 
-            personalCallsignEntry = Entry(self, textvariable = self.callsignEntryData, width=colWidth)
+            personalCallsignEntry = Entry(self.frame, textvariable = self.callsignEntryData, width=colWidth)
             self.widgets.append(personalCallsignEntry)
             personalCallsignEntry.grid(column=1, row=callsignRow,  columnspan=2, sticky="w")
             ## first clear any text
@@ -115,11 +116,11 @@ class Tab2(Frame):
 
             ## Name
             nameRow = 2
-            personalNameLabel = Label(self,text=self.commonConfText["name"])
+            personalNameLabel = Label(self.frame,text=self.commonConfText["name"])
             self.widgets.append(personalNameLabel)
             personalNameLabel.grid(column=0, row= nameRow, sticky ="w")
 
-            personalNameEntry = Entry(self, textvariable = self.nameEntryData, width=colWidth)
+            personalNameEntry = Entry(self.frame, textvariable = self.nameEntryData, width=colWidth)
             self.widgets.append(personalNameEntry)
             personalNameEntry.grid(column=1, row=nameRow,  columnspan=2, sticky="w")
             ## first clear any text
@@ -129,11 +130,11 @@ class Tab2(Frame):
 
             ## Telephone #
             phoneRow = 3
-            personalPhoneLabel = Label(self,text=self.commonConfText["phone"])
+            personalPhoneLabel = Label(self.frame,text=self.commonConfText["phone"])
             self.widgets.append(personalPhoneLabel)
             personalPhoneLabel.grid(column=0, row = phoneRow, sticky="w")
 
-            personalPhoneEntry = Entry(self, textvariable= self.phoneEntryData, width=colWidth)
+            personalPhoneEntry = Entry(self.frame, textvariable= self.phoneEntryData, width=colWidth)
             self.widgets.append(personalPhoneEntry)
             personalPhoneEntry.grid(column=1, row=phoneRow, columnspan=2, sticky="w")
             ## first clear any text
@@ -143,11 +144,11 @@ class Tab2(Frame):
 
             ## Address
             addrRow = 4
-            personalAddressLabel= Label(self, text=self.commonConfText["addr"])
+            personalAddressLabel= Label(self.frame, text=self.commonConfText["addr"])
             self.widgets.append(personalAddressLabel)
             personalAddressLabel.grid(column=0, row=addrRow, sticky="w")
 
-            personalAddressEntry = Entry(self, textvariable= self.addressEntryData, width=colWidth)
+            personalAddressEntry = Entry(self.frame, textvariable= self.addressEntryData, width=colWidth)
             self.widgets.append(personalAddressEntry)
             personalAddressEntry.grid(column=1, row=addrRow, columnspan=2, sticky="w")
             ## first clear any text
@@ -157,11 +158,11 @@ class Tab2(Frame):
 
             ## City/State/Zip
             cszRow = 5
-            personalCszLabel= Label(self, text=self.commonConfText["c-s-z"])
+            personalCszLabel= Label(self.frame, text=self.commonConfText["c-s-z"])
             self.widgets.append(personalCszLabel)
             personalCszLabel.grid(column=0, row=cszRow, sticky="w")
 
-            personalCszEntry = Entry(self, textvariable= self.cityEntryData, width=colWidth)
+            personalCszEntry = Entry(self.frame, textvariable= self.cityEntryData, width=colWidth)
             self.widgets.append(personalCszEntry)
             personalCszEntry.grid(column=1, row=cszRow, columnspan=2, sticky="w")
             ## first clear any text
@@ -171,11 +172,11 @@ class Tab2(Frame):
 
             ## Email Address
             emailRow = 6
-            personalEmailLabel = Label(self, text=self.commonConfText["email"])
+            personalEmailLabel = Label(self.frame, text=self.commonConfText["email"])
             self.widgets.append(personalEmailLabel)
             personalEmailLabel.grid(column=0, row=emailRow, sticky="w")
 
-            personalEmailEntry = Entry(self, textvariable= self.emailEntryData, width=colWidth)
+            personalEmailEntry = Entry(self.frame, textvariable= self.emailEntryData, width=colWidth)
             self.widgets.append(personalEmailEntry)
             personalEmailEntry.grid(column=1, row=emailRow, columnspan=2, sticky="w")
             ## first clear any text
@@ -190,7 +191,7 @@ class Tab2(Frame):
             self.widgets = []
             
             dtRow = 1
-            datetimeDateLabel = Label(self,text=self.commonConfText["fdate"])
+            datetimeDateLabel = Label(self.frame,text=self.commonConfText["fdate"])
             self.widgets.append(datetimeDateLabel)
             datetimeDateLabel.grid(column=0, row= dtRow, sticky ="w")
 
@@ -201,20 +202,20 @@ class Tab2(Frame):
             radioRow = dtRow
             #indexCount = 0
             for format in dateFormatText:
-                dateFormat = ttk.Radiobutton(self, text = format[0], value = format[1], variable = self.formatDateEntryData)
+                dateFormat = ttk.Radiobutton(self.frame, text = format[0], value = format[1], variable = self.formatDateEntryData)
                 self.widgets.append(dateFormat)
                 dateFormat.grid(column=1, row=radioRow, sticky="w")
                 radioRow += 1
             self.formatDateEntryData.set(commonConfData["fdate"])
 
-            datetimeTimeLabel = Label(self,text=self.commonConfText["ftime"])
+            datetimeTimeLabel = Label(self.frame,text=self.commonConfText["ftime"])
             self.widgets.append(datetimeTimeLabel)
             datetimeTimeLabel.grid(column=2, row=dtRow, sticky="w")
 
             ## Set up second radiobutton list for time formats
             radioRow = dtRow
             for format in timeFormatText:
-                timeFormat = ttk.Radiobutton(self, text = format[0], value = format[1], variable = self.formatTimeEntryData)
+                timeFormat = ttk.Radiobutton(self.frame, text = format[0], value = format[1], variable = self.formatTimeEntryData)
                 self.widgets.append(timeFormat)
                 timeFormat.grid(column=3, row=radioRow, sticky ="w")
                 radioRow += 1

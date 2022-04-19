@@ -19,6 +19,7 @@ class Tab3(Frame):
     def __init__(self, parent,controller):
         tk.Frame.__init__(self, parent,controller)
         self.controller = controller
+        self.frame = parent
         ## Global StringVar used in both subFrames
         self.entryInc = StringVar()
         self.entryTo = StringVar()
@@ -56,12 +57,13 @@ class Tab3(Frame):
 
     ## Referenced by subframes. Do not remove
     def quitProgram(self):
-        sys.exit()
+        controller.shutting_down()
       
 ####========================= ICS-213 Originator =============================
 class Tab3_Frame1(Frame):
     def __init__(self, master):
         Frame.__init__(self, master)
+        self.frame = master
         ## Keep track of widgets added to frame
         self.widgets = []
         ## Init configuration dictionary
@@ -141,25 +143,25 @@ class Tab3_Frame1(Frame):
         ## Before destroying the widgets, any data is transferred to the form data dictionary
         ##
         ## Display the current mode
-        self.label = Label(self, text="Orig", bg="#d8f8d8")
+        self.label = Label(self.frame, text="Orig", bg="#d8f8d8")
         self.widgets.append(self.label)
         self.label.grid(column=0,row = 0, sticky="w")
 
         # button object with command to replace the frame
-        self.button = Button(self, text="Go to Responder Mode", command=lambda: clearForm(Tab3_Frame2))
+        self.button = Button(self.frame, text="Go to Responder Mode", command=lambda: clearForm(Tab3_Frame2))
         self.widgets.append(self.button)
         self.button.grid(column=1,row = 0, sticky="w")
 
         ## Get the current date and time
-        self.getDtButton = Button(self, text="Get Date & Time", command=lambda:self.localGetDateTimeData(self.origDateEntry,self.origTimeEntry))
+        self.getDtButton = Button(self.frame, text="Get Date & Time", command=lambda:self.localGetDateTimeData(self.origDateEntry,self.origTimeEntry))
         self.widgets.append(self.getDtButton)
         self.getDtButton.grid(column=1,row = 0, sticky="e")
 
         ## combobox for 'file actions'
-        self.comboLabel = Label(self,text = "Select =-> ")
+        self.comboLabel = Label(self.frame,text = "Select =-> ")
         self.widgets.append(self.comboLabel)
         self.comboLabel.grid(column=3, row=0, sticky="w")
-        self.chooseFile = ttk.Combobox(self, width=master.colWidth, textvariable=self.fileDropDown)
+        self.chooseFile = ttk.Combobox(self.frame, width=master.colWidth, textvariable=self.fileDropDown)
         self.widgets.append(self.chooseFile)
         self.chooseFile['values'] = ["Save File","Load File", "Clear Form", "Update"]
         self.chooseFile.grid(column=3, row=0, sticky="w", padx=80)
@@ -169,10 +171,10 @@ class Tab3_Frame1(Frame):
         self.chooseFile.bind('<<ComboboxSelected>>', selectFileOption)
 
         ## Quit Button
-        #self.quitButton = Button(self, text="Quit", command=lambda:master.quitProgram())
-        #self.widgets.append(self.quitButton)
-        #self.quitButton.grid(column=3,row=0, sticky="e")
-        #self.quitButton.configure(bg="blue", fg="white")
+        self.quitButton = Button(self.frame, text="Quit", command=lambda:master.quitProgram())
+        self.widgets.append(self.quitButton)
+        self.quitButton.grid(column=3,row=0, sticky="e")
+        self.quitButton.configure(bg="blue", fg="white")
 
         #### Text sizing variables
         normText = 42
@@ -180,18 +182,18 @@ class Tab3_Frame1(Frame):
 
         incRow = 1
         ## Incident
-        self.origLabelInc=Label(self, text=self.origFieldsText["inc"], anchor='w')
+        self.origLabelInc=Label(self.frame, text=self.origFieldsText["inc"], anchor='w')
         self.widgets.append(self.origLabelInc)
         self.origLabelInc.grid(column=0, row=incRow, sticky = 'w')
 
-        self.origEntryInc = Entry(self, textvariable=master.entryInc, width=normText, bg="#d8f8f8")
+        self.origEntryInc = Entry(self.frame, textvariable=master.entryInc, width=normText, bg="#d8f8f8")
         self.widgets.append(self.origEntryInc)
         self.origEntryInc.grid(column=1, row=incRow, sticky='w')
         self.origEntryInc.delete(0,END)
         self.origEntryInc.insert(0,self.ics213FormData["inc"])
 
         ## Date Box
-        self.origDateEntry =Entry(self, text=master.entryDate1, bg="#d8f8d8", width=18)
+        self.origDateEntry =Entry(self.frame, text=master.entryDate1, bg="#d8f8d8", width=18)
         self.widgets.append(self.origDateEntry)
         self.origDateEntry.grid(column=3, row=incRow, sticky="w")
         self.origDateEntry.delete(0,END)
@@ -202,7 +204,7 @@ class Tab3_Frame1(Frame):
             self.origDateEntry.insert(0,"Date: "+ics213FormData["d1"])
 
         ## Time Box
-        self.origTimeEntry =Entry(self, text=master.entryTime1, bg="#d8f8d8", width=18)
+        self.origTimeEntry =Entry(self.frame, text=master.entryTime1, bg="#d8f8d8", width=18)
         self.widgets.append(self.origTimeEntry)
         self.origTimeEntry.grid(column=3, row=incRow, sticky="e")
         self.origTimeEntry.delete(0,END)
@@ -215,22 +217,22 @@ class Tab3_Frame1(Frame):
 
         toRow = 2
         ## To 
-        self.origLabelTo=Label(self, text=self.origFieldsText["to"], anchor= 'w')
+        self.origLabelTo=Label(self.frame, text=self.origFieldsText["to"], anchor= 'w')
         self.widgets.append(self.origLabelTo)
         self.origLabelTo.grid(column=0, row=toRow, sticky = 'w')
 
-        self.origEntryTo = Entry(self, textvariable=master.entryTo, width=normText, bg="#f8f8d8")
+        self.origEntryTo = Entry(self.frame, textvariable=master.entryTo, width=normText, bg="#f8f8d8")
         self.widgets.append(self.origEntryTo)
         self.origEntryTo.grid(column=1, row=toRow, sticky= 'w')
         self.origEntryTo.delete(0,END)
         self.origEntryTo.insert(0,self.ics213FormData["to"])
 
         ## Position of 'to'
-        self.origLabelToPos=Label(self, text=self.origFieldsText["p1"])
+        self.origLabelToPos=Label(self.frame, text=self.origFieldsText["p1"])
         self.widgets.append(self.origLabelToPos)
         self.origLabelToPos.grid(column=2, row=toRow, stick ='e')
 
-        self.origEntryToPos = Entry(self, textvariable=master.entryToPos, width=normText, bg="#f8f8d8")
+        self.origEntryToPos = Entry(self.frame, textvariable=master.entryToPos, width=normText, bg="#f8f8d8")
         self.widgets.append(self.origEntryToPos)
         self.origEntryToPos.grid(column=3, row=toRow, sticky = 'w')
         self.origEntryToPos.delete(0,END)
@@ -238,22 +240,22 @@ class Tab3_Frame1(Frame):
 
         fromRow = 3
         ##  From 
-        self.origLabelFrom=Label(self, text=self.origFieldsText["fm"], anchor= 'w')
+        self.origLabelFrom=Label(self.frame, text=self.origFieldsText["fm"], anchor= 'w')
         self.widgets.append(self.origLabelFrom)
         self.origLabelFrom.grid(column=0, row=fromRow, sticky= 'w')
 
-        self.origEntryFrom = Entry(self, textvariable=master.entryFrom, width=normText, bg="#d8f8f8")
+        self.origEntryFrom = Entry(self.frame, textvariable=master.entryFrom, width=normText, bg="#d8f8f8")
         self.widgets.append(self.origEntryFrom)
         self.origEntryFrom.grid(column=1, row=fromRow, sticky= 'w')
         self.origEntryFrom.delete(0,END)
         self.origEntryFrom.insert(0,self.ics213FormData["fm"])
 
         ## Position of 'from'
-        self.origLabelFromPos=Label(self, text=self.origFieldsText["p2"])
+        self.origLabelFromPos=Label(self.frame, text=self.origFieldsText["p2"])
         self.widgets.append(self.origLabelFromPos)
         self.origLabelFromPos.grid(column=2, row=fromRow, sticky ='e')
 
-        self.origEntryFromPos = Entry(self, textvariable=master.entryFromPos, width=normText, bg="#d8f8f8")
+        self.origEntryFromPos = Entry(self.frame, textvariable=master.entryFromPos, width=normText, bg="#d8f8f8")
         self.widgets.append(self.origEntryFromPos)
         self.origEntryFromPos.grid(column=3, row=fromRow, sticky = 'w')
         self.origEntryFromPos.delete(0,END)
@@ -261,11 +263,11 @@ class Tab3_Frame1(Frame):
 
         subjRow = 4
         ## Subject Line
-        self.origLabelSubj=Label(self, text=self.origFieldsText["sb"], anchor= 'w')
+        self.origLabelSubj=Label(self.frame, text=self.origFieldsText["sb"], anchor= 'w')
         self.widgets.append(self.origLabelSubj)
         self.origLabelSubj.grid(column=0, row=subjRow, sticky = 'w')
 
-        self.origEntrySubj = Entry(self, textvariable=master.entrySubj, width=normText, bg="#f8f8d8")
+        self.origEntrySubj = Entry(self.frame, textvariable=master.entrySubj, width=normText, bg="#f8f8d8")
         self.widgets.append(self.origEntrySubj)
         self.origEntrySubj.grid(column=1, row=subjRow, sticky='w')
         self.origEntrySubj.delete(0,END)
@@ -275,11 +277,11 @@ class Tab3_Frame1(Frame):
         ## Message area
         ## The Text widget allows for multi-line input and must be handled differently
         ## Text entered into this widget must use *.get() & *.set()
-        self.origLabelMsg=Label(self, text=self.origFieldsText["mg"], anchor = 'w')
+        self.origLabelMsg=Label(self.frame, text=self.origFieldsText["mg"], anchor = 'w')
         self.widgets.append(self.origLabelMsg)
         self.origLabelMsg.grid(column=0, row=msgRow, sticky = 'w')
 
-        self.origEntryMsg=Text(self)
+        self.origEntryMsg=Text(self.frame)
         self.widgets.append(self.origEntryMsg)
         self.origEntryMsg.grid(column=1, row=msgRow)
         self.origEntryMsg.grid_configure(columnspan=3)
@@ -291,22 +293,22 @@ class Tab3_Frame1(Frame):
 
         appRow = 7
         ## Approver
-        self.origLabelApprove=Label(self, text=self.origFieldsText["s1"], anchor= 'w')
+        self.origLabelApprove=Label(self.frame, text=self.origFieldsText["s1"], anchor= 'w')
         self.widgets.append(self.origLabelApprove)
         self.origLabelApprove.grid(column=0, row=appRow, sticky= 'w')
 
-        self.origEntryApprove = Entry(self, textvariable=master.entryApprover, width=normText, bg="#c8c8f8")
+        self.origEntryApprove = Entry(self.frame, textvariable=master.entryApprover, width=normText, bg="#c8c8f8")
         self.widgets.append(self.origEntryApprove)
         self.origEntryApprove.grid(column=1, row=appRow, sticky= 'w')
         self.origEntryApprove.delete(0,END)
         self.origEntryApprove.insert(0,ics213FormData["s1"])
 
         ## Appr. Pos
-        self.origLabelApprPos=Label(self, text=self.origFieldsText["p3"])
+        self.origLabelApprPos=Label(self.frame, text=self.origFieldsText["p3"])
         self.widgets.append(self.origLabelApprPos)  
         self.origLabelApprPos.grid(column=2, row=appRow, stick ='e')
 
-        self.origEntryApprPos = Entry(self, textvariable=master.entryApprPos, width=normText2, bg="#c8c8f8")
+        self.origEntryApprPos = Entry(self.frame, textvariable=master.entryApprPos, width=normText2, bg="#c8c8f8")
         self.widgets.append(self.origEntryApprPos)
         self.origEntryApprPos.grid(column=3, row=appRow, sticky = 'w')
         self.origEntryApprPos.delete(0,END)
@@ -634,7 +636,7 @@ class Tab3_Frame1(Frame):
 class Tab3_Frame2(Frame):
     def __init__(self, master):
         Frame.__init__(self, master)
-
+        self.frame = master
         # Keep track of widgets added to frame
         self.widgets = []
         ## Frame data dictionaries
@@ -686,25 +688,25 @@ class Tab3_Frame2(Frame):
                 self.chooseRespFile.set('')
 
 
-        self.label = Label(self, text="Resp", bg="#f8d8d8")
+        self.label = Label(self.frame, text="Resp", bg="#f8d8d8")
         self.widgets.append(self.label)
         # and another button to change it back to the Originator frame
-        self.button = Button(self, text="Go to Originator Mode", command=lambda: clearForm(Tab3_Frame1))
+        self.button = Button(self.frame, text="Go to Originator Mode", command=lambda: clearForm(Tab3_Frame1))
         self.widgets.append(self.button)
         self.label.grid(column=0,row=0, sticky="w")
         self.button.grid(column=1,row=0, sticky="w")
 
         ## Get the current date and time
-        self.getDtButton = Button(self, text="Get Date & Time", command=lambda:self.getDateTimeData(self.rplyDateEntry,self.rplyTimeEntry))
+        self.getDtButton = Button(self.frame, text="Get Date & Time", command=lambda:self.getDateTimeData(self.rplyDateEntry,self.rplyTimeEntry))
         self.widgets.append(self.getDtButton)
         self.getDtButton.grid(column=1,row = 0, sticky="e")
 
         ## radiobutton for 'file actions'
-        self.comboLabel2 = Label(self,text = "Select =-> ")
+        self.comboLabel2 = Label(self.frame,text = "Select =-> ")
         self.widgets.append(self.comboLabel2)
         self.comboLabel2.grid(column=3, row=0, sticky="w")
 
-        self.chooseRespFile = ttk.Combobox(self, width=master.colWidth, textvariable=self.fileDropDown)
+        self.chooseRespFile = ttk.Combobox(self.frame, width=master.colWidth, textvariable=self.fileDropDown)
         self.widgets.append(self.chooseRespFile)
         self.chooseRespFile['values'] = ["Save File", "Update"]
         self.chooseRespFile.grid(column=3, row=0, sticky="w",padx=80)
@@ -712,17 +714,17 @@ class Tab3_Frame2(Frame):
         self.chooseRespFile.bind('<<ComboboxSelected>>', selectRespFileOption)
 
         ## Quit button
-        #quitButton = Button(self, text="Quit", command=lambda:master.quitProgram())
-        #self.widgets.append(quitButton)
-        #quitButton.grid(column=3,row=0, sticky = "e")
-        #quitButton.configure(bg="blue", fg="white")
+        quitButton = Button(self.frame, text="Quit", command=lambda:master.quitProgram())
+        self.widgets.append(quitButton)
+        quitButton.grid(column=3,row=0, sticky = "e")
+        quitButton.configure(bg="blue", fg="white")
 
         #### Text sizing variable
         normText = 40
 
         dtRow = 1
         ## Date Box
-        self.rplyDateEntry =Entry(self, textvariable=master.rplyDateData, bg="#d8f8d8", width=18)
+        self.rplyDateEntry =Entry(self.frame, textvariable=master.rplyDateData, bg="#d8f8d8", width=18)
         self.widgets.append(self.rplyDateEntry)
         self.rplyDateEntry.grid(column=3, row=dtRow, sticky="w")
         self.rplyDateEntry.delete(0,END)
@@ -733,7 +735,7 @@ class Tab3_Frame2(Frame):
             self.rplyDateEntry.insert(0,"Date: "+respIcs213FormData["d2"])
 
         ## Time Box
-        self.rplyTimeEntry =Entry(self, textvariable=master.rplyTimeData, bg="#d8f8d8", width=18)
+        self.rplyTimeEntry =Entry(self.frame, textvariable=master.rplyTimeData, bg="#d8f8d8", width=18)
         self.widgets.append(self.rplyTimeEntry)
         self.rplyTimeEntry.grid(column=3, row=dtRow, sticky="e")
         self.rplyTimeEntry.delete(0,END)
@@ -745,11 +747,11 @@ class Tab3_Frame2(Frame):
 
         replyRow= 2
         ## Reply area
-        self.replyLabel = Label(self,text=self.rplyFieldsText['rp'])
+        self.replyLabel = Label(self.frame,text=self.rplyFieldsText['rp'])
         self.widgets.append(self.replyLabel)
         self.replyLabel.grid(column=0, row = replyRow, sticky="w")
 
-        self.replyEntryMsg = Text(self)
+        self.replyEntryMsg = Text(self.frame)
         self.widgets.append(self.replyEntryMsg)
         self.replyEntryMsg.grid(column=1, row=replyRow)
         self.replyEntryMsg.grid_configure(columnspan=3)
@@ -760,22 +762,22 @@ class Tab3_Frame2(Frame):
 
         respRow = 3
         ## Name of responder
-        self.replyNameLabel = Label(self, text=self.rplyFieldsText['s2'])
+        self.replyNameLabel = Label(self.frame, text=self.rplyFieldsText['s2'])
         self.widgets.append(self.replyNameLabel)
         self.replyNameLabel.grid(column=0, row=respRow, sticky="w")
 
-        self.replyEntryName = Entry(self, textvariable=master.entryName, width=normText, bg="#f8e8e8")
+        self.replyEntryName = Entry(self.frame, textvariable=master.entryName, width=normText, bg="#f8e8e8")
         self.widgets.append(self.replyEntryName)
         self.replyEntryName.grid(column=1, row=respRow, sticky="w")
         #print("s2 in respond:",ics213FormData["s2"])
         master.entryName.set(self.respIcs213FormData["s2"])
 
         ## Position of responder
-        self.replyNamePosLabel = Label(self, text=self.rplyFieldsText["p4"])
+        self.replyNamePosLabel = Label(self.frame, text=self.rplyFieldsText["p4"])
         self.widgets.append(self.replyNamePosLabel)
         self.replyNamePosLabel.grid(column=2,row=respRow, sticky="w")
 
-        self.replyNamePosEntry = Entry(self, textvariable=master.entryNamePos, width=normText, bg="#f8e8e8")
+        self.replyNamePosEntry = Entry(self.frame, textvariable=master.entryNamePos, width=normText, bg="#f8e8e8")
         self.widgets.append(self.replyNamePosEntry)
         self.replyNamePosEntry.grid(column=3, row=respRow, sticky="w")
         master.entryNamePos.set(self.respIcs213FormData["p4"])

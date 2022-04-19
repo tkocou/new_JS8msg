@@ -22,6 +22,7 @@ class Tab4(Frame):
     def __init__(self, parent,controller):
         tk.Frame.__init__(self, parent,controller)
         self.controller = controller
+        self.frame = parent
         
         self.entryInc = StringVar()
         self.entryNC_Callsign = StringVar()
@@ -47,7 +48,7 @@ class Tab4(Frame):
         self._frame.grid()
 
     def quitProgram(self):
-        sys.exit()
+        controller.shutting_down()
 
 # first sub-frame for Tab4
 ####================ ICS-309 Incident frame ====================
@@ -55,6 +56,7 @@ class Tab4(Frame):
 class Tab4_Frame1(Frame):
     def __init__(self, master):
         Frame.__init__(self, master)
+        self.frame = master
         ## Keep track of widgets added to frame
         self.widgets = []
         ## Init configuration dictionary
@@ -73,19 +75,19 @@ class Tab4_Frame1(Frame):
             master.switch_frame(frame_class)
 
         ## Which sub-frame are we in?
-        self.labelFrame = Label(self, text="Inc", bg="#d8f8d8")
+        self.labelFrame = Label(self.frame, text="Inc", bg="#d8f8d8")
         self.widgets.append(self.labelFrame)
         self.labelFrame.grid(column=0,row=0,sticky="w")
 
         ## Click to swap
-        self.buttonFrame = Button(self, text="Go to Logging form", command=lambda: clearForm(Tab4_Frame2))
+        self.buttonFrame = Button(self.frame, text="Go to Logging form", command=lambda: clearForm(Tab4_Frame2))
         self.widgets.append(self.buttonFrame)
         self.buttonFrame.grid(column=1,row=0, sticky="w")
 
 
         topRow =0
         ## Quit program button
-        self.quitButton = Button(self, text="Quit", command=lambda:master.quitProgram())
+        self.quitButton = Button(self.frame, text="Quit", command=lambda:master.quitProgram())
         self.widgets.append(self.quitButton)
         self.quitButton.configure(bg="blue", fg="white")
         self.quitButton.grid(column=1,row=topRow, sticky = "e", padx=20)
@@ -96,7 +98,7 @@ class Tab4_Frame1(Frame):
 class Tab4_Frame2(Frame):
     def __init__(self, master):
         Frame.__init__(self, master)
-
+        self.frame = master
         # Keep track of widgets added to frame
         self.widgets = []
         ## Frame data variables
@@ -119,19 +121,19 @@ class Tab4_Frame2(Frame):
             master.switch_frame(frame_class)
 
         ## Which sub-frame are we in?
-        self.labelFrame = Label(self, text="Inc", bg="d8f8d8")
+        self.labelFrame = Label(self.frame, text="Inc", bg="d8f8d8")
         self.widgets.append(self.labelFrame)
         self.labelFrame.grid(column=0,row=0,sticky="w")
 
         ## Click to swap
-        self.buttonFrame = Button(self, text="Go to Logging form", command=lambda: clearForm(Tab4_Frame1))
+        self.buttonFrame = Button(self.frame, text="Go to Logging form", command=lambda: clearForm(Tab4_Frame1))
         self.widgets.append(self.buttonFrame)
         self.buttonFrame.grid(column=1,row=0, sticky="w")
 
 
         topRow =0
         ## Quit program button
-        self.quitButton = Button(self, text="Quit", command=lambda:master.quitProgram())
+        self.quitButton = Button(self.frame, text="Quit", command=lambda:master.quitProgram())
         self.widgets.append(self.quitButton)
         self.quitButton.configure(bg="blue", fg="white")
         self.quitButton.grid(column=1,row=topRow, sticky = "e", padx=20)

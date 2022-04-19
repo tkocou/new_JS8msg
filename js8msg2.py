@@ -45,7 +45,7 @@ class App(tk.Frame):
         self.container = tk.Frame(master, height="600", width="800" )
         #self.container = master
         self.container.grid()
-        self.container.config()
+        #self.container.config()
         ## create dictionary with frames
         self.frames = {}
         for F in (T1.Tab1,T2.Tab2,T3.Tab3,T4.Tab4):
@@ -86,7 +86,7 @@ class App(tk.Frame):
         
         self.frame.config(menu = self.menubar)
         ## initialize screen to JS8msg Communication GUI
-        self.show_frame("Tab1")
+        #self.show_frame("Tab1")
 
 
 
