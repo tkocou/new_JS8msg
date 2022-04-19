@@ -7,6 +7,7 @@
 
 import DBHandler as dbh 
 import socket
+import sys
 import utilities as ut
 import threaded_listening as tl
 import tkinter as tk
@@ -42,30 +43,9 @@ class App(tk.Frame):
         self.receiver = None
         self.db_conn = ut.get_db_connection()
         self.frame = master
-        
-        #print("frame type:: ",type(self.frame))
-        
-        #self.tab1 = T1.Tab1(parent)
-        #self.tab2 = T2.Tab2(parent)
-        #self.tab3 = T3.Tab3(parent)
-        #self.tab4 = T4.Tab4(parent)
-        
-        container = tk.Frame(self)
-        container.grid()
-        self.frames = {}
-        for frm in (T1.Tab1,T2.Tab2,T3.Tab3,T4.Tab4):
-            if frm == T1.Tab1:
-                page_name = 'JS8msg Communication'
-            elif frm == T2.Tab2:
-                page_name = 'Config'
-            elif frm == T3.Tab3:
-                page_name = 'ICS-213'
-            elif frm == T4.Tab4:
-                page_name = 'JS8 Net'
-            #frame = frm(parent=container,controller=self)
-            frame = frm(parent=container)
-            self.frames[page_name] = frame
-        self.show_frame('JS8msg Communication')
+            
+        self.container = tk.Frame(self.frame)
+        self.container.grid()
 
         ## older GUI uses Notebook style of GUI
         ## switching to menu driven GUI
@@ -73,7 +53,7 @@ class App(tk.Frame):
         self.frame.title("JS8msg Version 2")
         self.frame.geometry('800x600')
         self.frame.resizable(width=False,height=False)
-        self.menubar = tk.Menu(self)
+        self.menubar = tk.Menu(self.con)
         
         ## File menu
         self.filemenu = tk.Menu(self.menubar, tearoff=0)
@@ -92,9 +72,27 @@ class App(tk.Frame):
         self.menubar.add_cascade(label='File', menu = self.filemenu)
         self.menubar.add_cascade(label='Help', menu = self.helpmenu)
         
+        self.config(menu = self.menubar)
+        
+        self.container = tk.Frame(self)
+        self.container.grid()
+        self.frames = {}
+        for frm in (T1.Tab1,T2.Tab2,T3.Tab3,T4.Tab4):
+            if frm == T1.Tab1:
+                page_name = 'JS8msg Communication'
+            elif frm == T2.Tab2:
+                page_name = 'Config'
+            elif frm == T3.Tab3:
+                page_name = 'ICS-213'
+            elif frm == T4.Tab4:
+                page_name = 'JS8 Net'
+            #frame = frm(parent=container,controller=self)
+            frame_cont = frm(parent=self.container)
+            self.frames[page_name] = frame_cont
+        self.show_frame('JS8msg Communication')
         ## initialize GUI to first frame
         #self.switch_frame(self.tab1)
-        
+        self.show_frame('JS8msg Communication')
 
 
 
@@ -129,10 +127,15 @@ class App(tk.Frame):
         ## db_conn is assigned in __init__()
         ## close the database connection
         self.db_conn.close_SQL()
-        ## do a proper shutdown of threaded receivers
-        self.stop_receiving()
+        try:
+            ## do a proper shutdown of threaded receivers
+            self.stop_receiver()
+        ## if threaded receiver was not running, ignore error
+        except:
+            pass
         ## destroy all existing widgets and then exit tkinter mainloop
-        self.destroy()
+        #self.destroy()
+        sys.exit()
         
     #def switch_frame(self,frame_class):
     #    print("frame type: ",type(frame_class))
