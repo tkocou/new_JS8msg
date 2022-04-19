@@ -18,6 +18,7 @@ class Tab1(Frame):
         Frame.__init__(self,parent,controller)
         self.controller = controller
         self.frame = parent
+        self.widgets = []
         #print("Entered JS8msg Control page")
         ## JS8msg always starts with this frame
         ## Let's check for directory structure
@@ -316,21 +317,25 @@ class Tab1(Frame):
             encodeButton1.configure(bg="yellow1", width=12, height=2)
             encodeButton1.grid(column=1,row=3, sticky="nw", pady=0, padx=10)
             self.japaneseList.append(encodeButton1)
+            self.widgets.append(encodeButton1)
 
             decodeButton1 = Button(self.frame, text="Decode Shift-JIS", command=decodeTextAreaJIS)
             decodeButton1.configure(bg="green1", width=12, height=2)
             decodeButton1.grid(column=1,row=4, sticky="nw", pady=0, padx=10)
             self.japaneseList.append(decodeButton1)
+            self.widgets.append(decodeButton1)
 
             encodeButton2 = Button(self.frame, text="Encode UTF-8", command=encodeTextAreaUTF8)
             encodeButton2.configure(bg="yellow1", width=12, height=2)
             encodeButton2.grid(column=1,row=5, sticky="nw", pady=0, padx=10)
             self.japaneseList.append(encodeButton2)
+            self.widgets.append(encodeButton2)
 
             decodeButton2 = Button(self.frame, text="Decode UTF-8", command=decodeTextAreaUTF8)
             decodeButton2.configure(bg="green1", width=12, height=2)
             decodeButton2.grid(column=1,row=6, sticky="nw", pady=0, padx=10)
             self.japaneseList.append(decodeButton2)
+            aself.widgets.append(decodeButton2)
 
         def encodeTextAreaJIS():
             if self.japanFlag:
@@ -363,19 +368,23 @@ class Tab1(Frame):
         ## Add a label and combobox to the display
         self.label = tk.Label(self.frame, text="Select =-> ")
         self.label.grid(column=0,row=topRow, sticky="w")
+        self.widgets.append(self.label)
         self.chooseAction = ttk.Combobox(self.frame, width=colWidth, textvariable = self.dropdown, background="#f8d8d8")
         self.chooseAction['values'] = ["Load Form","Send Form Message","Store Form Message to Inbox","Get All Messages from Inbox","Send Text Area","Store Text Area to Inbox","Activate Henkankun","Deactivate Henkankun"]
         self.chooseAction.grid(column=0,row=topRow, sticky="w", padx=80)
         ## Note: callback function must preceed the combobox widget
         self.chooseAction.bind('<<ComboboxSelected>>', selectMsgOption)
+        self.widgets.append(self.chooseAction)
 
         #print("Fini ComboBox widget")
 
         ## Add a group widgets
         self.groupLabel = tk.Button(self.frame, text="Add Group and Click =-> ", command=getGroup)
         self.groupLabel.grid(column=0, row=topRow, sticky="e", padx=120)
+        self.widgets.append(self.groupLabel)
         self.groupEntry = tk.Entry(self.frame, textvariable=self.group, width=14, bg="green1")
         self.groupEntry.grid(column=0, row=topRow, sticky="e")
+        self.widgets.append(self.groupEntry)
 
         #print("Fini Group button")
 
@@ -383,6 +392,7 @@ class Tab1(Frame):
         quitButton = tk.Button(self.frame, text="Quit", command=lambda:self.controller.shutting_down())
         quitButton.configure(bg="blue", fg="white")
         quitButton.grid(column=1,row=topRow, sticky = "w", padx=10)
+        self.widgets.append(quitButton)
 
         #print("Fini Quit button")
 
@@ -397,6 +407,7 @@ class Tab1(Frame):
         self.updateButton = tk.Button(self.frame, text = "Update Callsigns", command=buildCall)
         self.updateButton.grid(column=0, row=listRow, sticky="nw")
         self.updateButton.configure(bg="yellow1", width=22)
+        self.widgets.append(self.updateButton)
         
         #print("Fini Update Callsigns button")
 
@@ -404,6 +415,7 @@ class Tab1(Frame):
         self.listBoxButton = tk.Button(self.frame, text = "Select Callsign & Click here", command=retrieve)
         self.listBoxButton.configure(bg="yellow1", width=22)
         self.listBoxButton.grid(column=0, row=selRow, sticky="w")
+        self.widgets.append(self.listBoxButton)
 
         #print("Fini Select Callsign button")
 
@@ -413,11 +425,13 @@ class Tab1(Frame):
         self.chooseList.grid(column=0,row = listRow, padx = 15, pady=vertPad, sticky="nw")
         self.chooseList.activate(self.callsignSelIndex)
         self.chooseList.see(self.callsignSelIndex)
+        self.widgets.append(self.chooseList)
         ## add a scrollbar widget for when the callsign list size exceeds the displayed area
         self.scrollBar = tk.Scrollbar(self.frame, orient=VERTICAL, command=self.chooseList.yview)
         self.scrollBar.grid(column=0, row= listRow, pady=vertPad, sticky="nsw")
         ## Link the scrollbar widget to the Listbox widget
         self.chooseList['yscrollcommand'] = self.scrollBar.set
+        self.widgets.append(self.scrollBar)
 
         #print("Fini Callsign Listbox")
 
@@ -425,6 +439,7 @@ class Tab1(Frame):
         self.listMsgButton = tk.Button(self.frame, text = "Select Message & Click here", command=msgDisplay)
         self.listMsgButton.configure(bg="green1", width=22)
         self.listMsgButton.grid(column=0, row=selRow, sticky="se")
+        self.widgets.append(self.listMsgButton)
         
         #print("Fini Select Message")
         
@@ -434,6 +449,7 @@ class Tab1(Frame):
         self.chooseMessage.grid(column=0, row=listRow, padx=0, pady=vertPad, sticky="ne")
         self.chooseMessage.activate(self.msgListIndex)
         self.chooseMessage.see(self.msgListIndex)
+        self.widgets.append(self.chooseMessage)
         ## Added a scrollbar widget for when the messages list size exceeds the displayed area
         self.msgScrollBar = tk.Scrollbar(self.frame, orient=VERTICAL, command=self.chooseMessage.yview)
         ## adjust offset per OS due to font differences
@@ -443,12 +459,14 @@ class Tab1(Frame):
             self.msgScrollBar.grid(column=0, row=listRow, pady=vertPad, sticky="nse", padx=196) # linux?
         ## Link the scrollbar widget to the Listbox widget
         self.chooseMessage['yscrollcommand'] = self.msgScrollBar.set
+        self.widgets.append(self.msgScrollBar)
         
         #print("Fini Messages Listbox")
 
         self.clearTextAreaButton = tk.Button(self.frame, text="Clear Text Area", command=lambda: clearTextArea())
         self.clearTextAreaButton.configure(bg="blue", fg="white", width=22)
         self.clearTextAreaButton.grid(column=0, row=selRow, sticky="sew", padx=200)
+        self.widgets.append(self.clearTextAreaButton)
                 
         #print("Fini Clear Text button")
 
@@ -459,11 +477,17 @@ class Tab1(Frame):
         self.messageTextBox.configure(background="#f8d8d8", wrap="word", height=15, width=73)
         self.messageTextBox.delete(1.0,END)
         self.messageTextBox.insert(END,self.formDataToSend)
+        self.widgets.append(self.messageTextBox)
         ## add a scrollbar widget for when the callsign list size exceeds the displayed area
         self.scrollBarText = tk.Scrollbar(self.frame, orient=VERTICAL, command=self.messageTextBox.yview)
         self.scrollBarText.grid(column=0, row= txtRow, sticky="nsw", rowspan =4)
         ## Link the scrollbar widget to the Listbox widget
         self.messageTextBox['yscrollcommand'] = self.scrollBar.set
+        self.widgets.append(self.scrollBarText)
+        
+        ## we've collected a list of widgets, let's transfer it to the global dictionary
+        self.frame.widget_list_dict["Tab1"] = self.widgets
+        
         
         #print("Fini Text area")
 
@@ -582,4 +606,4 @@ class Tab1(Frame):
         if self.htmlFile:
             ## delete it
             os.remove(self.htmlFile)
-        sys.exit()
+        self.controller.shutting_down()
