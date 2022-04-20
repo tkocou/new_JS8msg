@@ -1,4 +1,3 @@
-import tkinter as tk
 from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox as mb
@@ -14,8 +13,8 @@ commonConfData = gv.commonConfData
 
 ## Common Configuration Data
 class Tab2(Frame):
-    def __init__(self, parent,controller):
-        tk.Frame.__init__(self, parent,controller)
+    def __init__(self,parent,controller):
+        Frame.__init__(self,parent,controller)
         self.controller = controller
         self.frame = parent
         # Keep track of widgets added to frame
@@ -45,27 +44,35 @@ class Tab2(Frame):
             selAction = self.chooseConfig.get()
             saveConfData()
             if selAction == "Personal":
+                ## clear the screen
                 ut.clearWidgetForm(self.widgets)
+                ## reset the dynamic widget list
+                gv.widget_list_dict["Tab2a"] = []
                 personalConf()
                 self.chooseConfig.set('')
             elif selAction == "Date/Time":
                 ut.clearWidgetForm(self.widgets)
+                gv.widget_list_dict["Tab2a"] = []
                 datetime()
                 self.chooseConfig.set('')
             elif selAction == "Radiogram":
                 ut.clearWidgetForm(self.widgets)
+                gv.widget_list_dict["Tab2a"] = []
                 radiogramItems()
                 self.chooseConfig.set('')
             elif selAction == "Save Configuration to file":
                 ut.clearWidgetForm(self.widgets)
+                gv.widget_list_dict["Tab2a"] = []
                 saveData()
                 self.chooseConfig.set('')
             elif selAction == "Load Configuration from file":
                 ut.clearWidgetForm(self.widgets)
+                gv.widget_list_dict["Tab2a"] = []
                 loadData()
                 self.chooseConfig.set('')
             elif selAction == "Clear Configuration":
                 ut.clearWidgetForm(self.widgets)
+                gv.widget_list_dict["Tab2a"] = []
                 clearData()
                 self.chooseConfig.set('')
 
@@ -89,10 +96,12 @@ class Tab2(Frame):
         self.blankLabel.grid(column=2,row=0, sticky="w")
         self.widgets.append(self.blankLabel)
 
-        quitButton = Button(self.frame, text="Quit", command=lambda:self.controller.shutting_down())
+        quitButton = Button(self.frame, text="Quit", command=lambda:self.quitProgram())
         quitButton.grid(column=4,row=0, sticky = "e")
         quitButton.configure(bg="blue", fg="white")
         self.widgets.append(quitButton)
+        ## keep track of static widgets on screen
+        gv.widget_list_dict["Tab2"] = self.widgets
 
         def personalConf():
             ## Table Entry Area
@@ -107,95 +116,99 @@ class Tab2(Frame):
             ## Callsign
             callsignRow = 1
             personalCallsignLabel = Label(self.frame,text=self.commonConfText["call"])
-            personalCallsignLabel.grid(column=0, row= callsignRow, sticky ="w")
             self.widgets.append(personalCallsignLabel)
+            personalCallsignLabel.grid(column=0, row= callsignRow, sticky ="w")
 
             personalCallsignEntry = Entry(self.frame, textvariable = self.callsignEntryData, width=colWidth)
+            self.widgets.append(personalCallsignEntry)
             personalCallsignEntry.grid(column=1, row=callsignRow,  columnspan=2, sticky="w")
             ## first clear any text
             personalCallsignEntry.delete(0,END)
             ## Insert any new text
             personalCallsignEntry.insert(0,self.commonConfData["call"])
-            self.widgets.append(personalCallsignEntry)
 
             ## Name
             nameRow = 2
             personalNameLabel = Label(self.frame,text=self.commonConfText["name"])
-            personalNameLabel.grid(column=0, row= nameRow, sticky ="w")
             self.widgets.append(personalNameLabel)
+            personalNameLabel.grid(column=0, row= nameRow, sticky ="w")
 
             personalNameEntry = Entry(self.frame, textvariable = self.nameEntryData, width=colWidth)
+            self.widgets.append(personalNameEntry)
             personalNameEntry.grid(column=1, row=nameRow,  columnspan=2, sticky="w")
             ## first clear any text
             personalNameEntry.delete(0,END)
             ## Insert any new text
             personalNameEntry.insert(0,self.commonConfData["name"])
-            self.widgets.append(personalNameEntry)
 
             ## Telephone #
             phoneRow = 3
             personalPhoneLabel = Label(self.frame,text=self.commonConfText["phone"])
-            personalPhoneLabel.grid(column=0, row = phoneRow, sticky="w")
             self.widgets.append(personalPhoneLabel)
+            personalPhoneLabel.grid(column=0, row = phoneRow, sticky="w")
 
             personalPhoneEntry = Entry(self.frame, textvariable= self.phoneEntryData, width=colWidth)
+            self.widgets.append(personalPhoneEntry)
             personalPhoneEntry.grid(column=1, row=phoneRow, columnspan=2, sticky="w")
             ## first clear any text
             personalPhoneEntry.delete(0,END)
             ## Insert any new text
             personalPhoneEntry.insert(0,self.commonConfData["phone"])
-            self.widgets.append(personalPhoneEntry)
 
             ## Address
             addrRow = 4
             personalAddressLabel= Label(self.frame, text=self.commonConfText["addr"])
-            personalAddressLabel.grid(column=0, row=addrRow, sticky="w")
             self.widgets.append(personalAddressLabel)
+            personalAddressLabel.grid(column=0, row=addrRow, sticky="w")
 
             personalAddressEntry = Entry(self.frame, textvariable= self.addressEntryData, width=colWidth)
+            self.widgets.append(personalAddressEntry)
             personalAddressEntry.grid(column=1, row=addrRow, columnspan=2, sticky="w")
             ## first clear any text
             personalAddressEntry.delete(0,END)
             ## Insert any new text
             personalAddressEntry.insert(0,self.commonConfData["addr"])
-            self.widgets.append(personalAddressEntry)
 
             ## City/State/Zip
             cszRow = 5
             personalCszLabel= Label(self.frame, text=self.commonConfText["c-s-z"])
-            personalCszLabel.grid(column=0, row=cszRow, sticky="w")
             self.widgets.append(personalCszLabel)
+            personalCszLabel.grid(column=0, row=cszRow, sticky="w")
 
             personalCszEntry = Entry(self.frame, textvariable= self.cityEntryData, width=colWidth)
+            self.widgets.append(personalCszEntry)
             personalCszEntry.grid(column=1, row=cszRow, columnspan=2, sticky="w")
             ## first clear any text
             personalCszEntry.delete(0,END)
             ## Insert any new text
             personalCszEntry.insert(0,self.commonConfData["c-s-z"])
-            self.widgets.append(personalCszEntry)
 
             ## Email Address
             emailRow = 6
             personalEmailLabel = Label(self.frame, text=self.commonConfText["email"])
-            personalEmailLabel.grid(column=0, row=emailRow, sticky="w")
             self.widgets.append(personalEmailLabel)
+            personalEmailLabel.grid(column=0, row=emailRow, sticky="w")
 
             personalEmailEntry = Entry(self.frame, textvariable= self.emailEntryData, width=colWidth)
+            self.widgets.append(personalEmailEntry)
             personalEmailEntry.grid(column=1, row=emailRow, columnspan=2, sticky="w")
             ## first clear any text
             personalEmailEntry.delete(0,END)
             ## Insert any new text
             personalEmailEntry.insert(0,self.commonConfData["email"])
-            self.widgets.append(personalEmailEntry)
+            ## keep track of which set of dynamic widgets are displayed
+            gv.widget_list_dict["Tab2a"] = self.widgets
 
         def datetime():
             ## Table Entry Area
             self.tableArea = "datetime"
+            ## reset widget list
+            self.widgets = []
             
             dtRow = 1
             datetimeDateLabel = Label(self.frame,text=self.commonConfText["fdate"])
-            datetimeDateLabel.grid(column=0, row= dtRow, sticky ="w")
             self.widgets.append(datetimeDateLabel)
+            datetimeDateLabel.grid(column=0, row= dtRow, sticky ="w")
 
             dateFormatText = [("YYYY-MM-DD","1"),("YYYY-DD-MM","2"),("MM/DD/YY","3"),("DD/MM/YY","4"),("YYYYMMDD","5")]
             timeFormatText = [("hhmmL","1"),("hh:mmL","2"),("hhmmZ","3"),("hh:mmZ","4"),("hhmm UTC","5"),("hh:mm UTC","6")]
@@ -211,8 +224,8 @@ class Tab2(Frame):
             self.formatDateEntryData.set(commonConfData["fdate"])
 
             datetimeTimeLabel = Label(self.frame,text=self.commonConfText["ftime"])
-            datetimeTimeLabel.grid(column=2, row=dtRow, sticky="w")
             self.widgets.append(datetimeTimeLabel)
+            datetimeTimeLabel.grid(column=2, row=dtRow, sticky="w")
 
             ## Set up second radiobutton list for time formats
             radioRow = dtRow
@@ -222,13 +235,17 @@ class Tab2(Frame):
                 timeFormat.grid(column=3, row=radioRow, sticky ="w")
                 radioRow += 1
             self.formatTimeEntryData.set(commonConfData["ftime"])
+            gv.widget_list_dict["Tab2a"] = self.widgets
 
         def radiogramItems():
+            ## reset widget list
+            self.widgets = []
             print("Misc. Items of Form")
             pass
         
         def loadData():
             os.chdir(gv.configPath)
+            self.widgets=[]
             fileNameList = [("JS8msg.cfg","*.cfg")]
             funcParam = (gv.configPath,fileNameList)
             result = ut.loadFormData(funcParam)
@@ -239,6 +256,7 @@ class Tab2(Frame):
                 mb.showinfo("Load","ERROR! Configuration data was not loaded")
 
         def saveData():
+            self.widgets=[]
             ## save config in current directory
             fileNameList = [("JS8msg.cfg","*.cfg")]
             funcParam = (gv.configPath,fileNameList,commonConfData,self.commonConfKeys)
@@ -249,8 +267,9 @@ class Tab2(Frame):
                 mb.showinfo("Save","ERROR! Configuration data was not saved")
 
         def clearData():
+            self.widgets=[]
             dtRow = 1
-            clearDataLabel = Label(self,text="Clearing configuration data.")
+            clearDataLabel = Label(self.frame,text="Clearing configuration data.")
             self.widgets.append(clearDataLabel)
             clearDataLabel.grid(column=0, row= dtRow, sticky ="w")
             for key in self.commonConfKeys:
@@ -281,7 +300,7 @@ class Tab2(Frame):
                 elif key == "fUTC":
                     commonConfData[key] = ""
             clearDataLabel['text'] = "Configuration data cleared."
-
+            gv.widget_list_dict["Tab2a"] = self.widgets
 
 
         def saveConfData():
@@ -317,8 +336,7 @@ class Tab2(Frame):
                         elif timeValue == "5" or timeValue == "6":
                             commonConfData[key] = "2"
 
-        ## we've collected a list of widgets, let's transfer it to the global dictionary
-        self.frame.widget_list_dict["Tab2"] = self.widgets
+
                 
     def quitProgram(self):
         self.controller.shutting_down()

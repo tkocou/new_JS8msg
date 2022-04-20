@@ -19,8 +19,8 @@ import classTab1 as T1
 import classTab2 as T2
 import classTab3 as T3
 import classTab4 as T4
-
-#widget_list = []
+import globalVariables as gv
+import create_menu as cm 
 
 
 class App(tk.Frame):
@@ -31,7 +31,7 @@ class App(tk.Frame):
     search_strings = []
     bgsearch_strings = []
     current_profile_id = 0
-    widget_list_dict = {"Tab1":[],"Tab2":[],"Tab3":[],"Tab4":[]}
+    #self.widget_list_dict = {"Tab1":[],"Tab2":[],"Tab3":[],"Tab4":[]}
     
     def __init__(self,master):
         super().__init__(master)
@@ -63,26 +63,28 @@ class App(tk.Frame):
         self.frame.title("JS8msg Version 2")
         self.frame.geometry('800x600')
         self.frame.resizable(width=False,height=False)
-        self.menubar = tk.Menu(self.container)
+        
+        cm.make_menu(self,self.container)
+        #self.menubar = tk.Menu(self.container)
         
         ## File menu
-        self.filemenu = tk.Menu(self.menubar, tearoff=0)
-        self.filemenu.add_separator()
-        self.filemenu.add_command(label='JS8msg Communication', command = lambda: self.show_frame("Tab1"))
-        self.filemenu.add_command(label='Config', command = lambda: self.show_frame("Tab2"))   
-        self.filemenu.add_command(label='ICS-213', command = lambda: self.show_frame("Tab3"))
+        #self.filemenu = tk.Menu(self.menubar, tearoff=0)
+        #self.filemenu.add_separator()
+        #self.filemenu.add_command(label='JS8msg Communication', command = lambda: self.show_frame("Tab1"))
+        #self.filemenu.add_command(label='Config', command = lambda: self.show_frame("Tab2"))   
+        #self.filemenu.add_command(label='ICS-213', command = lambda: self.show_frame("Tab3"))
         #self.filemenu.add_command(label='JS8 Net', command = lambda: self.show_frame("Tab4"))
-        self.filemenu.add_separator()
-        self.filemenu.add_command(label='Exit', command = self.shutting_down)
+        #self.filemenu.add_separator()
+        #self.filemenu.add_command(label='Exit', command = self.shutting_down)
         
         ## Help menu
-        self.helpmenu = tk.Menu(self.menubar, tearoff=0)
-        self.helpmenu.add_command(label='About',command = self.about)
+        #self.helpmenu = tk.Menu(self.menubar, tearoff=0)
+        #self.helpmenu.add_command(label='About',command = self.about)
         
-        self.menubar.add_cascade(label='File', menu = self.filemenu)
-        self.menubar.add_cascade(label='Help', menu = self.helpmenu)
+        #self.menubar.add_cascade(label='File', menu = self.filemenu)
+        #self.menubar.add_cascade(label='Help', menu = self.helpmenu)
         
-        self.frame.config(menu = self.menubar)
+        #self.frame.config(menu = self.menubar)
         ## initialize screen to JS8msg Communication GUI
         self.current_screen = "Tab1"
         self.show_frame(self.current_screen)
@@ -127,8 +129,7 @@ class App(tk.Frame):
         ## if threaded receiver was not running, ignore error
         except:
             pass
-        ## destroy all existing widgets and then exit tkinter mainloop
-        #self.destroy()
+        ## kill existing process
         sys.exit()
         
     #def switch_frame(self,frame_class):
@@ -142,16 +143,17 @@ class App(tk.Frame):
     
     
     def show_frame(self,page_name):
+        print(page_name)
         ## is the current GUI screen empty? i.e. never created before
-        if widget_list_dict[self.current_screen] == []:
+        if gv.widget_list_dict[self.current_screen] == []:
             ## create a new GUI container
             frame = self.frames[page_name](parent=self.container,controller=self)
         ## if the current GUI has been created already.....
-        elif widget_list_dict[self.current_screen] != []:
+        elif gv.widget_list_dict[self.current_screen] != []:
             ## clear the screen
-            ut.clearWidgetForm(widget_list_dict[self.current_screen])
+            ut.clearWidgetForm(gv.widget_list_dict[self.current_screen])
             ## clear the list in the dictionary
-            widget_list_dict[self.current_screen] = []
+            gv.widget_list_dict[self.current_screen] = []
             ## create a new GUI
             frame = self.frames[page_name](parent=self.container,controller=self)
         ## the widget dictionary will be updated by the new GUI

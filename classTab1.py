@@ -486,7 +486,7 @@ class Tab1(Frame):
         self.widgets.append(self.scrollBarText)
         
         ## we've collected a list of widgets, let's transfer it to the global dictionary
-        self.frame.widget_list_dict["Tab1"] = self.widgets
+        gv.widget_list_dict["Tab1"] = self.widgets
         
         
         #print("Fini Text area")

@@ -29,6 +29,9 @@ tempPath = os.getcwd()+pathSep+"Tmp"+pathSep
 ## database for net opps
 js8msg_db = "js8msg.db"
 
+## GUI tracking
+widget_list_dict = {"Tab1":[],"Tab2":[],"Tab2a":[],"Tab3":[],"Tab4":[]}
+
 ##
 ## JS8Call APIs
 txSendMessage = 'TX.SEND_MESSAGE'
@@ -68,9 +71,9 @@ configurePath = ""
 ##
 ## Configuration dictionary terms
 ##
-commonConfData = {'call':"", 'phone':"", 'name':"", 'addr':"", 'c-s-z':"", 'email':"", 'fdate':"", 'ftime':"", 'fUTC':"", "jflag":"FALSE"}
-commonConfText = {'call':"Callsign:", 'phone':"Phone#:", 'name':"Name: ", 'addr':"Address: ", 'c-s-z':"City/St/Zip:", 'email':"Email: ", 'fdate':"Date Fmt: ", 'ftime':"Time Fmt: ", 'fUTC':"Timezone: ", 'jflag':"FALSE"}
-commonConfKeys = ['call','phone','name','addr', 'c-s-z','email','fdate', 'ftime','fUTC','jflag']
+commonConfData = {'call':"", 'phone':"", 'name':"", 'addr':"", 'c-s-z':"", 'email':"", 'fdate':"", 'ftime':"", 'fUTC':""}
+commonConfText = {'call':"Callsign:", 'phone':"Phone#:", 'name':"Name: ", 'addr':"Address: ", 'c-s-z':"City/St/Zip:", 'email':"Email: ", 'fdate':"Date Fmt: ", 'ftime':"Time Fmt: ", 'fUTC':"Timezone: "}
+commonConfKeys = ['call','phone','name','addr', 'c-s-z','email','fdate', 'ftime','fUTC']
 readConfFlag = False
 readDataFlag = False
 
