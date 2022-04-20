@@ -30,7 +30,7 @@ tempPath = os.getcwd()+pathSep+"Tmp"+pathSep
 js8msg_db = "js8msg.db"
 
 ## GUI tracking
-widget_list_dict = {"Tab1":[],"Tab2":[],"Tab2a":[],"Tab3":[],"Tab4":[]}
+widget_list_dict = {"Tab1":[],"Tab2":[],"Tab2a":[],"Tab3":[],"Tab4":[],"Tab5":[]}
 
 ##
 ## JS8Call APIs
@@ -71,16 +71,16 @@ configurePath = ""
 ##
 ## Configuration dictionary terms
 ##
-commonConfData = {'call':"", 'phone':"", 'name':"", 'addr':"", 'c-s-z':"", 'email':"", 'fdate':"", 'ftime':"", 'fUTC':""}
-commonConfText = {'call':"Callsign:", 'phone':"Phone#:", 'name':"Name: ", 'addr':"Address: ", 'c-s-z':"City/St/Zip:", 'email':"Email: ", 'fdate':"Date Fmt: ", 'ftime':"Time Fmt: ", 'fUTC':"Timezone: "}
-commonConfKeys = ['call','phone','name','addr', 'c-s-z','email','fdate', 'ftime','fUTC']
+commonConfData = {'call':"", 'phone':"", 'uname':"", 'addr':"", 'c-s-z':"", 'email':"", 'fdate':"", 'ftime':"", 'fUTC':""}
+commonConfText = {'call':"Callsign:", 'phone':"Phone#:", 'uname':"Name: ", 'addr':"Address: ", 'c-s-z':"City/St/Zip:", 'email':"Email: ", 'fdate':"Date Fmt: ", 'ftime':"Time Fmt: ", 'fUTC':"Timezone: "}
+commonConfKeys = ['call','phone','uname','addr', 'c-s-z','email','fdate', 'ftime','fUTC']
 readConfFlag = False
 readDataFlag = False
 
 ## 
 ## A set of dictionaries and lists for ICS-213
 ## 
-ics213FieldsData = {'inc':"",'to':"",'fm':"",'p1':"",'p2':"",'sb':"",'d1':"",'t1':"",'mg':"",'s1':"",'p3':"",'rp':"",'d2':"",'t2':"",'s2':"",'p4':"","file":"213"}
+ics213FormData = {'inc':"",'to':"",'fm':"",'p1':"",'p2':"",'sb':"",'d1':"",'t1':"",'mg':"",'s1':"",'p3':"",'rp':"",'d2':"",'t2':"",'s2':"",'p4':"","file":"213"}
 ics213FieldsText =  {'inc':"Inc: ",'to':"To: ",'fm':"Fm: ",'p1':"Pos.: ",'p2':"Pos.: ",'sb':"Sub.: ",'d1':"Date: ",'t1':"Time: ",'mg':"Message",'s1':"Appr. ",'p3':"Pos. ",'rp':"Reply:  ",'d2':"Date:   ",'t2':"Time:   ",'s2':"Name: ",'p4':"Pos.:","file":"ICS-213"}
 origIcs213FieldKeys = ['inc','to','fm','p1','p2','sb','d1','t1','mg','s1','p3']
 rplyIcs213FieldKeys = ['rp','d2','t2','s2','p4','file']

@@ -154,6 +154,7 @@ class Tab1(Frame):
             elif selAction == "Deactivate Henkankun":
                 self.japanFlag = FALSE
                 ut.clearWidgetForm(self.japaneseList)
+                self.japaneseList = []
                 self.chooseAction.set('')
 
         #print("Past selectMsgOption()")
@@ -317,25 +318,25 @@ class Tab1(Frame):
             encodeButton1.configure(bg="yellow1", width=12, height=2)
             encodeButton1.grid(column=1,row=3, sticky="nw", pady=0, padx=10)
             self.japaneseList.append(encodeButton1)
-            self.widgets.append(encodeButton1)
+
 
             decodeButton1 = Button(self.frame, text="Decode Shift-JIS", command=decodeTextAreaJIS)
             decodeButton1.configure(bg="green1", width=12, height=2)
             decodeButton1.grid(column=1,row=4, sticky="nw", pady=0, padx=10)
             self.japaneseList.append(decodeButton1)
-            self.widgets.append(decodeButton1)
+    
 
             encodeButton2 = Button(self.frame, text="Encode UTF-8", command=encodeTextAreaUTF8)
             encodeButton2.configure(bg="yellow1", width=12, height=2)
             encodeButton2.grid(column=1,row=5, sticky="nw", pady=0, padx=10)
             self.japaneseList.append(encodeButton2)
-            self.widgets.append(encodeButton2)
+
 
             decodeButton2 = Button(self.frame, text="Decode UTF-8", command=decodeTextAreaUTF8)
             decodeButton2.configure(bg="green1", width=12, height=2)
             decodeButton2.grid(column=1,row=6, sticky="nw", pady=0, padx=10)
             self.japaneseList.append(decodeButton2)
-            aself.widgets.append(decodeButton2)
+
 
         def encodeTextAreaJIS():
             if self.japanFlag:
@@ -606,4 +607,7 @@ class Tab1(Frame):
         if self.htmlFile:
             ## delete it
             os.remove(self.htmlFile)
+        ## if the Henkankun widgets are showing, clear them before returning
+        if self.japaneseList != []:
+            ut.clearWidgetForm(self.japaneseList)
         self.controller.shutting_down()

@@ -44,18 +44,16 @@ class App(tk.Frame):
         self.db_conn = ut.get_db_connection()
         self.frame = master
         
+        ## set up a display frame for program GUIes
         self.container = tk.Frame(master, height="600", width="800" )
-        #self.container = master
         self.container.grid()
-        #self.container.config()
-        ## create dictionary with frames
+        ## create dictionary with frames references
         self.frames = {}
         #for F in (T1.Tab1,T2.Tab2,T3.Tab3,T4.Tab4):
         for F in (T1.Tab1,T2.Tab2,T3.Tab3):
             page_name = F.__name__
             self.frames[page_name] = F
             
-        #self.show_frame("Tab1")
 
         ## older GUI uses Notebook style of GUI
         ## switching to menu driven GUI
@@ -63,29 +61,9 @@ class App(tk.Frame):
         self.frame.title("JS8msg Version 2")
         self.frame.geometry('800x600')
         self.frame.resizable(width=False,height=False)
-        
+        ## create the GUI menu
         cm.make_menu(self,self.container)
-        #self.menubar = tk.Menu(self.container)
-        
-        ## File menu
-        #self.filemenu = tk.Menu(self.menubar, tearoff=0)
-        #self.filemenu.add_separator()
-        #self.filemenu.add_command(label='JS8msg Communication', command = lambda: self.show_frame("Tab1"))
-        #self.filemenu.add_command(label='Config', command = lambda: self.show_frame("Tab2"))   
-        #self.filemenu.add_command(label='ICS-213', command = lambda: self.show_frame("Tab3"))
-        #self.filemenu.add_command(label='JS8 Net', command = lambda: self.show_frame("Tab4"))
-        #self.filemenu.add_separator()
-        #self.filemenu.add_command(label='Exit', command = self.shutting_down)
-        
-        ## Help menu
-        #self.helpmenu = tk.Menu(self.menubar, tearoff=0)
-        #self.helpmenu.add_command(label='About',command = self.about)
-        
-        #self.menubar.add_cascade(label='File', menu = self.filemenu)
-        #self.menubar.add_cascade(label='Help', menu = self.helpmenu)
-        
-        #self.frame.config(menu = self.menubar)
-        ## initialize screen to JS8msg Communication GUI
+        ## assign the default function to be displayed
         self.current_screen = "Tab1"
         self.show_frame(self.current_screen)
 
@@ -131,17 +109,7 @@ class App(tk.Frame):
             pass
         ## kill existing process
         sys.exit()
-        
-    #def switch_frame(self,frame_class):
-    #    print("frame type: ",type(frame_class))
-    #    new_frame = frame_class(self)
-    #    if self._frame is not None:
-    #        self._frame.destroy()
-    #    self._frame = new_frame
-    #    self._frame.grid()
 
-    
-    
     def show_frame(self,page_name):
         print(page_name)
         ## is the current GUI screen empty? i.e. never created before

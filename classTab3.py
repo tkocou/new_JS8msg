@@ -712,10 +712,10 @@ class Tab3_Frame2(Frame):
         self.label = Label(self.frame, text="Resp", bg="#f8d8d8")
         self.widgets.append(self.label)
         # and another button to change it back to the Originator frame
-        self.button = Button(self.frame, text="Go to Originator Mode", command=lambda: clearFormR())
-        self.widgets.append(self.button)
-        self.label.grid(column=0,row=0, sticky="w")
-        self.button.grid(column=1,row=0, sticky="w")
+        #self.button = Button(self.frame, text="Go to Originator Mode", command=lambda: clearFormR())
+        #self.widgets.append(self.button)
+        #self.label.grid(column=0,row=0, sticky="w")
+        #self.button.grid(column=1,row=0, sticky="w")
 
         ## Get the current date and time
         self.getDtButton = Button(self.frame, text="Get Date & Time", command=lambda:self.getDateTimeData(self.rplyDateEntry,self.rplyTimeEntry))

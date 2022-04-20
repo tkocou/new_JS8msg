@@ -284,8 +284,6 @@ def get_settings():
     ## let's make a dictionary from the settings
     settings = {}
     for sett in dbset:
-        #print("setting type is: ",type(setting))
-        #print(sett)
         for setting in sett:
             try:
                 settings[setting[1]]=setting[2]
