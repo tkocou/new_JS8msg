@@ -49,8 +49,7 @@ class App(tk.Frame):
         self.container.grid()
         ## create dictionary with frames references
         self.frames = {}
-        #for F in (T1.Tab1,T2.Tab2,T3.Tab3,T4.Tab4):
-        for F in (T1.Tab1,T2.Tab2,T3.Tab3):
+        for F in (T1.Tab1,T2.Tab2,T3.Tab3,T4.Tab4):
             page_name = F.__name__
             self.frames[page_name] = F
             

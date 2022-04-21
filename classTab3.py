@@ -6,6 +6,12 @@ import utilities as ut
 import database_config as dc
 import ics213_utilities as ics
 
+## Note: the main difference between classes Tab3
+## and Tab4 is the focus of the GUI on the respective
+## portions of the ICS-213 form.
+## Tab 3 focuses on the Originator
+## Tab 4 focuses on the Responder
+
 class Tab3(Frame):
     def __init__(self,parent,controller):
         Frame.__init__(self,parent,controller)
@@ -53,12 +59,14 @@ class Tab3(Frame):
 
         #### Load up the configuration data
         dc.get_configuration_from_db()
-        
         self.commonConfData = gv.commonConfData
-        rDate, rTime = ut.dateAndTime(self.commonConfData["fdate"],self.commonConfData["ftime"],self.commonConfData["fUTC"])
-        self.ics213FormData["d2"] = self.ics213FormData["d1"] = rDate
-        self.ics213FormData["t2"] = self.ics213FormData["t1"] = rTime
-
+        
+        if not self.loadedFlag:
+            rDate, rTime = ut.dateAndTime(self.commonConfData["fdate"],self.commonConfData["ftime"],self.commonConfData["fUTC"])
+            ## A new or cleared form. Assign the date and time to both
+            self.ics213FormData["d2"] = self.ics213FormData["d1"] = rDate
+            self.ics213FormData["t2"] = self.ics213FormData["t1"] = rTime
+            
         self.fileDropDown = StringVar()
 
         #### callback functions for Combobox()
@@ -78,13 +86,6 @@ class Tab3(Frame):
                 self.chooseFile.set('')
 
 
-        ## ICS-213 Mode Switch - Originator vs Reply
-        ##
-        ## For any supported forms, widgets[] is used to keep track of widgets added to the form.
-        ## When changing the displayed page, widgets[] is used to destroy stored widget references
-        ## there by clearing the display for the next display.
-        ## Before destroying the widgets, any data is transferred to the form data dictionary
-        ##
         ## Display the current mode
         self.label = Label(self.frame, text="Originator", bg="#d8f8d8")
         self.widgets.append(self.label)

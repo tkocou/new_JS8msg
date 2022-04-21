@@ -6,13 +6,20 @@ import utilities as ut
 import database_config as dc
 import ics213_utilities as ics
 
+## Note: the main difference between classes Tab3
+## and Tab4 is the focus of the GUI on the respective
+## portions of the ICS-213 form.
+## Tab 3 focuses on the Originator
+## Tab 4 focuses on the Responder
+
 class Tab4(Frame):
     def __init__(self,parent,controller):
         Frame.__init__(self,parent,controller)
         self.controller = controller
         self.frame = parent
         self.widgets = []
-## Global StringVar used in both subFrames
+        
+        ## Global StringVar used in both subFrames
         self.entryInc = StringVar()
         self.entryTo = StringVar()
         self.entryToPos = StringVar()
@@ -51,19 +58,14 @@ class Tab4(Frame):
         
         #### Load up the configuration data
         dc.get_configuration_from_db()
+        self.commonConfData = gv.commonConfData
         
-        for key in gv.rplyIcs213FieldKeys:
-            if key == "s2":
-                self.entryName.set(self.ics213FormData[key])
-            elif key == "p4":
-                self.entryNamePos.set(self.ics213FormData[key])
-            elif key == "d2":
-                self.rplyDateData.set(self.ics213FormData[key])
-            elif key == "t2":
-                self.rplyTimeData.set(self.ics213FormData[key])
-            elif key == "file":
-                pass
-        
+        if not self.loadedFlag:
+            rDate, rTime = ut.dateAndTime(self.commonConfData["fdate"],self.commonConfData["ftime"],self.commonConfData["fUTC"])
+            ## A new or cleared form. Assign the date and time to both
+            self.ics213FormData["d2"] = self.ics213FormData["d1"] = rDate
+            self.ics213FormData["t2"] = self.ics213FormData["t1"] = rTime
+
         self.fileDropDown = StringVar()
         
         #### callback function for Combobox()
@@ -84,6 +86,7 @@ class Tab4(Frame):
                 
         self.label = Label(self.frame, text="Responder", bg="#f8d8d8")
         self.widgets.append(self.label)
+        self.label.grid(column=0,row = 0, sticky="w")
         
         ## Get the current date and time
         self.getDtButton = Button(self.frame, text="Get Date & Time", command=lambda:self.getDateTimeData(self.rplyDateEntry,self.rplyTimeEntry))
@@ -170,7 +173,7 @@ class Tab4(Frame):
         self.widgets.append(self.replyNamePosEntry)
         self.replyNamePosEntry.grid(column=3, row=respRow, sticky="w")
         self.entryNamePos.set(self.ics213FormData["p4"])
-        gv.widget_list_dict["Tab3"] = self.widgets
+        gv.widget_list_dict["Tab4"] = self.widgets
 
 
         
