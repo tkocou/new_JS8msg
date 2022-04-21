@@ -53,7 +53,7 @@ class Tab3(Frame):
         self.origFieldKeys = gv.origIcs213FieldKeys
         ## Able to update
         self.ics213FormData = gv.ics213FormData
-        self.origMsg = ""
+        #self.origMsg = ""
         self.result = None
         self.rDate = self.rTime = ""
 
@@ -140,7 +140,7 @@ class Tab3(Frame):
         if self.loadedFlag:
             self.origDateEntry.insert(0,"Date: "+self.loadedFileD1) 
         else:
-            self.origDateEntry.insert(0,"Date: "+ics213FormData["d1"])
+            self.origDateEntry.insert(0,"Date: "+self.ics213FormData["d1"])
 
         ## Time Box
         self.origTimeEntry =Entry(self.frame, text=self.entryTime1, bg="#d8f8d8", width=18)
@@ -151,7 +151,7 @@ class Tab3(Frame):
         if self.loadedFlag:
             self.origTimeEntry.insert(0,"Time: "+self.loadedFileT1) 
         else:
-            self.origTimeEntry.insert(0,"Time: "+ics213FormData["t1"])
+            self.origTimeEntry.insert(0,"Time: "+self.ics213FormData["t1"])
         
 
         toRow = 2
@@ -198,7 +198,7 @@ class Tab3(Frame):
         self.widgets.append(self.origEntryFromPos)
         self.origEntryFromPos.grid(column=3, row=fromRow, sticky = 'w')
         self.origEntryFromPos.delete(0,END)
-        self.origEntryFromPos.insert(0,ics213FormData["p2"])
+        self.origEntryFromPos.insert(0,self.ics213FormData["p2"])
 
         subjRow = 4
         ## Subject Line
@@ -210,7 +210,7 @@ class Tab3(Frame):
         self.widgets.append(self.origEntrySubj)
         self.origEntrySubj.grid(column=1, row=subjRow, sticky='w')
         self.origEntrySubj.delete(0,END)
-        self.origEntrySubj.insert(0,ics213FormData["sb"])
+        self.origEntrySubj.insert(0,self.ics213FormData["sb"])
 
         msgRow = 5
         ## Message area
@@ -226,9 +226,9 @@ class Tab3(Frame):
         self.origEntryMsg.grid_configure(columnspan=3)
         self.origEntryMsg.configure(background="green1", wrap='word')
         self.origEntryMsg.delete(1.0,"end")
-        self.origEntryMsg.insert(END,ics213FormData["mg"])
+        self.origEntryMsg.insert(END,self.ics213FormData["mg"])
         ## update the global
-        self.origMsg.set(ics213FormData["mg"])
+        self.origMsg.set(self.ics213FormData["mg"])
 
         appRow = 7
         ## Approver
@@ -240,7 +240,7 @@ class Tab3(Frame):
         self.widgets.append(self.origEntryApprove)
         self.origEntryApprove.grid(column=1, row=appRow, sticky= 'w')
         self.origEntryApprove.delete(0,END)
-        self.origEntryApprove.insert(0,ics213FormData["s1"])
+        self.origEntryApprove.insert(0,self.ics213FormData["s1"])
 
         ## Appr. Pos
         self.origLabelApprPos=Label(self.frame, text=self.origFieldsText["p3"])
@@ -251,7 +251,7 @@ class Tab3(Frame):
         self.widgets.append(self.origEntryApprPos)
         self.origEntryApprPos.grid(column=3, row=appRow, sticky = 'w')
         self.origEntryApprPos.delete(0,END)
-        self.origEntryApprPos.insert(0,ics213FormData["p3"])
+        self.origEntryApprPos.insert(0,self.ics213FormData["p3"])
         ## incase we suddenly switch to a different form, update widget dictionary
         gv.widget_list_dict["Tab3"] = self.widgets
 
@@ -272,5 +272,5 @@ class Tab3(Frame):
         self.ics213FormData["t1"]=rTime
         timeEn.insert(0,"Time: "+rTime)
         
-    def quitProgram():
+    def quitProgram(self):
         self.controller.shutting_down()

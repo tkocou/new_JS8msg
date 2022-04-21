@@ -23,7 +23,7 @@ def saveData(self):
         elif key == "sb":
             self.ics213FormData[key] = self.entrySubj.get()
         elif key == "mg":
-            self.ics213FormData[key] = self.origMsg.get()
+            self.ics213FormData[key] = self.origMsg
         elif key == "s1":
             self.ics213FormData[key] = self.entryApprover.get()
         elif key == "p3":

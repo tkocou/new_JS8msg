@@ -246,52 +246,52 @@ class Tab2(Frame):
             print("Misc. Items of Form")
             pass
         
-        def loadData():
-            #### Load up the configuration data
-            dc.get_configuration_from_db()
-            self.commonConfData = gv.commonConfData
+    def loadData(self):
+        #### Load up the configuration data
+        dc.get_configuration_from_db()
+        self.commonConfData = gv.commonConfData
 
 
-        def saveData():
-            gv.commonConfData = self.commonConfData
-            dc.save_configuration_to_db()
+    def saveData(self):
+        gv.commonConfData = self.commonConfData
+        dc.save_configuration_to_db()
 
 
-        def clearData():
-            self.widgets=[]
-            dtRow = 1
-            clearDataLabel = Label(self.frame,text="Clearing configuration data.")
-            self.widgets.append(clearDataLabel)
-            clearDataLabel.grid(column=0, row= dtRow, sticky ="w")
-            for key in self.commonConfKeys:
-                if key == "call":
-                    self.commonConfData[key] = ""
-                    self.callsignEntryData.set("")
-                elif key == "phone":
-                    self.commonConfData[key] = ""
-                    self.phoneEntryData.set("")
-                elif key == "name":
-                    self.commonConfData[key] = ""
-                    self.nameEntryData.set("")
-                elif key == "addr":
-                    self.commonConfData[key] = ""
-                    self.addressEntryData.set("")
-                elif key == "c-s-z":
-                    self.commonConfData[key] = ""
-                    self.cityEntryData.set("")
-                elif key == "email":
-                    self.commonConfData[key] = ""
-                    self.emailEntryData.set("")
-                elif key == "fdate":
-                    self.commonConfData[key] = ""
-                    self.formatDateEntryData.set("")
-                elif key == "ftime":
-                    self.commonConfData[key] = ""
-                    self.formatTimeEntryData.set("")
-                elif key == "fUTC":
-                    self.commonConfData[key] = ""
-            clearDataLabel['text'] = "Configuration data cleared."
-            gv.widget_list_dict["Tab2"] = self.widgets
+    def clearData(self):
+        self.widgets=[]
+        dtRow = 1
+        clearDataLabel = Label(self.frame,text="Clearing configuration data.")
+        self.widgets.append(clearDataLabel)
+        clearDataLabel.grid(column=0, row= dtRow, sticky ="w")
+        for key in self.commonConfKeys:
+            if key == "call":
+                self.commonConfData[key] = ""
+                self.callsignEntryData.set("")
+            elif key == "phone":
+                self.commonConfData[key] = ""
+                self.phoneEntryData.set("")
+            elif key == "name":
+                self.commonConfData[key] = ""
+                self.nameEntryData.set("")
+            elif key == "addr":
+                self.commonConfData[key] = ""
+                self.addressEntryData.set("")
+            elif key == "c-s-z":
+                self.commonConfData[key] = ""
+                self.cityEntryData.set("")
+            elif key == "email":
+                self.commonConfData[key] = ""
+                self.emailEntryData.set("")
+            elif key == "fdate":
+                self.commonConfData[key] = ""
+                self.formatDateEntryData.set("")
+            elif key == "ftime":
+                self.commonConfData[key] = ""
+                self.formatTimeEntryData.set("")
+            elif key == "fUTC":
+                self.commonConfData[key] = ""
+        clearDataLabel['text'] = "Configuration data cleared."
+        gv.widget_list_dict["Tab2"] = self.widgets
                 
     def quitProgram(self):
         self.controller.shutting_down()

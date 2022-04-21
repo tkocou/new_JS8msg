@@ -107,7 +107,7 @@ class Tab4(Frame):
         
         ## Quit button
         self.quitButton = Button(self.frame, text="Quit", command=lambda:self.quitProgram())
-        self.widgets.append(quitButton)
+        self.widgets.append(self.quitButton)
         self.quitButton.grid(column=3,row=0, sticky = "e")
         self.quitButton.configure(bg="blue", fg="white")
         
@@ -139,7 +139,7 @@ class Tab4(Frame):
 
         replyRow= 2
         ## Reply area
-        self.replyLabel = Label(self.frame,text=self.rplyFieldsText['rp'])
+        self.replyLabel = Label(self.frame,text=gv.ics213FieldsText['rp'])
         self.widgets.append(self.replyLabel)
         self.replyLabel.grid(column=0, row = replyRow, sticky="w")
 
@@ -154,7 +154,7 @@ class Tab4(Frame):
 
         respRow = 3
         ## Name of responder
-        self.replyNameLabel = Label(self.frame, text=self.rplyFieldsText['s2'])
+        self.replyNameLabel = Label(self.frame, text=gv.ics213FieldsText['s2'])
         self.widgets.append(self.replyNameLabel)
         self.replyNameLabel.grid(column=0, row=respRow, sticky="w")
 
@@ -165,7 +165,7 @@ class Tab4(Frame):
         self.entryName.set(self.ics213FormData["s2"])
 
         ## Position of responder
-        self.replyNamePosLabel = Label(self.frame, text=self.rplyFieldsText["p4"])
+        self.replyNamePosLabel = Label(self.frame, text=gv.ics213FieldsText["p4"])
         self.widgets.append(self.replyNamePosLabel)
         self.replyNamePosLabel.grid(column=2,row=respRow, sticky="w")
 

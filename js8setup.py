@@ -14,8 +14,7 @@ import documents as doc
 import locals as lc
 import template as tp
 import DBHandler as dbh
-
-js8msg_db = "js8msg.db"
+import globalVariables as gv
 
 def setup():
     
@@ -104,10 +103,7 @@ def setup():
         if not os.path.exists(iconCheck):
             shutil.copy2(iconFile,desktopDir)
             
-        filename = os.path.join(extLocalPath,js8msg_db)
-        if not os.path.exists(filename):
-            # create an empty file
-            with open(filename,mode='w'):pass
+        gv.js8msg_db = os.path.join(extLocalPath,gv.db_name)
         init_database()
 
     if sysPlatform == "Linux":
@@ -134,10 +130,7 @@ def setup():
         if not os.path.exists(iconCheck):
             shutil.copy2(iconFile,desktopDir)
             os.chmod(iconCheck,0o755)
-        filename = os.path.join(linuxLocalPath,js8msg_db)
-        if not os.path.exists(filename):
-            # create an empty file
-            with open(filename,mode='w'):pass
+        gv.js8msg_db = os.path.join(linuxLocalPath,gv.db_name)
         init_database()
 
     return
@@ -147,20 +140,29 @@ def init_database():
     message = ["CREATE TABLE setting (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT UNIQUE ON CONFLICT IGNORE, value TEXT)",
            "CREATE TABLE profile (id INTEGER PRIMARY KEY AUTOINCREMENT,title  TEXT UNIQUE ON CONFLICT IGNORE,def BOOLEAN DEFAULT (0),bgscan BOOLEAN DEFAULT (0))",
            "CREATE TABLE activity (id INTEGER PRIMARY KEY AUTOINCREMENT, profile_id INTEGER,type TEXT, value TEXT, dial TEXT, snr TEXT, call TEXT, spotdate TIMESTAMP)",
-           "CREATE TABLE configuration (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT UNIQUE ON CONFLICT IGNORE, value TEXT)"
+           "CREATE TABLE configuration (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT UNIQUE ON CONFLICT IGNORE, value TEXT)",
            "CREATE TABLE search (id INTEGER PRIMARY KEY AUTOINCREMENT, profile_id INT, keyword TEXT, last_seen  TIMESTAMP)",
            "INSERT INTO profile(title, def) VALUES ('Default', 1)",
            "INSERT INTO setting (name, value) VALUES ('udp_ip','127.0.0.1'),('udp_port','2242'),('tcp_ip','127.0.0.1'),('tcp_port','2442'),('hide_heartbeat',0),('dark_theme',0)",
            "INSERT INTO configuration (name, value) VALUES ('call','None'),('phone','None'),('uname','Nobody'),('addr','None'),('c-s-z','Nowhere'),('email','None'),('fdate','1'),('ftime','1'),('fUTC','0')"]
 
-    db_obj = dbh.DB_object(js8msg_db)
+    if os.path.exists(gv.js8msg_db):
+        ## do not reinitialize an existing database
+        pass
+    else:
+        ## create a new database and initialize it
+        with open(gv.js8msg_db,mode='w'):pass
+        db_obj = dbh.DB_object(gv.js8msg_db)
 
-    for data in message:
-        db_obj.set_SQL(data)
-        result = db_obj.exec_SQL()
-        if result[0] == False:
-            ## ignore errors as database may already exist
-            pass
+        for data in message:
+            print("js8setup: SQL message is: ", data)
+            db_obj.set_SQL(data)
+            result = db_obj.exec_SQL()
+            print("result in js8setup is: ",result)
+            if result[0] == False:
+                ## ignore errors as database may already exist
+                print("Error with DB")
+                pass
 
        
     

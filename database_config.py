@@ -12,6 +12,8 @@ def get_configuration_from_db():
     db_obj.close_SQL()
     # remove boolean from answer
     dbset = dbsettings[1:]
+    print("within get_configuration_from_db, dbset type is: ",type(dbset))
+    print("dbset is: ",dbset)
     ## populate the global configuration variable
     for sett in dbset:
         for setting in sett:

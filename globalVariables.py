@@ -27,7 +27,9 @@ binPath = os.path.dirname(__file__)
 tempPath = os.getcwd()+pathSep+"Tmp"+pathSep
 
 ## database for net opps
-js8msg_db = "js8msg.db"
+## js8msg_db will hold the paltform dependent path to 'db_name'
+js8msg_db = ""
+db_name = "js8msg.db"
 
 ## GUI tracking
 widget_list_dict = {"Tab1":[],"Tab2":[],"Tab2a":[],"Tab3":[],"Tab4":[],"Tab5":[]}
