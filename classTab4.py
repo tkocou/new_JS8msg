@@ -1,140 +1,196 @@
-import tkinter as tk
 from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox as mb
-import sys
-import os
-import webbrowser as wb
-import platform
 import globalVariables as gv
 import utilities as ut
-import js8API as api
+import database_config as dc
+import ics213_utilities as ics
 
-#ics309FormData = gv.ics309FieldsData 
-commonConfData =gv.commonConfData
-whichFormUsedExt = gv.whichForm
-readDataFlag = gv.readDataFlag
-readConfFlag = gv.readConfFlag
-
-
-#### ======================= ICS-309 Dual Frame Tab ================================
 class Tab4(Frame):
-    def __init__(self, parent,controller):
-        tk.Frame.__init__(self, parent,controller)
+    def __init__(self,parent,controller):
+        Frame.__init__(self,parent,controller)
         self.controller = controller
         self.frame = parent
-        
+        self.widgets = []
+## Global StringVar used in both subFrames
         self.entryInc = StringVar()
-        self.entryNC_Callsign = StringVar()
-        self.entryFromDate = StringVar()
-        self.entryFromTime = StringVar()
-        self.entryDateTime = StringVar()
-        self.entryToTime = StringVar()
-        self.entryNetName = StringVar()
-        self.entryPrepName = StringVar()
-        self.entryPrepDate = StringVar()
-        self.entryPrepTime = StringVar()
-
-
-        ## Set up to call the first frame = Originator    
-        self._frame = None
-        self.switch_frame(Tab4_Frame1)
-
-    def switch_frame(self, frame_class):
-        new_frame = frame_class(self)
-        if self._frame is not None:
-            self._frame.destroy()
-        self._frame = new_frame
-        self._frame.grid()
-
-    def quitProgram(self):
-        controller.shutting_down()
-
-# first sub-frame for Tab4
-####================ ICS-309 Incident frame ====================
-
-class Tab4_Frame1(Frame):
-    def __init__(self, master):
-        Frame.__init__(self, master)
-        self.frame = master
+        self.entryTo = StringVar()
+        self.entryToPos = StringVar()
+        self.entryFrom = StringVar()
+        self.entryFromPos = StringVar()
+        self.entrySubj = StringVar()
+        self.entryDate1 = StringVar()
+        self.entryTime1 = StringVar()
+        self.entryApprover = StringVar()
+        self.entryApprPos = StringVar()
+        self.entryName = StringVar()
+        self.entryNamePos = StringVar()
+        self.rplyDateData = StringVar()
+        self.rplyTimeData = StringVar()
+        self.origMsg = StringVar()
+        self.replyMsg = StringVar()
+        self.loadedFileD1 = ""
+        self.loadedFileT1 = ""
+        self.loadedFileD2 = ""
+        self.loadedFileT2 = ""
+        self.loadedFlag = False
+        self.colWidth = 20
+        
         ## Keep track of widgets added to frame
         self.widgets = []
-        ## Init configuration dictionary
-        self.commonConfData = gv.commonConfData
-        # overall form structure
-        #self.ics309FieldsData = gv.ics309FieldsData
-        self.entryLogTime = StringVar()
-        self.msgCallsignFrom = StringVar()
-        self.msgCallsignTo = StringVar()
-        self.logMsg = StringVar()
 
-
-        def clearForm(frame_class):
-            #
-            ut.clearWidgetForm(self.widgets)
-            master.switch_frame(frame_class)
-
-        ## Which sub-frame are we in?
-        self.labelFrame = Label(self.frame, text="Inc", bg="#d8f8d8")
-        self.widgets.append(self.labelFrame)
-        self.labelFrame.grid(column=0,row=0,sticky="w")
-
-        ## Click to swap
-        self.buttonFrame = Button(self.frame, text="Go to Logging form", command=lambda: clearForm(Tab4_Frame2))
-        self.widgets.append(self.buttonFrame)
-        self.buttonFrame.grid(column=1,row=0, sticky="w")
-
-
-        topRow =0
-        ## Quit program button
-        self.quitButton = Button(self.frame, text="Quit", command=lambda:master.quitProgram())
-        self.widgets.append(self.quitButton)
+        ## Frame data dictionaries
+        ## Read, but not written to
+        self.origFieldsText = gv.ics213FieldsText
+        self.origFieldKeys = gv.origIcs213FieldKeys
+        ## Able to update
+        self.ics213FormData = gv.ics213FormData
+        self.origMsg = ""
+        self.result = None
+        self.rDate = self.rTime = ""
+        
+        #### Load up the configuration data
+        dc.get_configuration_from_db()
+        
+        for key in gv.rplyIcs213FieldKeys:
+            if key == "s2":
+                self.entryName.set(self.ics213FormData[key])
+            elif key == "p4":
+                self.entryNamePos.set(self.ics213FormData[key])
+            elif key == "d2":
+                self.rplyDateData.set(self.ics213FormData[key])
+            elif key == "t2":
+                self.rplyTimeData.set(self.ics213FormData[key])
+            elif key == "file":
+                pass
+        
+        self.fileDropDown = StringVar()
+        
+        #### callback function for Combobox()
+        def selectRespFileOption(event):
+            selRespAction = self.chooseRespFile.get()
+            if selRespAction == "Save File":
+                ics.saveData(self)
+                self.chooseRespFile.set('')
+            elif selAction == "Load File":
+                ics.loadData(self)
+                self.chooseFile.set('')
+            elif selAction == "Clear Form":
+                ics.clearData(self)
+                self.chooseFile.set('')
+            elif selRespAction == "Update":
+                ics.updateData(self)
+                self.chooseRespFile.set('')
+                
+        self.label = Label(self.frame, text="Responder", bg="#f8d8d8")
+        self.widgets.append(self.label)
+        
+        ## Get the current date and time
+        self.getDtButton = Button(self.frame, text="Get Date & Time", command=lambda:self.getDateTimeData(self.rplyDateEntry,self.rplyTimeEntry))
+        self.widgets.append(self.getDtButton)
+        self.getDtButton.grid(column=1,row = 0, sticky="e")
+        
+        ## radiobutton for 'file actions'
+        self.comboLabel2 = Label(self.frame,text = "Select =-> ")
+        self.widgets.append(self.comboLabel2)
+        self.comboLabel2.grid(column=3, row=0, sticky="w")
+        
+        self.chooseRespFile = ttk.Combobox(self.frame, width=self.colWidth, textvariable=self.fileDropDown)
+        self.widgets.append(self.chooseRespFile)
+        self.chooseRespFile['values'] = ["Save File","Load File", "Clear Form", "Update"]
+        self.chooseRespFile.grid(column=3, row=0, sticky="w",padx=80)
+        ## callbacks must be declared before the combobox widget
+        self.chooseRespFile.bind('<<ComboboxSelected>>', selectRespFileOption)
+        
+        ## Quit button
+        self.quitButton = Button(self.frame, text="Quit", command=lambda:self.quitProgram())
+        self.widgets.append(quitButton)
+        self.quitButton.grid(column=3,row=0, sticky = "e")
         self.quitButton.configure(bg="blue", fg="white")
-        self.quitButton.grid(column=1,row=topRow, sticky = "e", padx=20)
-      
+        
+        #### Text sizing variable
+        normText = 40
+        
+        dtRow = 1
+        ## Date Box
+        self.rplyDateEntry = Entry(self.frame, textvariable=self.rplyDateData, bg="#d8f8d8", width=18)
+        self.widgets.append(self.rplyDateEntry)
+        self.rplyDateEntry.grid(column=3, row=dtRow, sticky="w")
+        self.rplyDateEntry.delete(0,END)
+        ## distinguish between blank form and loaded form
+        if self.loadedFlag:
+            self.rplyDateEntry.insert(0,"Date: "+self.loadedFileD2)
+        else:
+            self.rplyDateEntry.insert(0,"Date: "+self.ics213FormData["d2"])
 
-# second sub-frame for Tab4
-#### ============================= ICS-309 Logging form ============================
-class Tab4_Frame2(Frame):
-    def __init__(self, master):
-        Frame.__init__(self, master)
-        self.frame = master
-        # Keep track of widgets added to frame
-        self.widgets = []
-        ## Frame data variables
-        self.entryLogTime = StringVar()
-        self.msgCallsignFrom = StringVar()
-        self.msgCallsignTo = StringVar()
-        self.logMsg = StringVar()
+        ## Time Box
+        self.rplyTimeEntry =Entry(self.frame, textvariable=self.rplyTimeData, bg="#d8f8d8", width=18)
+        self.widgets.append(self.rplyTimeEntry)
+        self.rplyTimeEntry.grid(column=3, row=dtRow, sticky="e")
+        self.rplyTimeEntry.delete(0,END)
+         ## distinguish between blank form and loaded form
+        if self.loadedFlag:
+            self.rplyTimeEntry.insert(0,"Time: "+self.loadedFileT2)
+        else:
+            self.rplyTimeEntry.insert(0,"Time: "+self.ics213FormData["t2"])
 
-        # list of dictionaries, each dictionary equals one log entry of net ops
-        self.ics309List = gv.ics309List
-        # Dictionary of each log entry
-        self.ics309ListDataDict = gv.ics309ListDataDict
-        # form dict
-        self.ics309FieldsData = gv.ics309FieldsData
+        replyRow= 2
+        ## Reply area
+        self.replyLabel = Label(self.frame,text=self.rplyFieldsText['rp'])
+        self.widgets.append(self.replyLabel)
+        self.replyLabel.grid(column=0, row = replyRow, sticky="w")
+
+        self.replyEntryMsg = Text(self.frame)
+        self.widgets.append(self.replyEntryMsg)
+        self.replyEntryMsg.grid(column=1, row=replyRow)
+        self.replyEntryMsg.grid_configure(columnspan=3)
+        self.replyEntryMsg.configure(background="#f8f8d8", wrap='word')
+        self.replyEntryMsg.delete(1.0,"end")
+        self.replyEntryMsg.insert(END,self.ics213FormData["rp"])
+        self.replyMsg.set(self.ics213FormData["rp"])
+
+        respRow = 3
+        ## Name of responder
+        self.replyNameLabel = Label(self.frame, text=self.rplyFieldsText['s2'])
+        self.widgets.append(self.replyNameLabel)
+        self.replyNameLabel.grid(column=0, row=respRow, sticky="w")
+
+        self.replyEntryName = Entry(self.frame, textvariable=self.entryName, width=normText, bg="#f8e8e8")
+        self.widgets.append(self.replyEntryName)
+        self.replyEntryName.grid(column=1, row=respRow, sticky="w")
+        #print("s2 in respond:",ics213FormData["s2"])
+        self.entryName.set(self.ics213FormData["s2"])
+
+        ## Position of responder
+        self.replyNamePosLabel = Label(self.frame, text=self.rplyFieldsText["p4"])
+        self.widgets.append(self.replyNamePosLabel)
+        self.replyNamePosLabel.grid(column=2,row=respRow, sticky="w")
+
+        self.replyNamePosEntry = Entry(self.frame, textvariable=self.entryNamePos, width=normText, bg="#f8e8e8")
+        self.widgets.append(self.replyNamePosEntry)
+        self.replyNamePosEntry.grid(column=3, row=respRow, sticky="w")
+        self.entryNamePos.set(self.ics213FormData["p4"])
+        gv.widget_list_dict["Tab3"] = self.widgets
 
 
-        def clearForm(frame_class):
-            #
-            ut.clearWidgetForm(self.widgets)
-            master.switch_frame(frame_class)
+        
+    def getDateTimeData(self, dateEn, timeEn):
+        ## dateEn is the widget reference for the date Entry() display
+        ## timeEn is the widget reference for the time Entry() display
+        ## The config format data is loaded upfront
+        rDate = ""
+        rTime = ""
+        rDate, rTime = ut.dateAndTime(gv.commonConfData["fdate"],gv.commonConfData["ftime"],gv.commonConfData["fUTC"])
 
-        ## Which sub-frame are we in?
-        self.labelFrame = Label(self.frame, text="Inc", bg="d8f8d8")
-        self.widgets.append(self.labelFrame)
-        self.labelFrame.grid(column=0,row=0,sticky="w")
+        ## update date box
+        dateEn.delete(0,END)
+        self.ics213FormData["d2"]=rDate
+        dateEn.insert(0,"Date: "+self.ics213FormData["d2"])
 
-        ## Click to swap
-        self.buttonFrame = Button(self.frame, text="Go to Logging form", command=lambda: clearForm(Tab4_Frame1))
-        self.widgets.append(self.buttonFrame)
-        self.buttonFrame.grid(column=1,row=0, sticky="w")
-
-
-        topRow =0
-        ## Quit program button
-        self.quitButton = Button(self.frame, text="Quit", command=lambda:master.quitProgram())
-        self.widgets.append(self.quitButton)
-        self.quitButton.configure(bg="blue", fg="white")
-        self.quitButton.grid(column=1,row=topRow, sticky = "e", padx=20)
-      
+        ## update time box
+        timeEn.delete(0,END)
+        self.ics213FormData["t2"]=rTime
+        timeEn.insert(0,"Time: "+self.ics213FormData["t2"])
+        
+    def quitProgram():
+        self.controller.shutting_down()

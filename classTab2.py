@@ -5,6 +5,8 @@ import sys
 import os
 import globalVariables as gv
 import utilities as ut
+import create_menu as cm
+import database_config as dc
 
 #### ======================== Start of Configuration ===================================
 ##
@@ -23,7 +25,8 @@ class Tab2(Frame):
         ## More variables
         self.commonConfText = gv.commonConfText
         self.commonConfKeys = gv.commonConfKeys
-        self.commonConfData = gv.commonConfData
+        #self.commonConfData = gv.commonConfData
+        self.loadData()
 
         ## textvariable for combobox()
         self.dropdown = StringVar()
@@ -42,38 +45,38 @@ class Tab2(Frame):
         # callback function for combobox()
         def selectAction(event):
             selAction = self.chooseConfig.get()
-            saveConfData()
+            #saveConfData()
             if selAction == "Personal":
                 ## clear the screen
                 ut.clearWidgetForm(self.widgets)
                 ## reset the dynamic widget list
-                gv.widget_list_dict["Tab2a"] = []
-                personalConf()
+                gv.widget_list_dict["Tab2"] = []
+                self.personalConf()
                 self.chooseConfig.set('')
             elif selAction == "Date/Time":
                 ut.clearWidgetForm(self.widgets)
-                gv.widget_list_dict["Tab2a"] = []
-                datetime()
+                gv.widget_list_dict["Tab2"] = []
+                self.datetime()
                 self.chooseConfig.set('')
             elif selAction == "Radiogram":
                 ut.clearWidgetForm(self.widgets)
-                gv.widget_list_dict["Tab2a"] = []
-                radiogramItems()
+                gv.widget_list_dict["Tab2"] = []
+                self.radiogramItems()
                 self.chooseConfig.set('')
             elif selAction == "Save Configuration to file":
                 ut.clearWidgetForm(self.widgets)
-                gv.widget_list_dict["Tab2a"] = []
-                saveData()
+                gv.widget_list_dict["Tab2"] = []
+                self.saveData()
                 self.chooseConfig.set('')
             elif selAction == "Load Configuration from file":
                 ut.clearWidgetForm(self.widgets)
-                gv.widget_list_dict["Tab2a"] = []
-                loadData()
+                gv.widget_list_dict["Tab2"] = []
+                self.loadData()
                 self.chooseConfig.set('')
             elif selAction == "Clear Configuration":
                 ut.clearWidgetForm(self.widgets)
-                gv.widget_list_dict["Tab2a"] = []
-                clearData()
+                gv.widget_list_dict["Tab2"] = []
+                self.clearData()
                 self.chooseConfig.set('')
 
         ## Specify column width for form
@@ -96,10 +99,10 @@ class Tab2(Frame):
         self.blankLabel.grid(column=2,row=0, sticky="w")
         self.widgets.append(self.blankLabel)
 
-        quitButton = Button(self.frame, text="Quit", command=lambda:self.quitProgram())
-        quitButton.grid(column=4,row=0, sticky = "e")
-        quitButton.configure(bg="blue", fg="white")
-        self.widgets.append(quitButton)
+        self.quitButton = Button(self.frame, text="Quit", command=lambda:self.quitProgram())
+        self.quitButton.grid(column=4,row=0, sticky = "e")
+        self.quitButton.configure(bg="blue", fg="white")
+        self.widgets.append(self.quitButton)
         ## keep track of static widgets on screen
         gv.widget_list_dict["Tab2"] = self.widgets
 
@@ -206,9 +209,9 @@ class Tab2(Frame):
             self.widgets = []
             
             dtRow = 1
-            datetimeDateLabel = Label(self.frame,text=self.commonConfText["fdate"])
+            self.datetimeDateLabel = Label(self.frame,text=self.commonConfText["fdate"])
             self.widgets.append(datetimeDateLabel)
-            datetimeDateLabel.grid(column=0, row= dtRow, sticky ="w")
+            self.datetimeDateLabel.grid(column=0, row= dtRow, sticky ="w")
 
             dateFormatText = [("YYYY-MM-DD","1"),("YYYY-DD-MM","2"),("MM/DD/YY","3"),("DD/MM/YY","4"),("YYYYMMDD","5")]
             timeFormatText = [("hhmmL","1"),("hh:mmL","2"),("hhmmZ","3"),("hh:mmZ","4"),("hhmm UTC","5"),("hh:mm UTC","6")]
@@ -221,7 +224,7 @@ class Tab2(Frame):
                 self.widgets.append(dateFormat)
                 dateFormat.grid(column=1, row=radioRow, sticky="w")
                 radioRow += 1
-            self.formatDateEntryData.set(commonConfData["fdate"])
+            self.formatDateEntryData.set(self.commonConfData["fdate"])
 
             datetimeTimeLabel = Label(self.frame,text=self.commonConfText["ftime"])
             self.widgets.append(datetimeTimeLabel)
@@ -234,8 +237,8 @@ class Tab2(Frame):
                 self.widgets.append(timeFormat)
                 timeFormat.grid(column=3, row=radioRow, sticky ="w")
                 radioRow += 1
-            self.formatTimeEntryData.set(commonConfData["ftime"])
-            gv.widget_list_dict["Tab2a"] = self.widgets
+            self.formatTimeEntryData.set(self.commonConfData["ftime"])
+            gv.widget_list_dict["Tab2"] = self.widgets
 
         def radiogramItems():
             ## reset widget list
@@ -244,27 +247,15 @@ class Tab2(Frame):
             pass
         
         def loadData():
-            os.chdir(gv.configPath)
-            self.widgets=[]
-            fileNameList = [("JS8msg.cfg","*.cfg")]
-            funcParam = (gv.configPath,fileNameList)
-            result = ut.loadFormData(funcParam)
-            if result is not None:
-                self.commonConfData = commonConfData = result
-                mb.showinfo("Load","Configuration data was loaded")
-            else:
-                mb.showinfo("Load","ERROR! Configuration data was not loaded")
+            #### Load up the configuration data
+            dc.get_configuration_from_db()
+            self.commonConfData = gv.commonConfData
+
 
         def saveData():
-            self.widgets=[]
-            ## save config in current directory
-            fileNameList = [("JS8msg.cfg","*.cfg")]
-            funcParam = (gv.configPath,fileNameList,commonConfData,self.commonConfKeys)
-            result = ut.saveFormData(funcParam)
-            if result is not None:
-                mb.showinfo("Save","Configuration data was saved")
-            else:
-                mb.showinfo("Save","ERROR! Configuration data was not saved")
+            gv.commonConfData = self.commonConfData
+            dc.save_configuration_to_db()
+
 
         def clearData():
             self.widgets=[]
@@ -274,69 +265,33 @@ class Tab2(Frame):
             clearDataLabel.grid(column=0, row= dtRow, sticky ="w")
             for key in self.commonConfKeys:
                 if key == "call":
-                    commonConfData[key] = ""
+                    self.commonConfData[key] = ""
                     self.callsignEntryData.set("")
                 elif key == "phone":
-                    commonConfData[key] = ""
+                    self.commonConfData[key] = ""
                     self.phoneEntryData.set("")
                 elif key == "name":
-                    commonConfData[key] = ""
+                    self.commonConfData[key] = ""
                     self.nameEntryData.set("")
                 elif key == "addr":
-                    commonConfData[key] = ""
+                    self.commonConfData[key] = ""
                     self.addressEntryData.set("")
                 elif key == "c-s-z":
-                    commonConfData[key] = ""
+                    self.commonConfData[key] = ""
                     self.cityEntryData.set("")
                 elif key == "email":
-                    commonConfData[key] = ""
+                    self.commonConfData[key] = ""
                     self.emailEntryData.set("")
                 elif key == "fdate":
-                    commonConfData[key] = ""
+                    self.commonConfData[key] = ""
                     self.formatDateEntryData.set("")
                 elif key == "ftime":
-                    commonConfData[key] = ""
+                    self.commonConfData[key] = ""
                     self.formatTimeEntryData.set("")
                 elif key == "fUTC":
-                    commonConfData[key] = ""
+                    self.commonConfData[key] = ""
             clearDataLabel['text'] = "Configuration data cleared."
-            gv.widget_list_dict["Tab2a"] = self.widgets
-
-
-        def saveConfData():
-            if self.tableArea == "personal":
-                for key in self.commonConfKeys:
-                    ## Transfer user input from StringVar to data dictionary
-                    if key == "call":
-                        commonConfData[key] = self.callsignEntryData.get()
-                    elif key == "phone":
-                        commonConfData[key] = self.phoneEntryData.get()
-                    elif key == "name":
-                        commonConfData[key] = self.nameEntryData.get()
-                    elif key == "addr":
-                        commonConfData[key] = self.addressEntryData.get()
-                    elif key == "c-s-z":
-                        commonConfData[key] = self.cityEntryData.get()
-                    elif key == "email":
-                        commonConfData[key] = self.emailEntryData.get()
-            elif self.tableArea == "datetime":
-                for key in self.commonConfKeys:
-                    if key == "fdate":
-                        commonConfData[key] = self.formatDateEntryData.get()
-                    elif key == "ftime":
-                        commonConfData[key] = self.formatTimeEntryData.get()
-                    elif key == "fUTC":
-                        ## Which time format did they select
-                        timeValue = self.formatTimeEntryData.get()
-                        ## set fUTC to a value determined by the time format
-                        if timeValue == "1" or timeValue == "2":
-                            commonConfData[key] = "0"
-                        elif timeValue == "3" or timeValue == "4":
-                            commonConfData[key] = "1"
-                        elif timeValue == "5" or timeValue == "6":
-                            commonConfData[key] = "2"
-
-
+            gv.widget_list_dict["Tab2"] = self.widgets
                 
     def quitProgram(self):
         self.controller.shutting_down()
