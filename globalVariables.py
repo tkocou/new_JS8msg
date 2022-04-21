@@ -9,22 +9,34 @@ import os
 import platform
 from tkinter.constants import FALSE
 
+homeDir = os.path.expanduser('~')
+os.chdir(homeDir)
+
 ## Probably need to get system platform information
 pathSep = ""
 sysPlatform = platform.system()
 if sysPlatform == "Linux":
     pathSep = "/"
     clearConsoleCmd = "clear"
+    JS8msg_dir = os.path.join(homedir,"JS8msg")
+    try:
+        os.mkdir(JS8msg_dir)
+    except:
+        pass
+    msgPath = os.path.join(JS8msg_dir,"Messages")
+    localPath = os.path.join(JS8msg_dir,"Local")
+    templatePath = os.path.join(JS8msg_dir,"HtmlTemplates")
+    documentPath = os.path.join(JS8msg_dir,"Doc")
+    tempPath = os.path.join(JS8msg_dir,"Tmp")
 elif sysPlatform == "Windows":
     pathSep = "\\"
     clearConsoleCmd = "cls"
-
-configPath = os.getcwd()+pathSep+"Config"
-msgPath = os.getcwd()+pathSep+"Messages"
-localPath = os.getcwd()+pathSep+"Local"
-templatePath = os.getcwd()+pathSep+"HtmlTemplates"+pathSep
-binPath = os.path.dirname(__file__)
-tempPath = os.getcwd()+pathSep+"Tmp"+pathSep
+    msgPath = os.path.join(homeDir,"Messages")
+    localPath = os.path.join(homeDir,"Local")
+    templatePath = os.path.join(homeDir,"HtmlTemplates")
+    binPath = os.path.dirname(__file__)
+    tempPath = os.path.join(homedir,"Tmp")
+    documentPath = os.path.join(homedir,"Doc")
 
 ## database for net opps
 ## js8msg_db will hold the paltform dependent path to 'db_name'
