@@ -73,7 +73,7 @@ def setup():
         byteData = bytes(stringData,'utf-8')
         decodedData = base64.b64decode(byteData)
         rawArray = bz2.decompress(decodedData)
-        print("Updating or creating document %s." % fileName)
+        #print("Updating or creating document %s." % fileName)
         with open(fileName,"wb") as f:
             f.write(rawArray)
 
@@ -86,7 +86,7 @@ def setup():
         byteData = bytes(stringData,'utf-8')
         decodedData = base64.b64decode(byteData)
         rawArray = bz2.decompress(decodedData)
-        print("Updating or creating file %s." % fileName)
+        #print("Updating or creating file %s." % fileName)
         with open(fileName,"wb") as f:
             f.write(rawArray)
 
@@ -99,7 +99,7 @@ def setup():
         byteData = bytes(stringData,'utf-8')
         decodedData = base64.b64decode(byteData)
         rawArray = bz2.decompress(decodedData)
-        print("Updating or creating template %s." % fileName)
+        #print("Updating or creating template %s." % fileName)
         with open(fileName,"wb") as f:
             f.write(rawArray)
                 
@@ -110,25 +110,28 @@ def setup():
         if not os.path.exists(iconCheck):
             shutil.copy2(iconFile,desktopDir)
             
-
-    if sysPlatform == "Linux":
-        iFile = "JS8msg.desktop"
-        linuxLocalBinDir = os.path.join(homeDir,"bin")
-        linuxShell = os.path.join(linuxLocalBinDir,"js8msg.sh")
-        linuxLocalDirFile = os.path.join(gv.localPath,"js8msg.sh")
-        linuxShellTunc = os.path.join(linuxLocalBinDir,"js8msg")
-
-        iconFile = os.path.join(gv.localPath,iFile)
-        iconCheck = os.path.join(desktopDir,iFile)
-        if not os.path.exists(iconCheck):
-            shutil.copy2(iconFile,desktopDir)
-            os.chmod(iconCheck,0o755)
-        if not os.path.exists(linuxShell):
-            shutil.copy2(linuxLocalDirFile,linuxLocalBinDir)
-            os.chmod(linuxShell,0o755)
-            os.rename(linuxShell,linuxShellTunc)
+    if gv.project_dir == "None":
+        if sysPlatform == "Linux":
+            iFile = "JS8msg.desktop"
+            linuxLocalBinDir = os.path.join(homeDir,"bin")
+            linuxShell = os.path.join(linuxLocalBinDir,"js8msg")
+            linuxLocalDirFile = os.path.join(gv.localPath,"js8msg.sh")
+            linuxShellTunc = os.path.join(linuxLocalBinDir,"js8msg")
+    
+            shell_script = "js8msg"
+            linuxShellBin = os.path.join(gv.localPath,shell_script)
+            
+            iconFile = os.path.join(gv.localPath,iFile)
+            iconCheck = os.path.join(desktopDir,iFile)
+            
+            if not os.path.exists(iconCheck):
+                shutil.copy2(iconFile,desktopDir)
+                os.chmod(iconCheck,0o755)
+            if not os.path.exists(linuxShell):
+                shutil.copy2(linuxShellBin,linuxLocalBinDir)
+                os.chmod(linuxShell,0o755)
         
-    gv.js8msg_db = os.path.join(linuxLocalPath,gv.db_name)
+    gv.js8msg_db = os.path.join(gv.localPath,gv.db_name)
     init_database()
 
     return
@@ -138,7 +141,7 @@ def init_database():
     message = ["CREATE TABLE setting (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT UNIQUE ON CONFLICT IGNORE, value TEXT)",
            "CREATE TABLE profile (id INTEGER PRIMARY KEY AUTOINCREMENT,title  TEXT UNIQUE ON CONFLICT IGNORE,def BOOLEAN DEFAULT (0),bgscan BOOLEAN DEFAULT (0))",
            "CREATE TABLE activity (id INTEGER PRIMARY KEY AUTOINCREMENT, profile_id INTEGER,type TEXT, value TEXT, dial TEXT, snr TEXT, call TEXT, spotdate TIMESTAMP)",
-           "CREATE TABLE configuration (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT UNIQUE ON CONFLICT IGNORE, value TEXT)",
+           "CREATE TABLE configuration (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT UNIQUE ON CONFLICT IGNORE, value VARCHAR)",
            "CREATE TABLE search (id INTEGER PRIMARY KEY AUTOINCREMENT, profile_id INT, keyword TEXT, last_seen  TIMESTAMP)",
            "INSERT INTO profile(title, def) VALUES ('Default', 1)",
            "INSERT INTO setting (name, value) VALUES ('udp_ip','127.0.0.1'),('udp_port','2242'),('tcp_ip','127.0.0.1'),('tcp_port','2442'),('hide_heartbeat',0),('dark_theme',0)",

@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Terminal=false
+Icon=/home/tko/JS8msg/Local/js8msg.png
+Icon[en_US]=python3
+Name[en_US]=JS8msg
+Exec=js8msg
+Comment[en_US]=EMCOMM message support for JS8call
+Name=JS8msg
+Comment=EMCOMM message support for JS8call

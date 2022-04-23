@@ -13,7 +13,9 @@ class DB_object():
     ## The reason for the set* and exec* methods is for assisting with debugging.
     ##    db_file is a string
     def __init__ (self,db_file):
-        #super().__init__()
+        super().__init__()
+        
+        self.sql_result = None
         
         ## init a handler for SQL messages
         try:
@@ -33,30 +35,30 @@ class DB_object():
     
     def exec_SQL(self):
         try:
-            self.SQL_result = self.cur.execute(self.SQL_message)
+            self.sql_result = self.cur.execute(self.SQL_message)
             self.conn.commit()
-            return True, self.SQL_result
+            return True, self.sql_result
         except:
             ## return SQL error
-            return False, sqlite3.OperationalError
+            return False, self.sql_result
         
     def fetch_all_SQL(self):
         try:
             self.cur.execute(self.SQL_message)
-            self.SQL_result = self.cur.fetchall()
-            return True, self.SQL_result
+            self.sql_result = self.cur.fetchall()
+            return True, self.sql_result
         except:
             ## return SQL error
-            return False, sqlite3.OperationalError
+            return False, self.sql_result
         
     def fetch_once_SQL(self):
         try:
             self.cur.execute(self.SQL_message)
-            self.SQL_result = self.cur.fetchone()
-            return True, self.SQL_result
+            self.sql_result = self.cur.fetchone()
+            return True, self.sql_result
         except:
             ## return SQL error
-            return False, sqlite3.OperationalError
+            return False, self.sql_result
         
     
     def close_SQL(self):

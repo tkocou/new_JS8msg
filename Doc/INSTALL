@@ -1,0 +1,20 @@
+Linux:
+
+Unzip the archive in your home directory
+
+Copy js8msg.sh to your bin directory located in your home directory and set the executable permission.
+  $ cp JS8msg/Local/js8msg.sh ~/bin
+  $ chmod +x ~/bin/js8msg.sh
+And rename it
+  $ mv ~/bin/js8msg.sh js8msg
+
+Copy JS8msg.desktop to your Desktop and set the executable permission.
+  $ cp JS8msg/Local/JS8msg.desktop ~/Desktop
+  $ chmod +x ~/Desktop/JS8msg.desktop
+
+Lastly, set the executable permission for the main Python script.
+  $ chmod +x ~/JS8msg/Bin/js8msg.py
+
+Windows 10:
+
+To Be Done

@@ -1,0 +1,16 @@
+Linux:
+JS8msg does not add any extra libraries beyond requiring Python 3.8 (or higher)
+
+Delete the JS8msg directory in your Home directory
+Delete the JS8msg.desktop file in your desktop
+Delete the js8msg shell script in the "~.bin" directory
+
+Windows:
+JS8msg does not affect your Windows registry, nor does it install numerous DLL files.
+
+Delete the JS8msg.exe file in your Home Directory
+Delete the following directories in your Home directory: "Doc, Config, Local, Messages, HtmlTemplates and Tmp"
+Delete the JS8msg shortcut in your desktop.
+
+
+

@@ -9,6 +9,12 @@ import os
 import platform
 from tkinter.constants import FALSE
 
+project_dir = os.getcwd()
+project_dir = project_dir[10:]
+if project_dir != "Projects":
+    project_dir = "None"
+#print(project_dir)
+
 homeDir = os.path.expanduser('~')
 os.chdir(homeDir)
 
@@ -18,7 +24,7 @@ sysPlatform = platform.system()
 if sysPlatform == "Linux":
     pathSep = "/"
     clearConsoleCmd = "clear"
-    JS8msg_dir = os.path.join(homedir,"JS8msg")
+    JS8msg_dir = os.path.join(homeDir,"JS8msg")
     try:
         os.mkdir(JS8msg_dir)
     except:
@@ -37,6 +43,15 @@ elif sysPlatform == "Windows":
     binPath = os.path.dirname(__file__)
     tempPath = os.path.join(homedir,"Tmp")
     documentPath = os.path.join(homedir,"Doc")
+    
+if project_dir == "Projects":
+    project_dir += "/js8msg2"
+    msgPath = os.path.join(project_dir,"Messages")
+    localPath = os.path.join(project_dir,"Local")
+    templatePath = os.path.join(project_dir,"HtmlTemplates")
+    documentPath = os.path.join(project_dir,"Doc")
+    tempPath = os.path.join(project_dir,"Tmp")
+
 
 ## database for net opps
 ## js8msg_db will hold the paltform dependent path to 'db_name'
