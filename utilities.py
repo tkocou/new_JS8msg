@@ -281,7 +281,7 @@ def get_settings():
     dbset = dbsettings[1:]
     #print("get_settings: dbsettings type is: ",type(dbsettings))
     #print("get_settings: dbsettings is: ",dbsettings)
-    #print("get_settings: dbset is: ",dbset)
+    print("get_settings: dbset is: ",dbset)
     ## let's make a dictionary from the settings
     settings = {}
     for sett in dbset:

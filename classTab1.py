@@ -19,7 +19,7 @@ class Tab1(Frame):
         self.controller = controller
         self.frame = parent
         self.widgets = []
-        #print("Entered JS8msg Control page")
+
         ## JS8msg always starts with this frame
         ## Let's check for directory structure
         ## GitHub won't upload an empty directory
@@ -40,8 +40,6 @@ class Tab1(Frame):
             pass
 
         sysPlatform = platform.system()
-
-        #print("Past sysPlatform")
 
         ## Specify column width for form
         colWidth =23
@@ -64,15 +62,12 @@ class Tab1(Frame):
         self.japaneseList = []
         self.japanFlag = FALSE
 
-
-        #print("Past Variable list")
-
         ## build up the callsign list
         def buildCall():
             ## fetch the station callsign from JS8call
             try:
                 ## if JS8call is running, the station callsign is returned
-                self.stationCallSign = stationCallsign = api.getStationCallsign()
+                self.stationCallSign = api.getStationCallsign()
             except:
                 mb.showinfo("Error!","Either JS8call is not running or TCP server in JS8call is not running.")
             self.callsignList = []
@@ -80,7 +75,7 @@ class Tab1(Frame):
             for x in self.groupList:
                 self.callsignList.append(x)
             ## After adding the groups, now add the station callsign
-            self.callsignList.append(stationCallsign)
+            self.callsignList.append(self.stationCallSign)
             ## fetch the active callsigns from JS8call
             callList = api.getCallsigns()
             ## Add the active callsigns to the list
@@ -101,8 +96,6 @@ class Tab1(Frame):
                 self.chooseList.insert(index,x)
                 index += 1
 
-        #print("Past buildCall()")
-
         def buildMsgList():
             ## self.messageList is a list of dictionaries
             ## Clear any existing message being displayed
@@ -113,8 +106,6 @@ class Tab1(Frame):
                 self.chooseMessage.insert(index,x["from"]+', '+x["iden"])
                 index += 1
 
-        #print("Past buildMsgList()")
-
         def getGroup():
             ## read the group entered in the group Entry widget
             result=self.group.get().upper()
@@ -123,8 +114,6 @@ class Tab1(Frame):
                 buildCall()
                 ## clear the displayed group from the Entry widget
                 self.group.set("")
-
-        #print("Past getGroup()")
 
         ## Callbacks for Combobox()
         def selectMsgOption(event):
@@ -157,8 +146,6 @@ class Tab1(Frame):
                 self.japaneseList = []
                 self.chooseAction.set('')
 
-        #print("Past selectMsgOption()")
-
         ## Callback for ListBox Button
         def retrieve():
 
@@ -181,8 +168,6 @@ class Tab1(Frame):
             listBoxLabel = Label(self)
             listBoxLabel.grid(column=0,row=1, sticky="sw", padx=13)
             listBoxLabel.configure(text=self.labelText, bg="#d8b8d8", pady=6, width = 23)
-
-        #print("Past retrieve()")
 
         def msgDisplay():
             ##
@@ -306,8 +291,6 @@ class Tab1(Frame):
                 listBoxLabel2.grid(column=0,row=1, sticky="se", padx=13)
                 listBoxLabel2.configure(text=self.labelText2, bg="#d8b8d8", pady=6, width = 23)
 
-        #print("Past msgDisplay()")
-
         def setHenkankunButtons():
             ## reset list variable
             self.japaneseList = []
@@ -362,8 +345,15 @@ class Tab1(Frame):
             else:
                 pass
         
-        #print("Past Japan, starting GUI building")
-        
+
+        ##
+        ## Do an initial check to see if JS8call is running
+        try:
+            ## if JS8call is running, the station callsign is returned
+            self.stationCallSign = api.getStationCallsign()
+        except:
+            mb.showinfo("Error!","Either JS8call is not running or TCP server in JS8call is not running.")
+            
         #### main display of widgets ####
         topRow =0
         ## Add a label and combobox to the display

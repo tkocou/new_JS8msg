@@ -156,7 +156,7 @@ def init_database():
         db_obj = dbh.DB_object(gv.js8msg_db)
 
         for data in message:
-            print("js8setup: SQL message is: ", data)
+            #print("js8setup: SQL message is: ", data)
             db_obj.set_SQL(data)
             result = db_obj.exec_SQL()
             print("result in js8setup is: ",result)
