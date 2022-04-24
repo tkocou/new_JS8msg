@@ -31,13 +31,13 @@ def saveData(self):
         elif key == "d1":
             if self.entryDate1.get()[:6] == "Date: ":
                 self.ics213FormData[key] = self.entryDate1.get()[-6:]
-                print(self.ics213FormData[key])
+                #print(self.ics213FormData[key])
             else:
                 self.ics213FormData[key] = self.entryDate1.get()
         elif key == "t1":
             if self.entryTime1.get()[:6] == "Time: ":
                 self.ics213FormData[key] = self.entryTime1.get()[-6:]
-                print(self.ics213FormData[key])
+                #print(self.ics213FormData[key])
             else:
                 self.ics213FormData[key] = self.entryTime1.get()
         elif key == "rp":
@@ -92,23 +92,22 @@ def loadData(self):
                 self.entryApprPos.set(self.ics213FormData[key])
             elif key == "d1":
                 self.loadedFileD1 = self.ics213FormData[key]
-                self.entryDate1.set("Date: "+self.ics213FormData[key])
+                self.entryDate1.set(self.ics213FormData[key])
             elif key == "t1":
                 self.loadedFileT1 = self.ics213FormData[key]
-                self.entryTime1.set("Time: "+self.ics213FormData[key])
+                self.entryTime1.set(self.ics213FormData[key])
             elif key == "rp":
                 self.replyMsg.set(self.ics213FormData[key])
-                #print("loadData - rp: ",self.ics213FormData[key])
             elif key == "s2":
                 self.entryName.set(self.ics213FormData[key])
             elif key == "p4":
                 self.entryNamePos.set(self.ics213FormData[key])
             elif key == "d2":
                 self.loadedFileD2 = self.ics213FormData[key]
-                self.rplyDateData.set("Date: "+self.ics213FormData[key])
+                self.rplyDateData.set(self.ics213FormData[key])
             elif key == "t2":
                 self.loadedFileT2 = self.ics213FormData[key]
-                self.rplyTimeData.set("Time: "+self.ics213FormData[key])
+                self.rplyTimeData.set(self.ics213FormData[key])
             elif key == "file":
                 ## must be accounted for. Will be needed when calling HTML template
                 self.tempFile = self.ics213FormData[key]
@@ -123,64 +122,47 @@ def loadData(self):
 def clearData(self):
     ## resetting form to new condition
     for key in gv.totalIcs213Keys:
+        self.ics213FormData[key] = ""
         if key == "inc":
-            self.ics213FormData[key] = ""
             self.entryInc.set(self.ics213FormData[key])
         elif key == "to":
-            self.ics213FormData[key] = ""
             self.entryTo.set(self.ics213FormData[key])
         elif key == "fm":
-            self.ics213FormData[key] = ""
             self.entryFrom.set(self.ics213FormData[key])
         elif key == "p1":
-            self.ics213FormData[key] = ""
             self.entryToPos.set(self.ics213FormData[key])
         elif key == "p2":
-            self.ics213FormData[key] = ""
             self.entryFromPos.set(self.ics213FormData[key])
         elif key == "sb":
-            self.ics213FormData[key] = ""
             self.entrySubj.set(self.ics213FormData[key])
         elif key == "mg":
-            self.ics213FormData[key] = ""
-            self.origTextMsg.delete("1.0","end")
-            #self.origMsg.set(self.ics213FormData[key])
+            self.origMsg.set(self.ics213FormData[key])
         elif key == "s1":
-            self.ics213FormData[key] = ""
             self.entryApprover.set(self.ics213FormData[key])
         elif key == "p3":
-            self.ics213FormData[key] = ""
             self.entryApprPos.set(self.ics213FormData[key])
         elif key == "d1":
-            self.ics213FormData[key] = ""
             self.loadedFileD1 = self.ics213FormData[key]
             self.entryDate1.set(self.ics213FormData[key])
         elif key == "t1":
-            self.ics213FormData[key] = ""
             self.loadedFileT1 = self.ics213FormData[key]
             self.entryTime1.set(self.ics213FormData[key])
-        ## for info of responder, transfer read data to secondary dictionary
         elif key == "rp":
-            self.ics213FormData[key] = ""
             self.replyMsg.set(self.ics213FormData[key])
         elif key == "s2":
-            self.ics213FormData[key] = ""
             self.entryName.set(self.ics213FormData[key])
         elif key == "p4":
-            self.ics213FormData[key] = ""
             self.entryNamePos.set(self.ics213FormData[key])
         elif key == "d2":
-            self.ics213FormData[key] = ""
             self.loadedFileD2 = self.ics213FormData[key]
         elif key == "t2":
-            self.ics213FormData[key] = ""
             self.loadedFileT2 = self.ics213FormData[key]
         elif key == "file":
             ## must be accounted for. Will be needed when calling HTML template
             self.ics213FormData[key] = "213"
     self.loadedFlag = False
     ## get the current date & time
-    self.localGetDateTimeData(self.origDateEntry,self.origTimeEntry)
+    self.localGetDateTimeData(self.DateEntry,self.TimeEntry)
     ## set all date & time variables to the same date and time (current)
     self.ics213FormData["d2"] = self.ics213FormData["d1"]
     self.ics213FormData["t2"] = self.ics213FormData["t1"]

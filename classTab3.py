@@ -77,14 +77,17 @@ class Tab3(Frame):
                 self.origMsg.set(self.origTextMsg.get(1.0,"end"))
                 ics.saveData(self)
                 self.chooseFile.set('')
+                
             elif selAction == "Load File":
-                ut.clearWidgetForm(self.widgets)
                 ics.loadData(self)
-                self.origTextMsg.insert(1.0,self.ics213FormData["mg"])
+                self.update_Text_box()
                 self.chooseFile.set('')
+                
             elif selAction == "Clear Form":
                 ics.clearData(self)
+                self.update_Text_box()
                 self.chooseFile.set('')
+                
             #elif selAction == "Update":
             #    ics.updateData(self)
             #    self.chooseFile.set('')
@@ -96,7 +99,7 @@ class Tab3(Frame):
         self.label.grid(column=0,row = 0, sticky="w")
 
         ## Get the current date and time
-        self.getDtButton = Button(self.frame, text="Get Date & Time", command=lambda:self.localGetDateTimeData(self.origDateEntry,self.origTimeEntry))
+        self.getDtButton = Button(self.frame, text="Get Date & Time", command=lambda:self.localGetDateTimeData(self.DateEntry,self.TimeEntry))
         self.widgets.append(self.getDtButton)
         self.getDtButton.grid(column=1,row = 0, sticky="e")
 
@@ -119,6 +122,7 @@ class Tab3(Frame):
         #self.widgets.append(self.quitButton)
         #self.quitButton.grid(column=3,row=0, sticky="e")
         #self.quitButton.configure(bg="blue", fg="white")
+        
 
         #### Text sizing variables
         normText = 42
@@ -137,26 +141,34 @@ class Tab3(Frame):
         self.origEntryInc.insert(0,self.ics213FormData["inc"])
 
         ## Date Box
-        self.origDateEntry =Entry(self.frame, text=self.entryDate1, bg="#d8f8d8", width=18)
-        self.widgets.append(self.origDateEntry)
-        self.origDateEntry.grid(column=3, row=incRow, sticky="w")
-        self.origDateEntry.delete(0,END)
+        self.DateLabel = Label(self.frame, text="Date: ", bg="#d8f8d8", width=6)
+        self.widgets.append(self.DateLabel)
+        self.DateLabel.grid(column=3, row=incRow, sticky="w")
+        
+        self.DateEntry =Entry(self.frame, text=self.entryDate1, bg="#d8f8d8", width=8)
+        self.widgets.append(self.DateEntry)
+        self.DateEntry.grid(column=3, row=incRow, sticky="w", padx = 60)
+        self.DateEntry.delete(0,END)
         ## Need to distinguish between a blank form and a loaded form
         if self.loadedFlag:
-            self.origDateEntry.insert(0,"Date: "+self.loadedFileD1) 
+            self.DateEntry.insert(0,self.loadedFileD1) 
         else:
-            self.origDateEntry.insert(0,"Date: "+self.ics213FormData["d1"])
+            self.DateEntry.insert(0,self.ics213FormData["d1"])
 
         ## Time Box
-        self.origTimeEntry =Entry(self.frame, text=self.entryTime1, bg="#d8f8d8", width=18)
-        self.widgets.append(self.origTimeEntry)
-        self.origTimeEntry.grid(column=3, row=incRow, sticky="e")
-        self.origTimeEntry.delete(0,END)
+        self.TimeLabel = Label(self.frame, text="Time: ", bg="#d8f8d8", width=6)
+        self.widgets.append(self.TimeLabel)
+        self.TimeLabel.grid(column=3, row=incRow, sticky="e", padx = 95)
+        
+        self.TimeEntry =Entry(self.frame, text=self.entryTime1, bg="#d8f8d8", width=10)
+        self.widgets.append(self.TimeEntry)
+        self.TimeEntry.grid(column=3, row=incRow, sticky="e")
+        self.TimeEntry.delete(0,END)
         ## Need to distinguish between a blank form and a loaded form
         if self.loadedFlag:
-            self.origTimeEntry.insert(0,"Time: "+self.loadedFileT1) 
+            self.TimeEntry.insert(0,self.loadedFileT1) 
         else:
-            self.origTimeEntry.insert(0,"Time: "+self.ics213FormData["t1"])
+            self.TimeEntry.insert(0,self.ics213FormData["t1"])
         
 
         toRow = 2
@@ -228,20 +240,16 @@ class Tab3(Frame):
         #print("StrVar is: ",self.origMsg.get())
         #print("Dict is: ",self.ics213FormData["mg"])
         #print("Flag is: ",self.loadedFlag)
-
-        self.origTextMsg=Text(self.frame)
-        self.widgets.append(self.origTextMsg)
-        self.origTextMsg.grid(column=1, row=msgRow)
-        self.origTextMsg.grid_configure(columnspan=3)
-        self.origTextMsg.configure(background="green1", wrap='word')
-        self.origTextMsg.delete(1.0,"end")
-        if self.loadedFlag:
-            self.origTextMsg.insert(END,self.origMsg.get())
-            self.ics213FormData["mg"] = self.origMsg.get()
-        else:
+        if not self.loadedFlag:
+            self.origTextMsg=Text(self.frame)
+            self.widgets.append(self.origTextMsg)
+            self.origTextMsg.grid(column=1, row=msgRow)
+            self.origTextMsg.grid_configure(columnspan=3)
+            self.origTextMsg.configure(background="green1", wrap='word')
+            self.origTextMsg.delete(1.0,"end")
             self.origTextMsg.insert(END,self.ics213FormData["mg"])
-        ## needed for save function
             self.origMsg.set(self.ics213FormData["mg"])
+        
 
         appRow = 7
         ## Approver
@@ -279,11 +287,23 @@ class Tab3(Frame):
         ## update the text in the date entry box
         dateEn.delete(0,END)
         self.ics213FormData["d1"]=rDate
-        dateEn.insert(0,"Date: "+rDate)
+        dateEn.insert(0,rDate)
         ## update the text in the time entry box
         timeEn.delete(0,END)
         self.ics213FormData["t1"]=rTime
-        timeEn.insert(0,"Time: "+rTime)
+        timeEn.insert(0,rTime)
+        
+    def update_Text_box(self):
+        msgRow = 5
+        self.origTextMsg=Text(self.frame)
+        self.widgets.append(self.origTextMsg)
+        self.origTextMsg.grid(column=1, row=msgRow)
+        self.origTextMsg.grid_configure(columnspan=3)
+        self.origTextMsg.configure(background="green1", wrap='word')
+        self.origTextMsg.delete(1.0,"end")
+        self.origTextMsg.insert(END,self.origMsg.get())
+        self.ics213FormData["mg"] = self.origMsg.get()
+        self.loadedFlag = False
         
     def quitProgram(self):
         self.controller.shutting_down()

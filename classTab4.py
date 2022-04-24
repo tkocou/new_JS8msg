@@ -77,15 +77,12 @@ class Tab4(Frame):
                 ics.saveData(self)
                 self.chooseRespFile.set('')
             elif selAction == "Load File":
-                #ut.clearWidgetForm(self.widgets)
-                #ics.loadData(self)
-                #text_data = self.ics213FormData["rp"]
-                #print("loadData - text_data: ",text_data)
-                #self.replyTextMsg.insert('1.0',text_data)
-                self.goto_load()
+                ics.loadData(self)
+                self.update_Text_box()
                 self.chooseRespFile.set('')
             elif selAction == "Clear Form":
                 ics.clearData(self)
+                self.update_Text_box()
                 self.chooseRespFile.set('')
             #elif selAction == "Update":
             #    ics.updateData(self)
@@ -96,7 +93,7 @@ class Tab4(Frame):
         self.label.grid(column=0,row = 0, sticky="w")
         
         ## Get the current date and time
-        self.getDtButton = Button(self.frame, text="Get Date & Time", command=lambda:self.getDateTimeData(self.rplyDateEntry,self.rplyTimeEntry))
+        self.getDtButton = Button(self.frame, text="Get Date & Time", command=lambda:self.localGetDateTimeData(self.rplyDateEntry,self.rplyTimeEntry))
         self.widgets.append(self.getDtButton)
         self.getDtButton.grid(column=1,row = 0, sticky="e")
         
@@ -128,30 +125,30 @@ class Tab4(Frame):
         self.widgets.append(self.replyDateLabel)
         self.replyDateLabel.grid(column=0, row=dtRow, sticky="w")
         
-        self.rplyDateEntry = Entry(self.frame, textvariable=self.rplyDateData, bg="#d8f8d8", width=18)
-        self.widgets.append(self.rplyDateEntry)
-        self.rplyDateEntry.grid(column=1, row=dtRow, sticky="w")
-        self.rplyDateEntry.delete(0,END)
+        self.DateEntry = Entry(self.frame, textvariable=self.rplyDateData, bg="#d8f8d8", width=18)
+        self.widgets.append(self.DateEntry)
+        self.DateEntry.grid(column=1, row=dtRow, sticky="w")
+        self.DateEntry.delete(0,END)
         ## distinguish between blank form and loaded form
         if self.loadedFlag:
-            self.rplyDateEntry.insert(0,self.loadedFileD2)
+            self.DateEntry.insert(0,self.loadedFileD2)
         else:
-            self.rplyDateEntry.insert(0,self.ics213FormData["d2"])
+            self.DateEntry.insert(0,self.ics213FormData["d2"])
 
         ## Time Box
-        self.replyTimeLabel = Label(self.frame, text="Time: ", bg="#d8f8d8", width=6)
-        self.widgets.append(self.replyTimeLabel)
-        self.replyTimeLabel.grid(column=2, row=dtRow, sticky="w")
+        self.TimeLabel = Label(self.frame, text="Time: ", bg="#d8f8d8", width=6)
+        self.widgets.append(self.TimeLabel)
+        self.TimeLabel.grid(column=2, row=dtRow, sticky="w")
         
-        self.rplyTimeEntry =Entry(self.frame, textvariable=self.rplyTimeData, bg="#d8f8d8", width=18)
-        self.widgets.append(self.rplyTimeEntry)
-        self.rplyTimeEntry.grid(column=3, row=dtRow, sticky="w",padx = 20 )
-        self.rplyTimeEntry.delete(0,END)
+        self.TimeEntry =Entry(self.frame, textvariable=self.rplyTimeData, bg="#d8f8d8", width=18)
+        self.widgets.append(self.TimeEntry)
+        self.TimeEntry.grid(column=3, row=dtRow, sticky="w",padx = 20 )
+        self.TimeEntry.delete(0,END)
          ## distinguish between blank form and loaded form
         if self.loadedFlag:
-            self.rplyTimeEntry.insert(0,self.loadedFileT2)
+            self.TimeEntry.insert(0,self.loadedFileT2)
         else:
-            self.rplyTimeEntry.insert(0,self.ics213FormData["t2"])
+            self.TimeEntry.insert(0,self.ics213FormData["t2"])
 
         replyRow= 2
         ## Reply area
@@ -162,21 +159,15 @@ class Tab4(Frame):
         #print("StrVar is: ",self.replyMsg.get())
         #print("Dict is: ",self.ics213FormData["rp"])
         #print("Flag is: ",self.loadedFlag)
-
-        self.replyTextMsg = Text(self.frame)
-        self.widgets.append(self.replyTextMsg)
-        self.replyTextMsg.grid(column=1, row=replyRow)
-        self.replyTextMsg.grid_configure(columnspan=3)
-        self.replyTextMsg.configure(background="#f8f8d8", wrap='word')
-        self.replyTextMsg.delete('1.0',"end")
-        #print("loadedFlag: ",self.loadedFlag)
-        if self.loadedFlag:
-            print("rp at widget: ",self.ics213FormData["rp"])
+        if not self.loadedFlag:
+            self.replyTextMsg = Text(self.frame)
+            self.widgets.append(self.replyTextMsg)
+            self.replyTextMsg.grid(column=1, row=replyRow)
+            self.replyTextMsg.grid_configure(columnspan=3)
+            self.replyTextMsg.configure(background="#f8f8d8", wrap='word')
+            self.replyTextMsg.delete('1.0',"end")
             self.replyTextMsg.insert(END,self.ics213FormData["rp"])
             self.replyMsg.set(self.ics213FormData["rp"])
-        else:
-            self.replyTextMsg.insert(END,self.replyMsg.get())
-            #self.ics213FormData["rp"] = self.replyMsg.get()
 
 
         respRow = 3
@@ -201,16 +192,8 @@ class Tab4(Frame):
         self.entryNamePos.set(self.ics213FormData["p4"])
         gv.widget_list_dict["Tab4"] = self.widgets
         
-    ## Do to a quirk in Python, need some shim functions
-    def goto_load(self):
-        ut.clearWidgetForm(self.widgets)
-        ics.loadData(self)
-        text_data = self.ics213FormData["rp"]
-            #print("loadData - text_data: ",text_data)
-        self.replyTextMsg.insert('1.0',text_data)
         
-        
-    def getDateTimeData(self, dateEn, timeEn):
+    def localGetDateTimeData(self, dateEn, timeEn):
         ## dateEn is the widget reference for the date Entry() display
         ## timeEn is the widget reference for the time Entry() display
         ## The config format data is loaded upfront
@@ -221,12 +204,24 @@ class Tab4(Frame):
         ## update date box
         dateEn.delete(0,END)
         self.ics213FormData["d2"]=rDate
-        dateEn.insert(0,"Date: "+self.ics213FormData["d2"])
+        dateEn.insert(0,self.ics213FormData["d2"])
 
         ## update time box
         timeEn.delete(0,END)
         self.ics213FormData["t2"]=rTime
-        timeEn.insert(0,"Time: "+self.ics213FormData["t2"])
+        timeEn.insert(0,self.ics213FormData["t2"])
+        
+    def update_Text_box(self):
+        replyRow= 2
+        self.replyTextMsg = Text(self.frame)
+        self.widgets.append(self.replyTextMsg)
+        self.replyTextMsg.grid(column=1, row=replyRow)
+        self.replyTextMsg.grid_configure(columnspan=3)
+        self.replyTextMsg.configure(background="#f8f8d8", wrap='word')
+        self.replyTextMsg.delete('1.0',"end")
+        self.replyTextMsg.insert(END,self.ics213FormData["rp"])
+        self.replyMsg.set(self.ics213FormData["rp"])
+        self.loadedFlag = False
         
     def quitProgram(self):
         self.controller.shutting_down()
