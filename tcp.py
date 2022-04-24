@@ -11,7 +11,8 @@ import json
 import time
 
 ## insure that the tcp server is enabled in JS8call
-server = ('127.0.0.1', 2439)
+## will switch over to settings{}
+server = ('127.0.0.1', 2442)
 
 def from_message(content):
     try:
