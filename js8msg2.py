@@ -110,7 +110,7 @@ class App(tk.Frame):
         sys.exit()
 
     def show_frame(self,page_name):
-        print(page_name)
+        #print(page_name)
         ## is the current GUI screen empty? i.e. never created before
         if gv.widget_list_dict[self.current_screen] == []:
             ## create a new GUI container

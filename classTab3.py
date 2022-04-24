@@ -34,6 +34,7 @@ class Tab3(Frame):
         self.entryNamePos = StringVar()
         self.rplyDateData = StringVar()
         self.rplyTimeData = StringVar()
+        ## next 2 variables needed for save function
         self.origMsg = StringVar()
         self.replyMsg = StringVar()
         self.loadedFileD1 = ""
@@ -73,17 +74,20 @@ class Tab3(Frame):
         def selectFileOption(event):
             selAction = self.chooseFile.get()
             if selAction == "Save File":
+                self.origMsg.set(self.origTextMsg.get(1.0,"end"))
                 ics.saveData(self)
                 self.chooseFile.set('')
             elif selAction == "Load File":
+                ut.clearWidgetForm(self.widgets)
                 ics.loadData(self)
+                self.origTextMsg.insert(1.0,self.ics213FormData["mg"])
                 self.chooseFile.set('')
             elif selAction == "Clear Form":
                 ics.clearData(self)
                 self.chooseFile.set('')
-            elif selAction == "Update":
-                ics.updateData(self)
-                self.chooseFile.set('')
+            #elif selAction == "Update":
+            #    ics.updateData(self)
+            #    self.chooseFile.set('')
 
 
         ## Display the current mode
@@ -102,7 +106,8 @@ class Tab3(Frame):
         self.comboLabel.grid(column=3, row=0, sticky="w")
         self.chooseFile = ttk.Combobox(self.frame, width=self.colWidth, textvariable=self.fileDropDown)
         self.widgets.append(self.chooseFile)
-        self.chooseFile['values'] = ["Save File","Load File", "Clear Form", "Update"]
+        #self.chooseFile['values'] = ["Save File","Load File", "Clear Form", "Update"]
+        self.chooseFile['values'] = ["Save File","Load File", "Clear Form"]
         self.chooseFile.grid(column=3, row=0, sticky="w", padx=80)
         ## NOTE: callbacks must be declared before building the combobox widget
         ## If you change any of the 'values' list entries, you must also fix the
@@ -220,15 +225,23 @@ class Tab3(Frame):
         self.widgets.append(self.origLabelMsg)
         self.origLabelMsg.grid(column=0, row=msgRow, sticky = 'w')
 
-        self.origEntryMsg=Text(self.frame)
-        self.widgets.append(self.origEntryMsg)
-        self.origEntryMsg.grid(column=1, row=msgRow)
-        self.origEntryMsg.grid_configure(columnspan=3)
-        self.origEntryMsg.configure(background="green1", wrap='word')
-        self.origEntryMsg.delete(1.0,"end")
-        self.origEntryMsg.insert(END,self.ics213FormData["mg"])
-        ## update the global
-        self.origMsg.set(self.ics213FormData["mg"])
+        #print("StrVar is: ",self.origMsg.get())
+        #print("Dict is: ",self.ics213FormData["mg"])
+        #print("Flag is: ",self.loadedFlag)
+
+        self.origTextMsg=Text(self.frame)
+        self.widgets.append(self.origTextMsg)
+        self.origTextMsg.grid(column=1, row=msgRow)
+        self.origTextMsg.grid_configure(columnspan=3)
+        self.origTextMsg.configure(background="green1", wrap='word')
+        self.origTextMsg.delete(1.0,"end")
+        if self.loadedFlag:
+            self.origTextMsg.insert(END,self.origMsg.get())
+            self.ics213FormData["mg"] = self.origMsg.get()
+        else:
+            self.origTextMsg.insert(END,self.ics213FormData["mg"])
+        ## needed for save function
+            self.origMsg.set(self.ics213FormData["mg"])
 
         appRow = 7
         ## Approver

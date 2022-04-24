@@ -23,22 +23,23 @@ def saveData(self):
         elif key == "sb":
             self.ics213FormData[key] = self.entrySubj.get()
         elif key == "mg":
-            self.ics213FormData[key] = self.origMsg
+            self.ics213FormData[key] = self.origMsg.get()
         elif key == "s1":
             self.ics213FormData[key] = self.entryApprover.get()
         elif key == "p3":
             self.ics213FormData[key] = self.entryApprPos.get()
         elif key == "d1":
             if self.entryDate1.get()[:6] == "Date: ":
-                self.ics213FormData[key] = self.entryDate1.get()[6:]
+                self.ics213FormData[key] = self.entryDate1.get()[-6:]
+                print(self.ics213FormData[key])
             else:
                 self.ics213FormData[key] = self.entryDate1.get()
         elif key == "t1":
             if self.entryTime1.get()[:6] == "Time: ":
-                self.ics213FormData[key] = self.entryTime1.get()[6:]
+                self.ics213FormData[key] = self.entryTime1.get()[-6:]
+                print(self.ics213FormData[key])
             else:
                 self.ics213FormData[key] = self.entryTime1.get()
-        ## for info of responder, transfer read data to secondary dictionary
         elif key == "rp":
             self.ics213FormData[key] = self.replyMsg.get()
         elif key == "s2":
@@ -85,8 +86,6 @@ def loadData(self):
                 self.entrySubj.set(self.ics213FormData[key])
             elif key == "mg":
                 self.origMsg.set(self.ics213FormData[key])
-                self.origEntryMsg.delete(1.0,"end")
-                self.origEntryMsg.insert(END,self.ics213FormData["mg"])
             elif key == "s1":
                 self.entryApprover.set(self.ics213FormData[key])
             elif key == "p3":
@@ -99,6 +98,7 @@ def loadData(self):
                 self.entryTime1.set("Time: "+self.ics213FormData[key])
             elif key == "rp":
                 self.replyMsg.set(self.ics213FormData[key])
+                #print("loadData - rp: ",self.ics213FormData[key])
             elif key == "s2":
                 self.entryName.set(self.ics213FormData[key])
             elif key == "p4":
@@ -118,6 +118,7 @@ def loadData(self):
     else:
         ## must have cancelled the 'load' command
         pass
+    return
 
 def clearData(self):
     ## resetting form to new condition
@@ -142,8 +143,8 @@ def clearData(self):
             self.entrySubj.set(self.ics213FormData[key])
         elif key == "mg":
             self.ics213FormData[key] = ""
-            self.origEntryMsg.delete("1.0","end")
-            self.origMsg.set(self.ics213FormData[key])
+            self.origTextMsg.delete("1.0","end")
+            #self.origMsg.set(self.ics213FormData[key])
         elif key == "s1":
             self.ics213FormData[key] = ""
             self.entryApprover.set(self.ics213FormData[key])
@@ -199,8 +200,8 @@ def updateData():
         elif key == "sb":
             self.ics213FormData[key] = self.entrySubj.get()
         elif key == "mg":
-            self.ics213FormData[key] = self.origEntryMsg.get(1.0,END)
-            self.origMsg.set(self.ics213FormData[key])
+            self.ics213FormData[key] = self.origTextMsg.get(1.0,END)
+            #self.origMsg.set(self.ics213FormData[key])
         elif key == "s1":
             self.ics213FormData[key] = self.entryApprover.get()
         elif key == "p3":

@@ -13,14 +13,12 @@ def get_configuration_from_db():
     db_obj.close_SQL()
     # remove boolean from answer
     dbset = dbsettings[1:]
-    #print("within get_configuration_from_db, dbset type is: ",type(dbset))
-    #print("Checking dbset is: ",dbset)
     ## populate the global configuration variable
     for sett in dbset:
         for setting in sett:
             try:
                 gv.commonConfData[setting[1]]=setting[2]
-                print("gv.commonConfData[{0}] is: ".format(setting[1]),gv.commonConfData[setting[1]])
+                #print("gv.commonConfData[{0}] is: ".format(setting[1]),gv.commonConfData[setting[1]])
             except:
                 pass
 
@@ -37,13 +35,13 @@ def save_configuration_to_db():
     ## write new data
     db_obj.set_SQL(message)
     result = db_obj.exec_SQL()
-    #result = db_obj.fetch_all_SQL()
-    print("Insert ops result is: ",result[0])
+    #print("Insert ops result is: ",result[0])
     db_obj.close_SQL()
     ## return True or False
     return result[0]
 
 def check_stored_configuration():
+    ## used during debugging
     db_obj = ut.get_db_connection()
     message = "SELECT * FROM configuration"
     db_obj.set_SQL(message)

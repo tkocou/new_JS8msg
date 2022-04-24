@@ -34,6 +34,7 @@ class Tab4(Frame):
         self.entryNamePos = StringVar()
         self.rplyDateData = StringVar()
         self.rplyTimeData = StringVar()
+        ## next 2 variables needed for save function
         self.origMsg = StringVar()
         self.replyMsg = StringVar()
         self.loadedFileD1 = ""
@@ -52,7 +53,7 @@ class Tab4(Frame):
         self.origFieldKeys = gv.origIcs213FieldKeys
         ## Able to update
         self.ics213FormData = gv.ics213FormData
-        self.origMsg = ""
+        #self.origMsg = ""
         self.result = None
         self.rDate = self.rTime = ""
         
@@ -70,19 +71,25 @@ class Tab4(Frame):
         
         #### callback function for Combobox()
         def selectRespFileOption(event):
-            selRespAction = self.chooseRespFile.get()
-            if selRespAction == "Save File":
+            selAction = self.chooseRespFile.get()
+            if selAction == "Save File":
+                self.replyMsg.set(self.replyTextMsg.get('1.0',"end"))
                 ics.saveData(self)
                 self.chooseRespFile.set('')
             elif selAction == "Load File":
-                ics.loadData(self)
-                self.chooseFile.set('')
+                #ut.clearWidgetForm(self.widgets)
+                #ics.loadData(self)
+                #text_data = self.ics213FormData["rp"]
+                #print("loadData - text_data: ",text_data)
+                #self.replyTextMsg.insert('1.0',text_data)
+                self.goto_load()
+                self.chooseRespFile.set('')
             elif selAction == "Clear Form":
                 ics.clearData(self)
-                self.chooseFile.set('')
-            elif selRespAction == "Update":
-                ics.updateData(self)
                 self.chooseRespFile.set('')
+            #elif selAction == "Update":
+            #    ics.updateData(self)
+            #    self.chooseRespFile.set('')
                 
         self.label = Label(self.frame, text="Responder", bg="#f8d8d8")
         self.widgets.append(self.label)
@@ -100,7 +107,8 @@ class Tab4(Frame):
         
         self.chooseRespFile = ttk.Combobox(self.frame, width=self.colWidth, textvariable=self.fileDropDown)
         self.widgets.append(self.chooseRespFile)
-        self.chooseRespFile['values'] = ["Save File","Load File", "Clear Form", "Update"]
+        ##self.chooseRespFile['values'] = ["Save File","Load File", "Clear Form", "Update"]
+        self.chooseRespFile['values'] = ["Save File","Load File", "Clear Form"]
         self.chooseRespFile.grid(column=3, row=0, sticky="w",padx=80)
         ## callbacks must be declared before the combobox widget
         self.chooseRespFile.bind('<<ComboboxSelected>>', selectRespFileOption)
@@ -116,26 +124,34 @@ class Tab4(Frame):
         
         dtRow = 1
         ## Date Box
+        self.replyDateLabel = Label(self.frame, text="Date: ", bg="#d8f8d8", width=6)
+        self.widgets.append(self.replyDateLabel)
+        self.replyDateLabel.grid(column=0, row=dtRow, sticky="w")
+        
         self.rplyDateEntry = Entry(self.frame, textvariable=self.rplyDateData, bg="#d8f8d8", width=18)
         self.widgets.append(self.rplyDateEntry)
-        self.rplyDateEntry.grid(column=3, row=dtRow, sticky="w")
+        self.rplyDateEntry.grid(column=1, row=dtRow, sticky="w")
         self.rplyDateEntry.delete(0,END)
         ## distinguish between blank form and loaded form
         if self.loadedFlag:
-            self.rplyDateEntry.insert(0,"Date: "+self.loadedFileD2)
+            self.rplyDateEntry.insert(0,self.loadedFileD2)
         else:
-            self.rplyDateEntry.insert(0,"Date: "+self.ics213FormData["d2"])
+            self.rplyDateEntry.insert(0,self.ics213FormData["d2"])
 
         ## Time Box
+        self.replyTimeLabel = Label(self.frame, text="Time: ", bg="#d8f8d8", width=6)
+        self.widgets.append(self.replyTimeLabel)
+        self.replyTimeLabel.grid(column=2, row=dtRow, sticky="w")
+        
         self.rplyTimeEntry =Entry(self.frame, textvariable=self.rplyTimeData, bg="#d8f8d8", width=18)
         self.widgets.append(self.rplyTimeEntry)
-        self.rplyTimeEntry.grid(column=3, row=dtRow, sticky="e")
+        self.rplyTimeEntry.grid(column=3, row=dtRow, sticky="w",padx = 20 )
         self.rplyTimeEntry.delete(0,END)
          ## distinguish between blank form and loaded form
         if self.loadedFlag:
-            self.rplyTimeEntry.insert(0,"Time: "+self.loadedFileT2)
+            self.rplyTimeEntry.insert(0,self.loadedFileT2)
         else:
-            self.rplyTimeEntry.insert(0,"Time: "+self.ics213FormData["t2"])
+            self.rplyTimeEntry.insert(0,self.ics213FormData["t2"])
 
         replyRow= 2
         ## Reply area
@@ -143,14 +159,25 @@ class Tab4(Frame):
         self.widgets.append(self.replyLabel)
         self.replyLabel.grid(column=0, row = replyRow, sticky="w")
 
-        self.replyEntryMsg = Text(self.frame)
-        self.widgets.append(self.replyEntryMsg)
-        self.replyEntryMsg.grid(column=1, row=replyRow)
-        self.replyEntryMsg.grid_configure(columnspan=3)
-        self.replyEntryMsg.configure(background="#f8f8d8", wrap='word')
-        self.replyEntryMsg.delete(1.0,"end")
-        self.replyEntryMsg.insert(END,self.ics213FormData["rp"])
-        self.replyMsg.set(self.ics213FormData["rp"])
+        #print("StrVar is: ",self.replyMsg.get())
+        #print("Dict is: ",self.ics213FormData["rp"])
+        #print("Flag is: ",self.loadedFlag)
+
+        self.replyTextMsg = Text(self.frame)
+        self.widgets.append(self.replyTextMsg)
+        self.replyTextMsg.grid(column=1, row=replyRow)
+        self.replyTextMsg.grid_configure(columnspan=3)
+        self.replyTextMsg.configure(background="#f8f8d8", wrap='word')
+        self.replyTextMsg.delete('1.0',"end")
+        #print("loadedFlag: ",self.loadedFlag)
+        if self.loadedFlag:
+            print("rp at widget: ",self.ics213FormData["rp"])
+            self.replyTextMsg.insert(END,self.ics213FormData["rp"])
+            self.replyMsg.set(self.ics213FormData["rp"])
+        else:
+            self.replyTextMsg.insert(END,self.replyMsg.get())
+            #self.ics213FormData["rp"] = self.replyMsg.get()
+
 
         respRow = 3
         ## Name of responder
@@ -161,7 +188,6 @@ class Tab4(Frame):
         self.replyEntryName = Entry(self.frame, textvariable=self.entryName, width=normText, bg="#f8e8e8")
         self.widgets.append(self.replyEntryName)
         self.replyEntryName.grid(column=1, row=respRow, sticky="w")
-        #print("s2 in respond:",ics213FormData["s2"])
         self.entryName.set(self.ics213FormData["s2"])
 
         ## Position of responder
@@ -174,8 +200,15 @@ class Tab4(Frame):
         self.replyNamePosEntry.grid(column=3, row=respRow, sticky="w")
         self.entryNamePos.set(self.ics213FormData["p4"])
         gv.widget_list_dict["Tab4"] = self.widgets
-
-
+        
+    ## Do to a quirk in Python, need some shim functions
+    def goto_load(self):
+        ut.clearWidgetForm(self.widgets)
+        ics.loadData(self)
+        text_data = self.ics213FormData["rp"]
+            #print("loadData - text_data: ",text_data)
+        self.replyTextMsg.insert('1.0',text_data)
+        
         
     def getDateTimeData(self, dateEn, timeEn):
         ## dateEn is the widget reference for the date Entry() display
@@ -195,5 +228,5 @@ class Tab4(Frame):
         self.ics213FormData["t2"]=rTime
         timeEn.insert(0,"Time: "+self.ics213FormData["t2"])
         
-    def quitProgram():
+    def quitProgram(self):
         self.controller.shutting_down()

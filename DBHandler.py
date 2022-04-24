@@ -3,15 +3,11 @@
 import sqlite3
 
 class DB_object():
-    ## some class level variables
-    #conn = ""
-    #cur = ""
-    #SQL_message = ""
 
-    
     ## When we create a new object, we pass the database file name to this class
     ## The reason for the set* and exec* methods is for assisting with debugging.
     ##    db_file is a string
+    
     def __init__ (self,db_file):
         super().__init__()
         
@@ -28,10 +24,8 @@ class DB_object():
         
     def set_SQL(self, message):
         ## message will be a SQL command string
-        ## example listed next:
-        ## """CREATE TABLE setting (id    INTEGER PRIMARY KEY AUTOINCREMENT, name  TEXT    UNIQUE ON CONFLICT IGNORE, value TEXT)"""
         self.SQL_message = message
-        #print("Received message: ",message)
+
     
     def exec_SQL(self):
         try:

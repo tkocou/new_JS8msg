@@ -87,7 +87,11 @@ def saveFormData(Parameters):
     ## and lacks a 'write' or 'close' attribute
     if fh is not None:
         for key in dataKeys:
-            fh.write(key+':'+dataDict[key]+'\n')
+            ## extract text data
+            data_keyed = dataDict[key]
+            #print("key type: ",type(key))
+            #print("data_keyed type: ",type(data_keyed))
+            fh.write(key+':'+data_keyed+'\n')
         fh.close()
         return dataDict
     else:
@@ -191,12 +195,17 @@ def parseStringData(readData):
         ## Otherwise, using textKey, the extra lines are appended
 
         try:
+            #print("key: ",x[0])
+            #print("data: ",x[1])
             key = x[0]
             data = x[1]
             dataDict[key] = data
         except IndexError:
             if len(x[0]) > 0:
+                #print("Additional data: ",x[0])
                 dataDict[textKey] = dataDict[textKey]+'\n'+x[0]
+            else:
+                pass
     return dataDict
 
 def makeCRC32(text):
@@ -279,9 +288,7 @@ def get_settings():
     db_obj.close_SQL()
     # remove boolean from answer
     dbset = dbsettings[1:]
-    #print("get_settings: dbsettings type is: ",type(dbsettings))
-    #print("get_settings: dbsettings is: ",dbsettings)
-    print("get_settings: dbset is: ",dbset)
+    #print("get_settings: dbset is: ",dbset)
     ## let's make a dictionary from the settings
     settings = {}
     for sett in dbset:
@@ -290,7 +297,6 @@ def get_settings():
                 settings[setting[1]]=setting[2]
             except:
                 pass
-    #print(settings)
     return settings
 
 def get_socket():
