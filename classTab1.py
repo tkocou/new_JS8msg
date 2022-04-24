@@ -380,10 +380,9 @@ class Tab1(Frame):
         #print("Fini Group button")
 
         ## Quit program button
-        quitButton = tk.Button(self.frame, text="Quit", command=lambda:self.controller.shutting_down())
-        quitButton.configure(bg="blue", fg="white")
-        quitButton.grid(column=1,row=topRow, sticky = "w", padx=10)
-        self.widgets.append(quitButton)
+        #quitButton.configure(bg="blue", fg="white")
+        #quitButton.grid(column=1,row=topRow, sticky = "w", padx=10)
+        #self.widgets.append(quitButton)
 
         #print("Fini Quit button")
 

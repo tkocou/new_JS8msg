@@ -114,10 +114,10 @@ class Tab4(Frame):
         self.chooseRespFile.bind('<<ComboboxSelected>>', selectRespFileOption)
         
         ## Quit button
-        self.quitButton = Button(self.frame, text="Quit", command=lambda:self.quitProgram())
-        self.widgets.append(self.quitButton)
-        self.quitButton.grid(column=3,row=0, sticky = "e")
-        self.quitButton.configure(bg="blue", fg="white")
+        #self.quitButton = Button(self.frame, text="Quit", command=lambda:self.quitProgram())
+        #self.widgets.append(self.quitButton)
+        #self.quitButton.grid(column=3,row=0, sticky = "e")
+        #self.quitButton.configure(bg="blue", fg="white")
         
         #### Text sizing variable
         normText = 40

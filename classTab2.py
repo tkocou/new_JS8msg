@@ -56,10 +56,10 @@ class Tab2(Frame):
         self.blankLabel.grid(column=2,row=0, sticky="w")
         self.widgets.append(self.blankLabel)
 
-        self.quitButton = Button(self.frame, text="Quit", command=lambda:self.quitProgram())
-        self.quitButton.grid(column=3,row=0, sticky = "e")
-        self.quitButton.configure(bg="blue", fg="white")
-        self.widgets.append(self.quitButton)
+        #self.quitButton = Button(self.frame, text="Quit", command=lambda:self.quitProgram())
+        #self.quitButton.grid(column=3,row=0, sticky = "e")
+        #self.quitButton.configure(bg="blue", fg="white")
+        #self.widgets.append(self.quitButton)
         
         label_col = 0
         
