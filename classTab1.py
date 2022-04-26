@@ -10,7 +10,7 @@ import globalVariables as gv
 import utilities as ut
 import js8API as api
 import henkankun as hn
-
+from operator import itemgetter, attrgetter
 
 #### ======================== JS8msg Control =============================
 class Tab1(Frame):
@@ -61,6 +61,7 @@ class Tab1(Frame):
         self.stationCallSign = ""
         self.japaneseList = []
         self.japanFlag = FALSE
+        self.segmented_messages = []
 
         ## build up the callsign list
         def buildCall():
@@ -110,7 +111,9 @@ class Tab1(Frame):
             ## read the group entered in the group Entry widget
             result=self.group.get().upper()
             if result != "":
-                self.groupList.append(self.group.get().upper())
+                if result[:1] != '@':
+                    result = '@'+result
+                self.groupList.append(result)
                 buildCall()
                 ## clear the displayed group from the Entry widget
                 self.group.set("")
@@ -121,7 +124,7 @@ class Tab1(Frame):
             if selAction == "Load Form":
                 loadSourceData()
                 self.chooseAction.set('')
-            elif selAction == "Send Form Message":
+            elif selAction == "Send Form Live":
                 sendTxMessage()
                 self.chooseAction.set('')
             elif selAction == "Store Form Message to Inbox":
@@ -152,8 +155,10 @@ class Tab1(Frame):
             ## self.chooseList.curselection() returns a tuple
             ## select the first element and assign to 'index'
             index = self.chooseList.curselection()
+            #print("index: ",index)
             if index != ():
                 select = index[0]
+                #print("callsignList: ",self.callsignList[select])
                 self.callsignSelected = self.callsignList[select]
                 self.callsignSelIndex = select
                 self.labelText = "Selected: "+self.callsignSelected
@@ -165,9 +170,9 @@ class Tab1(Frame):
                 self.labelText = "Selected: "+self.callsignList[0]
 
             ## Display the selected callsign
-            listBoxLabel = Label(self)
-            listBoxLabel.grid(column=0,row=1, sticky="sw", padx=13)
-            listBoxLabel.configure(text=self.labelText, bg="#d8b8d8", pady=6, width = 23)
+            #listBoxLabel = Label(self)
+            #listBoxLabel.grid(column=0,row=2, sticky="nw", padx=13)
+            #listBoxLabel.configure(text=self.labelText, bg="#d8b8d8", pady=6, width = 23)
 
         def msgDisplay():
             ##
@@ -287,37 +292,37 @@ class Tab1(Frame):
                     else:
                         self.messageTextBox.insert(END,formData+'\n')
                 ## update the display and show the selected message id
-                listBoxLabel2 = Label(self)
-                listBoxLabel2.grid(column=0,row=1, sticky="se", padx=13)
-                listBoxLabel2.configure(text=self.labelText2, bg="#d8b8d8", pady=6, width = 23)
+                #listBoxLabel2 = Label(self)
+                #listBoxLabel2.grid(column=0,row=1, sticky="se", padx=13)
+                #listBoxLabel2.configure(text=self.labelText2, bg="#d8b8d8", pady=6, width = 23)
 
         def setHenkankunButtons():
             ## reset list variable
             self.japaneseList = []
-
+            buttonRow = 6
             ## add buttons and track widgets
 
             encodeButton1 = Button(self.frame, text="Encode Shift-JIS", command=encodeTextAreaJIS)
             encodeButton1.configure(bg="yellow1", width=12, height=2)
-            encodeButton1.grid(column=1,row=3, sticky="nw", pady=0, padx=10)
+            encodeButton1.grid(column=1,row=buttonRow, sticky="nw", pady=0, padx=10)
             self.japaneseList.append(encodeButton1)
 
 
             decodeButton1 = Button(self.frame, text="Decode Shift-JIS", command=decodeTextAreaJIS)
             decodeButton1.configure(bg="green1", width=12, height=2)
-            decodeButton1.grid(column=1,row=4, sticky="nw", pady=0, padx=10)
+            decodeButton1.grid(column=1,row=buttonRow+1, sticky="nw", pady=0, padx=10)
             self.japaneseList.append(decodeButton1)
     
 
             encodeButton2 = Button(self.frame, text="Encode UTF-8", command=encodeTextAreaUTF8)
             encodeButton2.configure(bg="yellow1", width=12, height=2)
-            encodeButton2.grid(column=1,row=5, sticky="nw", pady=0, padx=10)
+            encodeButton2.grid(column=1,row=buttonRow+2, sticky="nw", pady=0, padx=10)
             self.japaneseList.append(encodeButton2)
 
 
             decodeButton2 = Button(self.frame, text="Decode UTF-8", command=decodeTextAreaUTF8)
             decodeButton2.configure(bg="green1", width=12, height=2)
-            decodeButton2.grid(column=1,row=6, sticky="nw", pady=0, padx=10)
+            decodeButton2.grid(column=1,row=buttonRow+3, sticky="nw", pady=0, padx=10)
             self.japaneseList.append(decodeButton2)
 
 
@@ -355,13 +360,19 @@ class Tab1(Frame):
             mb.showinfo("Error!","Either JS8call is not running or TCP server in JS8call is not running.")
             
         #### main display of widgets ####
-        topRow =0
+        topRow = 0
+        buttonRow = 2
+        listRow = 1
+        listBoxRow = 3
+        seldCM_Row = 4
+        selCMRow = 5
+        selTextRow = 6
         ## Add a label and combobox to the display
         self.label = tk.Label(self.frame, text="Select =-> ")
         self.label.grid(column=0,row=topRow, sticky="w")
         self.widgets.append(self.label)
         self.chooseAction = ttk.Combobox(self.frame, width=colWidth, textvariable = self.dropdown, background="#f8d8d8")
-        self.chooseAction['values'] = ["Load Form","Send Form Message","Store Form Message to Inbox","Get All Messages from Inbox","Send Text Area","Store Text Area to Inbox","Activate Henkankun","Deactivate Henkankun"]
+        self.chooseAction['values'] = ["Load Form","Send Form Live","Store Form Message to Inbox","Get All Messages from Inbox","Send Text Area","Store Text Area to Inbox","Activate Henkankun","Deactivate Henkankun"]
         self.chooseAction.grid(column=0,row=topRow, sticky="w", padx=80)
         ## Note: callback function must preceed the combobox widget
         self.chooseAction.bind('<<ComboboxSelected>>', selectMsgOption)
@@ -373,70 +384,63 @@ class Tab1(Frame):
         self.groupLabel = tk.Button(self.frame, text="Add Group and Click =-> ", command=getGroup)
         self.groupLabel.grid(column=0, row=topRow, sticky="e", padx=120)
         self.widgets.append(self.groupLabel)
+        
         self.groupEntry = tk.Entry(self.frame, textvariable=self.group, width=14, bg="green1")
         self.groupEntry.grid(column=0, row=topRow, sticky="e")
         self.widgets.append(self.groupEntry)
 
-        #print("Fini Group button")
-
-        ## Quit program button
-        #quitButton.configure(bg="blue", fg="white")
-        #quitButton.grid(column=1,row=topRow, sticky = "w", padx=10)
-        #self.widgets.append(quitButton)
-
-        #print("Fini Quit button")
-
+        ## Display the selected callsign
+        self.listBoxLabel = Label(self,text=self.labelText)
+        self.listBoxLabel.grid(column=0,row=buttonRow, sticky="w", padx=50)
+        self.listBoxLabel.configure( bg="#d8b8d8", pady=6, width = 23)
+        self.widgets.append(self.listBoxLabel)
+        
+        self.listBoxLabel2 = Label(self,text=self.labelText2)
+        self.listBoxLabel2.grid(column=0,row=buttonRow, sticky="e", padx=50)
+        self.listBoxLabel2.configure( bg="#d8b8d8", pady=6, width = 23)
+        self.widgets.append(self.listBoxLabel2)
+        
         ## set the height of the scrollbars
-        vertPad = 32
-
-        ## Next few widgets need to be populated from live JS8call
-        listRow = 1
-        selRow = 2
+        vertPad = 6
 
         ## Added an Update button for callsigns Listbox
         self.updateButton = tk.Button(self.frame, text = "Update Callsigns", command=buildCall)
         self.updateButton.grid(column=0, row=listRow, sticky="nw")
-        self.updateButton.configure(bg="yellow1", width=22)
+        self.updateButton.configure(bg="yellow1")
         self.widgets.append(self.updateButton)
-        
-        #print("Fini Update Callsigns button")
-
+ 
         ## Add a button to select a callsign from the Listbox for transmitting or the JS8call inbox
         self.listBoxButton = tk.Button(self.frame, text = "Select Callsign & Click here", command=retrieve)
         self.listBoxButton.configure(bg="yellow1", width=22)
-        self.listBoxButton.grid(column=0, row=selRow, sticky="w")
+        self.listBoxButton.grid(column=0, row=selCMRow, sticky="nw")
         self.widgets.append(self.listBoxButton)
 
-        #print("Fini Select Callsign button")
-
         ## Add the callsign Listbox widget
+        ######
         self.chooseList = tk.Listbox(self.frame, selectmode=SINGLE, selectbackground="#f8f8d8", bg="green1", width=23)
         buildCall()
-        self.chooseList.grid(column=0,row = listRow, padx = 15, pady=vertPad, sticky="nw")
+        self.chooseList.grid(column=0,row = listBoxRow, padx = 15, pady=vertPad, sticky="nw")
         self.chooseList.activate(self.callsignSelIndex)
         self.chooseList.see(self.callsignSelIndex)
         self.widgets.append(self.chooseList)
         ## add a scrollbar widget for when the callsign list size exceeds the displayed area
         self.scrollBar = tk.Scrollbar(self.frame, orient=VERTICAL, command=self.chooseList.yview)
-        self.scrollBar.grid(column=0, row= listRow, pady=vertPad, sticky="nsw")
+        self.scrollBar.grid(column=0, row= listBoxRow, pady=vertPad, sticky="nsw")
         ## Link the scrollbar widget to the Listbox widget
         self.chooseList['yscrollcommand'] = self.scrollBar.set
         self.widgets.append(self.scrollBar)
 
-        #print("Fini Callsign Listbox")
-
         ## Added button for selecting from the message list 
         self.listMsgButton = tk.Button(self.frame, text = "Select Message & Click here", command=msgDisplay)
         self.listMsgButton.configure(bg="green1", width=22)
-        self.listMsgButton.grid(column=0, row=selRow, sticky="se")
+        self.listMsgButton.grid(column=0, row=selCMRow, sticky="ne")
         self.widgets.append(self.listMsgButton)
         
-        #print("Fini Select Message")
-        
         ## Added the messages Listbox widget
+        ######
         self.chooseMessage = tk.Listbox(self.frame, selectmode=SINGLE, selectbackground="#f8f8d8",bg="green1", width=24)
         buildMsgList()
-        self.chooseMessage.grid(column=0, row=listRow, padx=0, pady=vertPad, sticky="ne")
+        self.chooseMessage.grid(column=0, row=listBoxRow, padx=0, pady=vertPad, sticky="ne")
         self.chooseMessage.activate(self.msgListIndex)
         self.chooseMessage.see(self.msgListIndex)
         self.widgets.append(self.chooseMessage)
@@ -444,33 +448,30 @@ class Tab1(Frame):
         self.msgScrollBar = tk.Scrollbar(self.frame, orient=VERTICAL, command=self.chooseMessage.yview)
         ## adjust offset per OS due to font differences
         if sysPlatform == "Windows":
-            self.msgScrollBar.grid(column=0, row=listRow, pady=vertPad, sticky="nse", padx=150) # windows?
+            self.msgScrollBar.grid(column=0, row=listBoxRow, pady=vertPad, sticky="nse", padx=150) # windows?
         elif sysPlatform == "Linux":
-            self.msgScrollBar.grid(column=0, row=listRow, pady=vertPad, sticky="nse", padx=196) # linux?
+            self.msgScrollBar.grid(column=0, row=listBoxRow, pady=vertPad, sticky="nse", padx=196) # linux?
         ## Link the scrollbar widget to the Listbox widget
         self.chooseMessage['yscrollcommand'] = self.msgScrollBar.set
         self.widgets.append(self.msgScrollBar)
-        
-        #print("Fini Messages Listbox")
 
         self.clearTextAreaButton = tk.Button(self.frame, text="Clear Text Area", command=lambda: clearTextArea())
         self.clearTextAreaButton.configure(bg="blue", fg="white", width=22)
-        self.clearTextAreaButton.grid(column=0, row=selRow, sticky="sew", padx=200)
+        self.clearTextAreaButton.grid(column=0, row=selCMRow, sticky="new", padx=200)
         self.widgets.append(self.clearTextAreaButton)
-                
-        #print("Fini Clear Text button")
 
-        txtRow = 3
         ## Added a general purpose Text area to the display
+        ######
+        vert_pady = 6
         self.messageTextBox = tk.Text(self.frame)
-        self.messageTextBox.grid(column=0, row=txtRow, sticky="nse", padx=0, rowspan=4)
-        self.messageTextBox.configure(background="#f8d8d8", wrap="word", height=15, width=73)
+        self.messageTextBox.grid(column=0, row=selTextRow, sticky="nse", padx=0, rowspan=4, pady = vert_pady)
+        self.messageTextBox.configure(background="#f8d8d8", wrap="word", height=17, width=73)
         self.messageTextBox.delete(1.0,END)
         self.messageTextBox.insert(END,self.formDataToSend)
         self.widgets.append(self.messageTextBox)
         ## add a scrollbar widget for when the callsign list size exceeds the displayed area
         self.scrollBarText = tk.Scrollbar(self.frame, orient=VERTICAL, command=self.messageTextBox.yview)
-        self.scrollBarText.grid(column=0, row= txtRow, sticky="nsw", rowspan =4)
+        self.scrollBarText.grid(column=0, row= selTextRow, sticky="nsw", rowspan =4, pady = vert_pady)
         ## Link the scrollbar widget to the Listbox widget
         self.messageTextBox['yscrollcommand'] = self.scrollBar.set
         self.widgets.append(self.scrollBarText)
@@ -492,11 +493,14 @@ class Tab1(Frame):
                 ## use the contents of the Text area
                 ## which is stored in self.formDataToSend
                 ## send it to JS8call for transmitting immediately
-                ## self.formDataToSend is encoded and wrapped in 'api.sendLive'
-
-                result = api.sendLive(self.callsignSelected,self.formDataToSend)
-                if result is None:
-                    mb.showwarning(None,"Problem with JS8call transmitting message.")
+                ## after encoding it and then wrapping it
+                intermediate_data = ut.wrapMsg(ut.encodeMessage(self.formDataToSend))
+                list_to_send = create_data_list(intermediate_data)
+                for text_mesg in list_to_send:
+                    text_mesg = "MSG "+text_mesg
+                    result = api.sendLive(self.callsignSelected,text_mesg)
+                    if result is None:
+                        mb.showwarning(None,"Problem with JS8call transmitting message.")
             else:
                 ## remind them to select a destination callsign
                 mb.showinfo("No callsign selected","Select one from the list of callsigns.")
@@ -508,9 +512,11 @@ class Tab1(Frame):
             if self.callsignSelected:
                 if self.japanFlag:
                     self.formDataToSend = "MSG "+self.formDataToSend
-                result = api.sendLiveText(self.callsignSelected,self.formDataToSend)
-                if result is None:
-                    mb.showwarning(None,"Problem with JS8call transmitting message.")
+                list_to_send = create_data_list(self.formDataToSend)
+                for text_mesg in list_to_send:
+                    result = api.sendLive(self.callsignSelected,text_mesg)
+                    if result is None:
+                        mb.showwarning(None,"Problem with JS8call transmitting message.")
             else:
                 ## remind them to select a destination callsign
                 mb.showinfo("No callsign selected","Select one from the list of callsigns.")
@@ -520,44 +526,128 @@ class Tab1(Frame):
             if result == None:
                 return result
             if self.callsignSelected:
-                #if self.japanFlag:
-                #    self.formDataToSend = "MSG "+self.formDataToSend
-                result = api.sendTextAreaToInbox(self.callsignSelected,self.formDataToSend)
-                if result is not None:
-                    mb.showinfo("Result","Message is stored in Inbox!")
-                else:
-                    mb.showwarning(None,"Problem with JS8call storing message.")
+                list_to_send = create_data_list(self.formDataToSend)
+                for text_mesg in list_to_send:
+                    result = api.sendToInbox(self.callsignSelected,text_mesg)
+                    if result is None:
+                        mb.showwarning(None,"Problem with JS8call storing message.")
+                mb.showinfo("Result","Text Area is stored in Inbox!")
             else:
                 mb.showinfo("No callsign selected","Select one from the list of callsigns.")
 
         def storeMessage():
             ## valid if you selected a destination callsign
             if self.callsignSelected:
-                ## self.formDataToSend is encoded and wrapped in 'api.sendToInbox'
-                result = api.sendToInbox(self.callsignSelected,self.formDataToSend)
-                if result is not None:
-                    mb.showinfo("Result","Message is stored in Inbox!")
-                else:
-                    mb.showwarning(None,"Problem with JS8call storing message.")
+                intermediate_data = ut.wrapMsg(ut.encodeMessage(self.formDataToSend))
+                list_to_send = create_data_list(intermediate_data)
+                #print("list_to_send: ",list_to_send)
+                for text_mesg in list_to_send:
+                    #print("test_mesg: ",text_mesg)
+                    result = api.sendToInbox(self.callsignSelected,text_mesg)
+                    #print("storeMessage result: ",result)
+                    if result is None:
+                        mb.showwarning(None,"Problem with JS8call storing message.")
+                mb.showinfo("Result","Message block is stored in Inbox!")
             else:
                 mb.showinfo("No callsign selected","Select one from the list of callsigns.")
 
         def getMessages():
             ## getInbox returns a list of dictionaries from JS8call
-            result = api.getInbox()
+            result = None
+            try:
+                result = api.getInbox()
+                #print("result: ",result)
+            except:
+                pass
             if result:
-                ## self.messageList will hold a list of dictionaries
+                #print("result: ",result)
+                ## result will hold a list of dictionaries
                 ## each dictionary will hold callsign, message text, and messageID
-                ## if wrapped, the message remains the same
-                ## display needs the wrap to differenciate between forms and text
-                self.messageList = result
+                ##
+                ## Check for segmented message
+                mm_list = []
+                plain_list = []
                 self.chooseMessage.delete(0,END)
+                for z in result:
+                    #print("Dict: ",z)
+                    if z["mesg"][:5] == "TAG0X":
+                        ## we have a segmented message, process it
+                        multi_message = {}
+                        multi_message["from"] = z["from"]
+                        pieces = z["mesg"].split(":",2)
+                        multi_message["tag"]=pieces[0][3:]
+                        multi_message["seq"]=pieces[1]
+                        multi_message["tbit"]=pieces[2]
+                        mm_list.append(multi_message)
+                        #print("pieces seq",pieces[1])
+                    else:
+                        plain_list.append(z)
+                ##
+                ## we have walked through the list of messages 
+                ## and ID'ed the tagged messages as well as separated the plain text messages
+                ##
+                ## Process plain text messages first
                 index = 0
-                for x in self.messageList:
+                for x in plain_list:
                     self.chooseMessage.insert(index,x["from"]+', '+x["iden"])
+                    self.messageList.append(x)
+                    index += 1
+
+                ## now process the segmented messages
+                ## 'mm_list' is a list of dictionaries
+                ## NOTE: processing will take several passes to sort out the 'mess'
+                ## JS8call does not store messages in any particular order
+                ##
+                tag_list = []
+                ## lets gather the tags
+                for x in mm_list:
+                    tag_list.append(x["tag"])
+                    
+                tags_unique = []                
+                ## let's filter out the duplicates
+                for x in tag_list:
+                    if x not in tags_unique:
+                        tags_unique.append(x)
+                #print("Unique tags: ",tags_unique)
+                ## let's separate out all the pieces of the unique message
+                unique_message = []
+                #mesg_unique = {}
+                for tag in tags_unique:
+                    for mesg in mm_list:
+                        print("mesg in mm_list: ",mesg)
+                        if mesg['tag'] == tag:
+                            mesg_unique = {}
+                            ## build a dictionary of all the pieces of a message
+                            mesg_unique["tag"] = mesg["tag"]
+                            mesg_unique["from"] = mesg["from"]
+                            mesg_unique["seq"] = mesg["seq"]
+                            mesg_unique["tbit"] = mesg["tbit"]
+                            ## make a list of the dictionary segments
+                            unique_message.append(mesg_unique)
+                    #print("\nunique_message: ",unique_message)
+                    ## now sort the list of dictionaries
+                    #sorted_list = sorted(unique_message, key=unique_message['seq'])
+                    sorted_list = dictionary_bubble_sort(unique_message)
+                    #print("\nsorted_list: ",sorted_list)
+                    result_text = ""
+                    reconstructed_mesg = {}
+                    ## concantanate the text pieces
+                    for y in sorted_list:
+                        result_text += y["tbit"]
+                    ## 'y' should contain the last dictionary in 'sorted_list' 
+                    ## 'from' and 'tag' data should be identical for all   
+                    reconstructed_mesg["from"] = y["from"]
+                    reconstructed_mesg["mesg"] = result_text
+                    reconstructed_mesg["iden"] = y["tag"]
+                    ## Let's append the recon'd message 
+                    self.segmented_messages.append(reconstructed_mesg)
+                    ## add the reconstructed message to the List widget
+                    self.chooseMessage.insert(index,reconstructed_mesg["from"]+', '+reconstructed_mesg["iden"])
+                    self.messageList.append(reconstructed_mesg)
+                    ## 'index' continues from the last position in 'self.chooseMessage'
                     index += 1
             else:
-                mb.showwarning(None,"Problem fetching messages from inbox")
+                mb.showwarning(None,"Message Inbox is empty.")
 
 
 
@@ -589,6 +679,44 @@ class Tab1(Frame):
         def clearTextArea():
             self.messageTextBox.delete(1.0,END)
             return
+        
+        def create_data_list(data_text):
+            ## data holds the text message to send
+            ## data_list will hold the text message broken into multiple
+            ## 'msg' for sending
+            mesg_tag = ut.makeCRC32(data_text)
+            
+            data_list = [data_text[index:index+gv.size_of_data] for index in range(0,len(data_text),gv.size_of_data)]
+            ## Next assign position of each chunk to said message
+            count = 0
+            final_count = len(data_list)
+            ## For a list of 10 messages, make messages read 1_of_10::..., 2_of_10::..., 3_of_10::..., etc.
+            ## The double colon will be the delineator for separating the chunks
+            for text_index in data_list:
+                #print("text_index type: ",type(text_index))
+                #data_list[count]= 'TAG'+mesg_tag+':'+str(count+1)+'_OF_'+str(final_count)+':'+data_list[count]
+                data_list[count]= 'TAG'+mesg_tag+':'+str(count+1)+':'+data_list[count]
+                
+                if count < final_count-1:
+                    count += 1
+            #print("data_list: ",data_list)
+            return data_list
+        
+        def dictionary_bubble_sort(list_dictionaries):
+            n = len(list_dictionaries)
+            list_dict = list_dictionaries
+            for i in range(n-1):
+                for j in range(0, n-i-1):
+                    first_dict = list_dict[j]
+                    second_dict = list_dict[j+1]
+                    ## now we have 2 dictionaries
+                    ## let's compare the sequences
+                    if int(first_dict['seq']) > int(second_dict['seq']):
+                        # swap dictionaries
+                        list_dict[j], list_dict[j + 1] = list_dict[j + 1], list_dict[j]
+            return list_dict
+            
+            
             
 
     def quitProgram(self):

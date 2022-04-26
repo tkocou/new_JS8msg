@@ -50,7 +50,7 @@ def getInbox():
     JS8command = gv.inboxGetMessages
     msgDict = gv.messageDict
     results = api(tuple([JS8command,"", {}]))
-
+    print("getInbox: results: ",results)
     if results is not None:
         ## A list of messages are returned from JS8call
         ## results[2] is a dictionary
@@ -110,24 +110,10 @@ def getInbox():
 
 def sendToInbox(callsign, textMsg):
     JS8command = gv.inboxStoreMessage
-    ## encode and wrap the message
-    msgData = ut.wrapMsg(ut.encodeMessage(textMsg))
+    ## encoding and wrapping the message is done prior to calling this function
     ## JS8call only uses uppercase text
     ## Note the structure of the parameter dictionary below
-    params = {'params':{"CMD":"MSG","CALLSIGN":callsign.upper(),"TEXT":msgData}}
-    results = api(tuple([JS8command,"",params]))
-    if results is not None:
-        return results
-    else:
-        return None
-
-def sendTextAreaToInbox(callsign, textMsg):
-    JS8command = gv.inboxStoreMessage
-    ## encode and wrap the message
-    msgData = textMsg
-    ## JS8call only uses uppercase text
-    ## Note the structure of the parameter dictionary below
-    params = {'params':{"CMD":"MSG","CALLSIGN":callsign.upper(),"TEXT":msgData}}
+    params = {'params':{"CMD":"MSG","CALLSIGN":callsign.upper(),"TEXT":textMsg}}
     results = api(tuple([JS8command,"",params]))
     if results is not None:
         return results
@@ -135,6 +121,7 @@ def sendTextAreaToInbox(callsign, textMsg):
         return None
 
 def sendLive(callsign,textMsg):
+    ## Do a check and then send to JS8call
     JS8command = gv.rxGetSelectedCall
     result = api(tuple([JS8command,"", {}]))
     selCall = result[1]
@@ -142,22 +129,6 @@ def sendLive(callsign,textMsg):
         mb.showinfo("ERROR!","Callsign does not match the selected callsign in JS8call. Please select the target callsign in JS8call.")
     else:
         JS8command = gv.txSendMessage
-        msgData = ut.wrapMsg(textMsg.upper())
-        results = api(tuple([JS8command,msgData,{}]))
-        if results is not None:
-            return results[2]
-        else:
-            return None
-
-def sendLiveText(callsign,textMsg):
-    JS8command = gv.rxGetSelectedCall
-    result = api(tuple([JS8command,"", {}]))
-    selCall = result[1]
-    if selCall != callsign:
-        mb.showinfo("ERROR!","Callsign does not match the selected callsign in JS8call. Please select the target callsign in JS8call.")
-    else:
-        JS8command = gv.txSendMessage
-        ## Send unencoded text from Text area
         msgData = textMsg.upper()
         results = api(tuple([JS8command,msgData,{}]))
         if results is not None:

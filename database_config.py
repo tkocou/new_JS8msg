@@ -18,7 +18,6 @@ def get_configuration_from_db():
         for setting in sett:
             try:
                 gv.commonConfData[setting[1]]=setting[2]
-                #print("gv.commonConfData[{0}] is: ".format(setting[1]),gv.commonConfData[setting[1]])
             except:
                 pass
 
@@ -31,7 +30,7 @@ def save_configuration_to_db():
     result = db_obj.exec_SQL()
     print("Delete ops result is: ",result[0])
     ## insert settings from gv.commonConfData into SQL message
-    message = "INSERT INTO configuration (name,value) VALUES ('call','{0}'),('phone','{1}'),('uname','{2}'),('addr','{3}'),('c-s-z','{4}'),('email','{5}'),('fdate','{6}'),('ftime','{7}'),('fUTC','{8}')".format(gv.commonConfData['call'],gv.commonConfData['phone'],gv.commonConfData['uname'],gv.commonConfData['addr'],gv.commonConfData['c-s-z'],gv.commonConfData['email'],gv.commonConfData['fdate'],gv.commonConfData['ftime'],gv.commonConfData['fUTC'])
+    message = "INSERT INTO configuration (name,value) VALUES ('call','{0}'),('phone','{1}'),('uname','{2}'),('addr','{3}'),('c-s-z','{4}'),('email','{5}'),('fdate','{6}'),('ftime','{7}'),('fUTC','{8}'),('blksz','{9}')".format(gv.commonConfData['call'],gv.commonConfData['phone'],gv.commonConfData['uname'],gv.commonConfData['addr'],gv.commonConfData['c-s-z'],gv.commonConfData['email'],gv.commonConfData['fdate'],gv.commonConfData['ftime'],gv.commonConfData['fUTC'],gv.commonConfData['blksz'])
     ## write new data
     db_obj.set_SQL(message)
     result = db_obj.exec_SQL()

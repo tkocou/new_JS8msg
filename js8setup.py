@@ -39,27 +39,27 @@ def setup():
 
     try:
         os.mkdir(gv.documentPath)
-        print("Created directory 'Doc'.")
+        #print("Created directory 'Doc'.")
     except: ## directory already exists, do nothing
         pass
     try:
         os.mkdir(gv.localPath)
-        print("Created directory 'Local'.")
+        #print("Created directory 'Local'.")
     except: ## directory already exists, do nothing
         pass
     try:
         os.mkdir(gv.templatePath)
-        print("Created directory 'HtmlTemplates'.")
+        #print("Created directory 'HtmlTemplates'.")
     except: ## directory already exists, do nothing
         pass
     try:
         os.mkdir(gv.msgPath)
-        print("Creating directory 'Messages'.")
+        #print("Creating directory 'Messages'.")
     except:
         pass
     try:
         os.mkdir(gv.tempPath)
-        print("Creating directory 'Tmp'.")
+        #print("Creating directory 'Tmp'.")
     except:
         pass
         
@@ -145,7 +145,7 @@ def init_database():
            "CREATE TABLE search (id INTEGER PRIMARY KEY AUTOINCREMENT, profile_id INT, keyword TEXT, last_seen  TIMESTAMP)",
            "INSERT INTO profile(title, def) VALUES ('Default', 1)",
            "INSERT INTO setting (name, value) VALUES ('udp_ip','127.0.0.1'),('udp_port','2242'),('tcp_ip','127.0.0.1'),('tcp_port','2442'),('hide_heartbeat',0),('dark_theme',0)",
-           "INSERT INTO configuration (name, value) VALUES ('call','None'),('phone','None'),('uname','Nobody'),('addr','None'),('c-s-z','Nowhere'),('email','None'),('fdate','1'),('ftime','1'),('fUTC','0')"]
+           "INSERT INTO configuration (name, value) VALUES ('call','None'),('phone','None'),('uname','Nobody'),('addr','None'),('c-s-z','Nowhere'),('email','None'),('fdate','1'),('ftime','1'),('fUTC','0'),('blksz','26')"]
 
     if os.path.exists(gv.js8msg_db):
         ## do not reinitialize an existing database

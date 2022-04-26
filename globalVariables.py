@@ -17,33 +17,24 @@ if project_dir != "Projects":
 
 homeDir = os.path.expanduser('~')
 os.chdir(homeDir)
-
+JS8msg_dir = os.path.join(homeDir,"JS8msg")
+try:
+    os.mkdir(JS8msg_dir)
+except:
+    pass
+msgPath = os.path.join(JS8msg_dir,"Messages")
+localPath = os.path.join(JS8msg_dir,"Local")
+templatePath = os.path.join(JS8msg_dir,"HtmlTemplates")
+documentPath = os.path.join(JS8msg_dir,"Doc")
+tempPath = os.path.join(JS8msg_dir,"Tmp")
 ## Probably need to get system platform information
-pathSep = ""
+
 sysPlatform = platform.system()
 if sysPlatform == "Linux":
-    pathSep = "/"
     clearConsoleCmd = "clear"
-    JS8msg_dir = os.path.join(homeDir,"JS8msg")
-    try:
-        os.mkdir(JS8msg_dir)
-    except:
-        pass
-    msgPath = os.path.join(JS8msg_dir,"Messages")
-    localPath = os.path.join(JS8msg_dir,"Local")
-    templatePath = os.path.join(JS8msg_dir,"HtmlTemplates")
-    documentPath = os.path.join(JS8msg_dir,"Doc")
-    tempPath = os.path.join(JS8msg_dir,"Tmp")
 elif sysPlatform == "Windows":
-    pathSep = "\\"
     clearConsoleCmd = "cls"
-    msgPath = os.path.join(homeDir,"Messages")
-    localPath = os.path.join(homeDir,"Local")
-    templatePath = os.path.join(homeDir,"HtmlTemplates")
-    binPath = os.path.dirname(__file__)
-    tempPath = os.path.join(homedir,"Tmp")
-    documentPath = os.path.join(homedir,"Doc")
-    
+
 if project_dir == "Projects":
     project_dir += "/js8msg2"
     msgPath = os.path.join(project_dir,"Messages")
@@ -86,25 +77,16 @@ messageDictKeys = ["from","mesg","iden"]
 whichForm = {"form":""}
 
 ## flag for japanese use
-japanFlag = FALSE
+japanFlag = False
 
-## Some path variables
-## 
-binPath = ""
-auxPath = ""
-storePath = ""
-templatesPath = ""
-tmpPath = ""
-configurePath = ""
+size_of_data = 26
 
 ##
 ## Configuration dictionary terms
 ##
-commonConfData = {'call':"", 'phone':"", 'uname':"", 'addr':"", 'c-s-z':"", 'email':"", 'fdate':"", 'ftime':"", 'fUTC':""}
-commonConfText = {'call':"Callsign:", 'phone':"Phone#:", 'uname':"Name: ", 'addr':"Address: ", 'c-s-z':"City/St/Zip:", 'email':"Email: ", 'fdate':"Date Fmt: ", 'ftime':"Time Fmt: ", 'fUTC':"Timezone: "}
-commonConfKeys = ['call','phone','uname','addr', 'c-s-z','email','fdate', 'ftime','fUTC']
-readConfFlag = False
-readDataFlag = False
+commonConfData = {'call':"", 'phone':"", 'uname':"", 'addr':"", 'c-s-z':"", 'email':"", 'fdate':"", 'ftime':"", 'fUTC':"", 'blksz':"26"}
+commonConfText = {'call':"Callsign:", 'phone':"Phone#:", 'uname':"Name: ", 'addr':"Address: ", 'c-s-z':"City/St/Zip:", 'email':"Email: ", 'fdate':"Date Fmt: ", 'ftime':"Time Fmt: ", 'fUTC':"Timezone: ", 'blksz':"Block_size: "}
+commonConfKeys = ['call','phone','uname','addr', 'c-s-z','email','fdate', 'ftime','fUTC','blksz']
 
 ## 
 ## A set of dictionaries and lists for ICS-213
@@ -113,7 +95,6 @@ ics213FormData = {'inc':"",'to':"",'fm':"",'p1':"",'p2':"",'sb':"",'d1':"",'t1':
 ics213FieldsText =  {'inc':"Inc: ",'to':"To: ",'fm':"Fm: ",'p1':"Pos.: ",'p2':"Pos.: ",'sb':"Sub.: ",'d1':"Date: ",'t1':"Time: ",'mg':"Message",'s1':"Appr. ",'p3':"Pos. ",'rp':"Reply:  ",'d2':"Date:   ",'t2':"Time:   ",'s2':"Name: ",'p4':"Pos.:","file":"ICS-213"}
 origIcs213FieldKeys = ['inc','to','fm','p1','p2','sb','d1','t1','mg','s1','p3']
 rplyIcs213FieldKeys = ['rp','d2','t2','s2','p4','file']
-respIcs213FormData = {'rp':"",'d2':"",'t2':"",'s2':"",'p4':"",'file':""}
 totalIcs213Keys = ['inc','to','p1','fm','p2','sb','d1','t1','mg','s1','p3','rp','s2','p4','d2','t2','file']
 
 ##

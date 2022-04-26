@@ -43,6 +43,7 @@ class Tab2(Frame):
         self.formatDateEntryData = StringVar()
         self.formatTimeEntryData = StringVar()
         self.fileEntryData = StringVar()
+        self.blkszEntryData = StringVar()
         self.colWidth = 40
         self.label_padx = 8
         
@@ -55,11 +56,6 @@ class Tab2(Frame):
         self.blankLabel.config(text = '         ')
         self.blankLabel.grid(column=2,row=0, sticky="w")
         self.widgets.append(self.blankLabel)
-
-        #self.quitButton = Button(self.frame, text="Quit", command=lambda:self.quitProgram())
-        #self.quitButton.grid(column=3,row=0, sticky = "e")
-        #self.quitButton.configure(bg="blue", fg="white")
-        #self.widgets.append(self.quitButton)
         
         label_col = 0
         
@@ -158,14 +154,6 @@ class Tab2(Frame):
         self.personalEmailEntry.delete(0,END)
         ## Insert any new text
         self.personalEmailEntry.insert(0,self.commonConfData["email"])
-        ## keep track of which set of dynamic widgets are displayed
-        #gv.widget_list_dict["Tab2a"] = self.widgets
-
-    #def datetime(self):
-        ## Table Entry Area
-        #self.tableArea = "datetime"
-        ## reset widget list
-        #self.widgets = []
         
         dtRow0 = 8
         self.blankLabel = Label(self.frame)
@@ -207,7 +195,20 @@ class Tab2(Frame):
             #self.timeFormat.grid(column=1, row=radioRow, sticky ="e")
             radioRow += 1
         self.formatTimeEntryData.set(self.commonConfData["ftime"])
+        
+        blkRow = dtRow+6
+        self.block_size_label = Label(self.frame, text=self.commonConfText["blksz"])
+        self.widgets.append(self.block_size_label)
+        self.block_size_label.grid(column=label_col, row=blkRow, sticky="e", padx = self.label_padx)
+        
+        self.block_size_entry = Entry(self.frame, textvariable=self.blkszEntryData)
+        self.widgets.append(self.block_size_entry)
+        self.block_size_entry.grid(column=1, row=blkRow, sticky='w')
+        self.block_size_entry.delete(0,END)
+        self.block_size_entry.insert(0,self.commonConfData["blksz"])
+        gv.size_of_data = self.commonConfData["blksz"]
         gv.widget_list_dict["Tab2"] = self.widgets
+        
 
     def radiogramItems(self):
         ## reset widget list
@@ -252,6 +253,10 @@ class Tab2(Frame):
                     self.commonConfData[key] = "1"
                 elif timeValue == "5" or timeValue == "6":
                     self.commonConfData[key] = "2"
+            elif key == "blksz":
+                self.commonConfData[key] = self.blkszEntryData.get()
+                ## pass the setting to the globalVariables
+                gv.size_of_data = self.commonConfData[key]
         
         ## To transfer, we blank out the old dictioary
         gv.commonConfData = {}
@@ -297,6 +302,8 @@ class Tab2(Frame):
                 self.formatTimeEntryData.set("")
             elif key == "fUTC":
                 self.commonConfData[key] = ""
+            elif key == "blksz":
+                pass
         self.clearDataLabel['text'] = "Configuration data cleared."
         gv.widget_list_dict["Tab2"] = self.widgets
                 
