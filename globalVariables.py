@@ -73,13 +73,20 @@ stationCallsign = ""
 messageDict = {"from":"","mesg":"","iden":""}
 messageDictKeys = ["from","mesg","iden"]
 
-# keep track of which form is being used
-whichForm = {"form":""}
-
 ## flag for japanese use
 japanFlag = False
 
+## default size of chunks when sending a form
+## the purpose for chunking of the form data is to comply with ID regulations
 size_of_data = 26
+
+## flags to enable print statements
+debug_flag_database_config = False
+debug_flag_Tab1 = False
+debug_flag_Tab2 = False
+debug_flag_Tab3 = False
+debug_flag_Tab4 = False
+
 
 ##
 ## Configuration dictionary terms

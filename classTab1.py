@@ -12,6 +12,8 @@ import js8API as api
 import henkankun as hn
 from operator import itemgetter, attrgetter
 
+debug_flag = gv.debug_flag_Tab1
+
 #### ======================== JS8msg Control =============================
 class Tab1(Frame):
     def __init__(self,parent,controller):
@@ -87,7 +89,7 @@ class Tab1(Frame):
                     if x:
                         self.callsignList.append(x)
             else:
-                mb.showinfo("Error!","Either JS8call is not running or TCP server in JS8call is not running.")
+                mb.showinfo("Error!","Either JS8call is not running or TCP/UDP server in JS8call is not running.")
                 callList = []
             ## clear out any old list being displayed
             self.chooseList.delete(0,'end')
@@ -155,10 +157,12 @@ class Tab1(Frame):
             ## self.chooseList.curselection() returns a tuple
             ## select the first element and assign to 'index'
             index = self.chooseList.curselection()
-            #print("index: ",index)
+            if debug_flag:
+                print("index: ",index)
             if index != ():
                 select = index[0]
-                #print("callsignList: ",self.callsignList[select])
+                if debug_flag:
+                    print("callsignList: ",self.callsignList[select])
                 self.callsignSelected = self.callsignList[select]
                 self.callsignSelIndex = select
                 self.labelText = "Selected: "+self.callsignSelected
@@ -168,11 +172,6 @@ class Tab1(Frame):
                 self.callsignSelected = self.callsignList[0]
                 self.callsignSelIndex = 0
                 self.labelText = "Selected: "+self.callsignList[0]
-
-            ## Display the selected callsign
-            #listBoxLabel = Label(self)
-            #listBoxLabel.grid(column=0,row=2, sticky="nw", padx=13)
-            #listBoxLabel.configure(text=self.labelText, bg="#d8b8d8", pady=6, width = 23)
 
         def msgDisplay():
             ##
@@ -378,7 +377,6 @@ class Tab1(Frame):
         self.chooseAction.bind('<<ComboboxSelected>>', selectMsgOption)
         self.widgets.append(self.chooseAction)
 
-        #print("Fini ComboBox widget")
 
         ## Add a group widgets
         self.groupLabel = tk.Button(self.frame, text="Add Group and Click =-> ", command=getGroup)
@@ -479,8 +477,6 @@ class Tab1(Frame):
         ## we've collected a list of widgets, let's transfer it to the global dictionary
         gv.widget_list_dict["Tab1"] = self.widgets
         
-        
-        #print("Fini Text area")
 
         ## added buttons to invoke the Japanese encoding functions written by JE6VGZ
         if self.japanFlag:
@@ -540,11 +536,14 @@ class Tab1(Frame):
             if self.callsignSelected:
                 intermediate_data = ut.wrapMsg(ut.encodeMessage(self.formDataToSend))
                 list_to_send = create_data_list(intermediate_data)
-                #print("list_to_send: ",list_to_send)
+                if debug_flag:
+                    print("list_to_send: ",list_to_send)
                 for text_mesg in list_to_send:
-                    #print("test_mesg: ",text_mesg)
+                    if debug_flag:
+                        print("test_mesg: ",text_mesg)
                     result = api.sendToInbox(self.callsignSelected,text_mesg)
-                    #print("storeMessage result: ",result)
+                    if debug_flag:
+                        print("storeMessage result: ",result)
                     if result is None:
                         mb.showwarning(None,"Problem with JS8call storing message.")
                 mb.showinfo("Result","Message block is stored in Inbox!")
@@ -556,11 +555,11 @@ class Tab1(Frame):
             result = None
             try:
                 result = api.getInbox()
-                #print("result: ",result)
+                if debug_flag:
+                    print("result: ",result)
             except:
                 pass
             if result:
-                #print("result: ",result)
                 ## result will hold a list of dictionaries
                 ## each dictionary will hold callsign, message text, and messageID
                 ##
@@ -569,7 +568,8 @@ class Tab1(Frame):
                 plain_list = []
                 self.chooseMessage.delete(0,END)
                 for z in result:
-                    #print("Dict: ",z)
+                    if debug_flag:
+                        print("Dict: ",z)
                     if z["mesg"][:5] == "TAG0X":
                         ## we have a segmented message, process it
                         multi_message = {}
@@ -579,7 +579,8 @@ class Tab1(Frame):
                         multi_message["seq"]=pieces[1]
                         multi_message["tbit"]=pieces[2]
                         mm_list.append(multi_message)
-                        #print("pieces seq",pieces[1])
+                        if debug_flag:
+                            print("pieces seq",pieces[1])
                     else:
                         plain_list.append(z)
                 ##
@@ -608,13 +609,15 @@ class Tab1(Frame):
                 for x in tag_list:
                     if x not in tags_unique:
                         tags_unique.append(x)
-                #print("Unique tags: ",tags_unique)
+                if debug_flag:
+                    print("Unique tags: ",tags_unique)
                 ## let's separate out all the pieces of the unique message
                 unique_message = []
                 #mesg_unique = {}
                 for tag in tags_unique:
                     for mesg in mm_list:
-                        print("mesg in mm_list: ",mesg)
+                        if debug_flag:
+                            print("mesg in mm_list: ",mesg)
                         if mesg['tag'] == tag:
                             mesg_unique = {}
                             ## build a dictionary of all the pieces of a message
@@ -624,11 +627,13 @@ class Tab1(Frame):
                             mesg_unique["tbit"] = mesg["tbit"]
                             ## make a list of the dictionary segments
                             unique_message.append(mesg_unique)
-                    #print("\nunique_message: ",unique_message)
+                    if debug_flag:
+                        print("\nunique_message: ",unique_message)
                     ## now sort the list of dictionaries
                     #sorted_list = sorted(unique_message, key=unique_message['seq'])
                     sorted_list = dictionary_bubble_sort(unique_message)
-                    #print("\nsorted_list: ",sorted_list)
+                    if debug_flag:
+                        print("\nsorted_list: ",sorted_list)
                     result_text = ""
                     reconstructed_mesg = {}
                     ## concantanate the text pieces
@@ -667,7 +672,8 @@ class Tab1(Frame):
             ## fetch the text within the Text box
             try:
                 self.formDataToSend = self.messageTextBox.get(1.0,END)
-                #print("Length of text: ", len(self.formDataToSend))
+                if debug_flag:
+                    print("Length of text: ", len(self.formDataToSend))
                 if len(self.formDataToSend) == 1:
                     mb.showwarning(None,"Type a text message in the Text Area.")
                     return None
@@ -693,13 +699,15 @@ class Tab1(Frame):
             ## For a list of 10 messages, make messages read 1_of_10::..., 2_of_10::..., 3_of_10::..., etc.
             ## The double colon will be the delineator for separating the chunks
             for text_index in data_list:
-                #print("text_index type: ",type(text_index))
+                if debug_flag:
+                    print("text_index type: ",type(text_index))
                 #data_list[count]= 'TAG'+mesg_tag+':'+str(count+1)+'_OF_'+str(final_count)+':'+data_list[count]
                 data_list[count]= 'TAG'+mesg_tag+':'+str(count+1)+':'+data_list[count]
                 
                 if count < final_count-1:
                     count += 1
-            #print("data_list: ",data_list)
+            if debug_flag:
+                print("data_list: ",data_list)
             return data_list
         
         def dictionary_bubble_sort(list_dictionaries):
@@ -710,7 +718,7 @@ class Tab1(Frame):
                     first_dict = list_dict[j]
                     second_dict = list_dict[j+1]
                     ## now we have 2 dictionaries
-                    ## let's compare the sequences
+                    ## let's compare the sequence numbers
                     if int(first_dict['seq']) > int(second_dict['seq']):
                         # swap dictionaries
                         list_dict[j], list_dict[j + 1] = list_dict[j + 1], list_dict[j]

@@ -4,14 +4,16 @@ from tkinter import messagebox as mb
 import sys
 import os
 import globalVariables as gv
-import utilities as ut
 import create_menu as cm
-import database_config as dc
+import database_functions as df
 
 #### ======================== Start of Configuration ===================================
 ##
 
 commonConfData = gv.commonConfData
+debug_flag = gv.debug_flag_Tab2
+## settings will be a dictionary
+settings = df.get_settings()
 
 ## Common Configuration Data
 class Tab2(Frame):
@@ -73,7 +75,6 @@ class Tab2(Frame):
 
         self.personalCallsignEntry = Entry(self.frame, textvariable = self.callsignEntryData, width=self.colWidth)
         self.widgets.append(self.personalCallsignEntry)
-        #self.personalCallsignEntry.grid(column=1, row=callsignRow,  columnspan=2, sticky="e")
         self.personalCallsignEntry.grid(column=1, row=callsignRow,  columnspan=2, sticky="w")
         ## first clear any text
         self.personalCallsignEntry.delete(0,END)
@@ -88,7 +89,6 @@ class Tab2(Frame):
 
         self.personalNameEntry = Entry(self.frame, textvariable = self.nameEntryData, width=self.colWidth)
         self.widgets.append(self.personalNameEntry)
-        #self.personalNameEntry.grid(column=1, row=nameRow,  columnspan=2, sticky="e")
         self.personalNameEntry.grid(column=1, row=nameRow,  columnspan=2, sticky="w")
         ## first clear any text
         self.personalNameEntry.delete(0,END)
@@ -103,7 +103,6 @@ class Tab2(Frame):
 
         self.personalPhoneEntry = Entry(self.frame, textvariable= self.phoneEntryData, width=self.colWidth)
         self.widgets.append(self.personalPhoneEntry)
-        #self.personalPhoneEntry.grid(column=1, row=phoneRow, columnspan=2, sticky="e")
         self.personalPhoneEntry.grid(column=1, row=phoneRow, columnspan=2, sticky="w")
         ## first clear any text
         self.personalPhoneEntry.delete(0,END)
@@ -118,7 +117,6 @@ class Tab2(Frame):
 
         self.personalAddressEntry = Entry(self.frame, textvariable= self.addressEntryData, width=self.colWidth)
         self.widgets.append(self.personalAddressEntry)
-        #self.personalAddressEntry.grid(column=1, row=addrRow, columnspan=2, sticky="e")
         self.personalAddressEntry.grid(column=1, row=addrRow, columnspan=2, sticky="w")
         ## first clear any text
         self.personalAddressEntry.delete(0,END)
@@ -133,7 +131,6 @@ class Tab2(Frame):
 
         self.personalCszEntry = Entry(self.frame, textvariable= self.cityEntryData, width=self.colWidth)
         self.widgets.append(self.personalCszEntry)
-        #self.personalCszEntry.grid(column=1, row=cszRow, columnspan=2, sticky="e")
         self.personalCszEntry.grid(column=1, row=cszRow, columnspan=2, sticky="w")
         ## first clear any text
         self.personalCszEntry.delete(0,END)
@@ -148,7 +145,6 @@ class Tab2(Frame):
 
         self.personalEmailEntry = Entry(self.frame, textvariable= self.emailEntryData, width=self.colWidth)
         self.widgets.append(self.personalEmailEntry)
-        #self.personalEmailEntry.grid(column=1, row=emailRow, columnspan=2, sticky="e")
         self.personalEmailEntry.grid(column=1, row=emailRow, columnspan=2, sticky="w")
         ## first clear any text
         self.personalEmailEntry.delete(0,END)
@@ -177,14 +173,12 @@ class Tab2(Frame):
             self.dateFormat = ttk.Radiobutton(self.frame, text = format[0], value = format[1], variable = self.formatDateEntryData)
             self.widgets.append(self.dateFormat)
             self.dateFormat.grid(column=1, row=radioRow, sticky="w")
-            #self.dateFormat.grid(column=0, row=radioRow, sticky="e")
             radioRow += 1
         self.formatDateEntryData.set(self.commonConfData["fdate"])
 
         self.datetimeTimeLabel = Label(self.frame,text=self.commonConfText["ftime"])
         self.widgets.append(self.datetimeTimeLabel)
         self.datetimeTimeLabel.grid(column=2, row=dtRow, sticky="e")
-        #self.datetimeTimeLabel.grid(column=1, row=dtRow, sticky="w")
         
         ## Set up second radiobutton list for time formats
         radioRow = dtRow
@@ -192,7 +186,6 @@ class Tab2(Frame):
             self.timeFormat = ttk.Radiobutton(self.frame, text = format[0], value = format[1], variable = self.formatTimeEntryData)
             self.widgets.append(self.timeFormat)
             self.timeFormat.grid(column=3, row=radioRow, sticky ="w")
-            #self.timeFormat.grid(column=1, row=radioRow, sticky ="e")
             radioRow += 1
         self.formatTimeEntryData.set(self.commonConfData["ftime"])
         
@@ -207,21 +200,25 @@ class Tab2(Frame):
         self.block_size_entry.delete(0,END)
         self.block_size_entry.insert(0,self.commonConfData["blksz"])
         gv.size_of_data = self.commonConfData["blksz"]
+        
+        
         gv.widget_list_dict["Tab2"] = self.widgets
         
 
     def radiogramItems(self):
         ## reset widget list
         self.widgets = []
-        print("Misc. Items of Form")
+        if debug_flag:
+            print("Misc. Items of Form")
         pass
         
     def loadData(self):
-        ## dc.get_configuration_from_db() function
+        ## df.get_configuration_from_db() function
         ## assigns DB results directly to gv.commonConfData
-        dc.get_configuration_from_db()
+        df.get_configuration_from_db()
         self.commonConfData = gv.commonConfData
-        #print("Checking LOAD: ",self.commonConfData)
+        if debug_flag:
+            print("Checking LOAD: ",self.commonConfData)
 
 
     def saveData(self):
@@ -262,11 +259,12 @@ class Tab2(Frame):
         gv.commonConfData = {}
         ## and add the new dictionary
         gv.commonConfData.update(self.commonConfData)
-        
-        print("Checking assignment to Global: ",gv.commonConfData)
-        dc.save_configuration_to_db()
-        print("Config data saved. Re-reading data.")
-        dc.check_stored_configuration()
+        if debug_flag:
+            print("Checking assignment to Global: ",gv.commonConfData)
+        df.save_configuration_to_db()
+        if debug_flag:
+            print("Config data saved. Re-reading data.")
+        df.check_stored_configuration()
 
 
     def clearData(self):
@@ -308,5 +306,4 @@ class Tab2(Frame):
         gv.widget_list_dict["Tab2"] = self.widgets
                 
     def quitProgram(self):
-        #ut.clearWidgetForm(self.widgets)
         self.controller.shutting_down()

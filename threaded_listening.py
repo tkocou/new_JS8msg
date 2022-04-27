@@ -13,7 +13,7 @@ import time
 from threading import *
 from threading import Thread
 from io import StringIO as S_IO
-import utilities as ut
+import database_functions as df
 import DBHandler as dbh
 
 
@@ -29,8 +29,8 @@ class TCP_rx(Thread):
         self.keep_running = False
         
     def run(self):
-        ## Go to 'utilities.py', run 'get_db_connection()' and assign returned object
-        self.db_obj = ut.get_db_connection()
+        ## Go to 'database_functions.py', run 'get_db_connection()' and assign returned object
+        self.db_obj = df.get_db_connection()
         self.cur = self.db_obj.cursor()
         
         tracked_types = {"RX.ACTIVITY","RX.DIRECTED","RX.SPOT"}

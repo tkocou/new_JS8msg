@@ -8,7 +8,6 @@
 import DBHandler as dbh 
 import socket
 import sys
-import utilities as ut
 import threaded_listening as tl
 import tkinter as tk
 from tkinter.ttk import *
@@ -20,8 +19,9 @@ import classTab2 as T2
 import classTab3 as T3
 import classTab4 as T4
 import globalVariables as gv
-import create_menu as cm 
-
+import create_menu as cm
+import database_functions as df 
+import utilities as ut
 
 class App(tk.Frame):
     ## event was moved here to create a class variable
@@ -39,9 +39,9 @@ class App(tk.Frame):
         ## get_socket will return either a socket or 'None'
         ## this info will help with situations where JS8call
         ## is not running
-        self.sock = ut.get_socket()
+        self.sock = df.get_socket()
         self.receiver = None
-        self.db_conn = ut.get_db_connection()
+        self.db_conn = df.get_db_connection()
         self.frame = master
         
         ## set up a display frame for program GUIes
@@ -135,7 +135,6 @@ def main():
     js.setup()
     root = tk.Tk()
     app = App(master = root)
-    #app.Protocol("WM_DELETE_WINDOW",app.shutting_down)
     app.mainloop()
     
 if __name__ == '__main__':

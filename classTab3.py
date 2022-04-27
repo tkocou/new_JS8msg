@@ -3,7 +3,7 @@ from tkinter import ttk
 from tkinter import messagebox as mb
 import globalVariables as gv
 import utilities as ut
-import database_config as dc
+import database_functions as df
 import ics213_utilities as ics
 
 ## Note: the main difference between classes Tab3
@@ -59,7 +59,7 @@ class Tab3(Frame):
         self.rDate = self.rTime = ""
 
         #### Load up the configuration data
-        dc.get_configuration_from_db()
+        df.get_configuration_from_db()
         self.commonConfData = gv.commonConfData
         
         if not self.loadedFlag:
