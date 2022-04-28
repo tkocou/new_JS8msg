@@ -3,3 +3,5 @@ Moved JS8msg code from 'Notebook' style GUI to 'Menu' style GUI
 Removed unused variables in GlobalVariables.py
 
 Fixed time to ID issue during sending of ICS forms
+
+Found JS8Call TCP connections were maxing out causing chunk upload to be truncated. In JS8Call reporting tab, raised max connections to 99. 

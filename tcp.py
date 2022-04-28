@@ -9,10 +9,16 @@
 from socket import socket, AF_INET, SOCK_STREAM
 import json
 import time
+import database_functions as df
+import globalVariables as gv
 
 ## insure that the tcp server is enabled in JS8call
 ## will switch over to settings{}
-server = ('127.0.0.1', 2442)
+
+#server = ('127.0.0.1', 2442)
+#settings = df.get_settings()
+#server = (settings['tcp_ip'], int(settings['tcp_port']))
+
 
 def from_message(content):
     try:
@@ -31,6 +37,12 @@ class Client(object):
         self.rigCommand = ''
         self.rigValue = ""
         self.rigParams = {}
+        self.settings = df.get_settings(self)
+        ## do we listen to JS8call TCP or UDP ports?
+        if gv.TCP:
+            self.server = (self.settings['tcp_ip'], int(self.settings['tcp_port']))
+        else:
+            self.server = (self.settings['udp_ip'], int(self.settings['udp_port']))
 
     def process(self, message):
         ## parse the incoming message
@@ -70,7 +82,7 @@ class Client(object):
     def connect(self):
         self.sock = socket(AF_INET, SOCK_STREAM)
         try:
-            self.sock.connect(server)
+            self.sock.connect(self.server)
         except:
             ## JS8call is not running or is not running the TCP server
             return None
@@ -81,7 +93,7 @@ class Client(object):
 
             ## listen for a reply by JS8call
             while self.connected:
-                content = self.sock.recv(8192)
+                content = self.sock.recv(gv.recv_buffer_size)
                 if not content:
                     break
 

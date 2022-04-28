@@ -1,24 +1,32 @@
 import globalVariables as gv
 import DBHandler as dbh
+from socket import socket, AF_INET, SOCK_STREAM
 
-debug_flag = gv.debug_flag_database_config
+debug_flag = gv.debug_flag_database_functions
 
 def get_db_connection():
     ## database was initialized during setup
     ## 'js8msg_db' is defined in file 'globalVariables.py'
     return dbh.DB_object(gv.js8msg_db)
 
-def get_settings():
+def get_settings(self):
     ## database was initialized during setup
     message = "SELECT * FROM setting"
     db_obj = get_db_connection()
+    if debug_flag:
+        print("get_settings: db_obj: ",db_obj)
     db_obj.set_SQL(message)
     result = db_obj.exec_SQL()
+    if debug_flag:
+        print("get_settings: result: ",result)
     dbsettings = db_obj.fetch_all_SQL()
+    if debug_flag:
+        print("get_settings: dbsettings: ",dbsettings)
     db_obj.close_SQL()
     # remove boolean from answer
     dbset = dbsettings[1:]
-    #print("get_settings: dbset is: ",dbset)
+    if debug_flag:
+        print("get_settings: dbset is: ",dbset)
     ## let's make a dictionary from the settings
     settings = {}
     for sett in dbset:
@@ -29,11 +37,11 @@ def get_settings():
                 pass
     return settings
 
-def get_socket():
+def get_socket(self):
     ## fetch settings
-    settings = get_settings()
+    settings = get_settings(self)
     ## set up network connection
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock = socket(AF_INET, SOCK_STREAM)
     try:
         sock.connect((settings['tcp_ip'], int(settings['tcp_port'])))
         return sock
@@ -43,10 +51,8 @@ def get_socket():
 def get_configuration_from_db():
     ## database was initialized during setup
     message = "SELECT * FROM configuration"
-    #print(message)
     db_obj = get_db_connection()
     db_obj.set_SQL(message)
-    #result = db_obj.exec_SQL()
     dbsettings = db_obj.fetch_all_SQL()
     db_obj.close_SQL()
     # remove boolean from answer

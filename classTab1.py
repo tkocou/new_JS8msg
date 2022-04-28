@@ -10,7 +10,7 @@ import globalVariables as gv
 import utilities as ut
 import js8API as api
 import henkankun as hn
-from operator import itemgetter, attrgetter
+#from operator import itemgetter, attrgetter
 
 debug_flag = gv.debug_flag_Tab1
 
@@ -131,6 +131,7 @@ class Tab1(Frame):
                 self.chooseAction.set('')
             elif selAction == "Store Form Message to Inbox":
                 storeMessage()
+                clearTextArea()
                 self.chooseAction.set('')
             elif selAction == "Get All Messages from Inbox":
                 getMessages()
@@ -180,15 +181,19 @@ class Tab1(Frame):
             formDataDict = {}
             textKey = ""
             index=self.chooseMessage.curselection()
+            if debug_flag:
+                print("classTab1: msgDisplay: index: ",index)
             if index != ():
+                ## if no message was selected, default to the first message
                 select = index[0]
                 
                 ## transfer dictionary from list of dictionaries
                 self.msgSelected = self.messageList[select]
                 self.labelText2 = self.msgSelected["from"]+', '+self.msgSelected["iden"]
-
+                if debug_flag:
+                    print("classTab1: msgDisplay: self.msgSelected: ",self.msgSelected)
                 ## the message could be wrapped and encoded
-                if self.msgSelected["mesg"][:8] == 'EMCOMMG=':
+                if self.msgSelected["mesg"][:8] == 'EMCOMMG^':
 
                     ## pull out message from dictionary. Unwrap and decode it
                     formDecoded = ut.decodeMessage(ut.unwrapMsg(self.msgSelected["mesg"]))
@@ -254,12 +259,12 @@ class Tab1(Frame):
 
                     ## outputHtml gives back a HTML document
                     ## parse off the 'file' key from the formKeys, not needed!
-                    result = ut.outputHtml(formData, keyFile[:-1], templateFile)
+                    html_result = ut.outputHtml(formData, keyFile[:-1], templateFile)
 
                     ## write the form to a file for the web browser
-                    self.htmlFile = gv.tempPath+"temp.html"
+                    self.htmlFile = os.path.join(gv.tempPath,"temp.html")
                     fh = open(self.htmlFile,"w")
-                    for x in result:
+                    for x in html_result:
                         fh.writelines(x)
                     fh.close()
 
@@ -267,19 +272,19 @@ class Tab1(Frame):
                     self.messageTextBox.delete(1.0,END)
                     ## build the URL for the web browser
                     url = 'file://'+os.path.realpath(self.htmlFile)
+                    if debug_flag:
+                        print("classTab1: msgDisplay: self.htmlFile: ",self.htmlFile)
+                        print("classTab1: msgDisplay: url: ",url)
                     ## open the HTML file in a web browser
                     wb.open(url)
                     self.messageTextBox.delete(1.0,END)
-                    self.messageTextBox.insert(END,"If you do not see a webpage, check a web browser for ICS Form")
-                    ## Sometimes the web browser will send extra messages to the
-                    ## Python console
-                    ## Clear the Python console of messages from web browser
-                    x =1
-                    while x < 3:
-                        ## wait 1 second and then clear
-                        ut.clearConsole()
-                        x += 1
-
+                    mb_text_message = """If you do not see a webpage, check an existing, opened web browser for ICS Form.
+                    \nThe web browser might print extranous messages to the Python console.
+                    \nAny new reports will overwite the existing HTML file.
+                    \n\nTo make a hard copy of the report, use the print function of the web browser.
+                    """
+                    self.messageTextBox.insert(END,mb_text_message)
+                    
                 else:
                     ## display regular text in Text box
                     formData = self.msgSelected["mesg"]
@@ -290,10 +295,9 @@ class Tab1(Frame):
                         setHenkankunButtons()
                     else:
                         self.messageTextBox.insert(END,formData+'\n')
-                ## update the display and show the selected message id
-                #listBoxLabel2 = Label(self)
-                #listBoxLabel2.grid(column=0,row=1, sticky="se", padx=13)
-                #listBoxLabel2.configure(text=self.labelText2, bg="#d8b8d8", pady=6, width = 23)
+
+            else:
+                mb.showinfo("Error!","The message box is empty. Please get the messages from the JS8call inbox.")
 
         def setHenkankunButtons():
             ## reset list variable
@@ -552,14 +556,14 @@ class Tab1(Frame):
 
         def getMessages():
             ## getInbox returns a list of dictionaries from JS8call
-            result = None
+            api_result = None
             try:
-                result = api.getInbox()
+                api_result = api.getInbox()
                 if debug_flag:
-                    print("result: ",result)
+                    print("classTab1: getMessages: api_result: ",api_result)
             except:
                 pass
-            if result:
+            if api_result:
                 ## result will hold a list of dictionaries
                 ## each dictionary will hold callsign, message text, and messageID
                 ##
@@ -567,14 +571,21 @@ class Tab1(Frame):
                 mm_list = []
                 plain_list = []
                 self.chooseMessage.delete(0,END)
-                for z in result:
+                self.messageList = []
+                if debug_flag:
+                    print("classTab1: getMessages: len(z): ",len(api_result))
+                for z in api_result:
                     if debug_flag:
-                        print("Dict: ",z)
-                    if z["mesg"][:5] == "TAG0X":
+                        print("classTab1: getMessages: Dict: ",z)
+                    if z["TEXT"][:5] == "TAG0X":
+                        if debug_flag:
+                            print("classTab1: getMessages: z['TEXT']:",z["TEXT"])
                         ## we have a segmented message, process it
                         multi_message = {}
-                        multi_message["from"] = z["from"]
-                        pieces = z["mesg"].split(":",2)
+                        multi_message["from"] = z["FROM"]
+                        pieces = z["TEXT"].split(":",2)
+                        if debug_flag:
+                            print("classTab1: getMessages: pieces:",pieces)
                         multi_message["tag"]=pieces[0][3:]
                         multi_message["seq"]=pieces[1]
                         multi_message["tbit"]=pieces[2]
@@ -582,7 +593,11 @@ class Tab1(Frame):
                         if debug_flag:
                             print("pieces seq",pieces[1])
                     else:
-                        plain_list.append(z)
+                        plain_dict = {}
+                        plain_dict["from"] = z["FROM"]
+                        plain_dict["mesg"] = z["TEXT"]
+                        plain_dict["iden"] = z["_ID"]
+                        plain_list.append(plain_dict)
                 ##
                 ## we have walked through the list of messages 
                 ## and ID'ed the tagged messages as well as separated the plain text messages
@@ -610,14 +625,14 @@ class Tab1(Frame):
                     if x not in tags_unique:
                         tags_unique.append(x)
                 if debug_flag:
-                    print("Unique tags: ",tags_unique)
+                    print("classTab1: getMessages: Unique tags: ",tags_unique)
                 ## let's separate out all the pieces of the unique message
                 unique_message = []
-                #mesg_unique = {}
                 for tag in tags_unique:
+                    message_count = 0
                     for mesg in mm_list:
                         if debug_flag:
-                            print("mesg in mm_list: ",mesg)
+                            print("classTab1: getMessages: mesg in mm_list: ",mesg)
                         if mesg['tag'] == tag:
                             mesg_unique = {}
                             ## build a dictionary of all the pieces of a message
@@ -627,13 +642,17 @@ class Tab1(Frame):
                             mesg_unique["tbit"] = mesg["tbit"]
                             ## make a list of the dictionary segments
                             unique_message.append(mesg_unique)
+                            message_count += 1
                     if debug_flag:
-                        print("\nunique_message: ",unique_message)
+                        print("\nclassTab1: getMessages: message_count: ",message_count)
+                        print("\nclassTab1: getMessages: unique_message: ",unique_message)
                     ## now sort the list of dictionaries
                     #sorted_list = sorted(unique_message, key=unique_message['seq'])
                     sorted_list = dictionary_bubble_sort(unique_message)
                     if debug_flag:
-                        print("\nsorted_list: ",sorted_list)
+                        print("\nclassTab1: getMessages: len(sorted_list): ",len(sorted_list))
+                    if debug_flag:
+                        print("\nclassTab1: getMessages: sorted_list: ",sorted_list)
                     result_text = ""
                     reconstructed_mesg = {}
                     ## concantanate the text pieces
@@ -644,6 +663,8 @@ class Tab1(Frame):
                     reconstructed_mesg["from"] = y["from"]
                     reconstructed_mesg["mesg"] = result_text
                     reconstructed_mesg["iden"] = y["tag"]
+                    if debug_flag:
+                        print("classTab1: getMessage: reconstructed_mesg: ",reconstructed_mesg)
                     ## Let's append the recon'd message 
                     self.segmented_messages.append(reconstructed_mesg)
                     ## add the reconstructed message to the List widget
@@ -673,7 +694,7 @@ class Tab1(Frame):
             try:
                 self.formDataToSend = self.messageTextBox.get(1.0,END)
                 if debug_flag:
-                    print("Length of text: ", len(self.formDataToSend))
+                    print("classTab1: loadTextArea: Length of text: ", len(self.formDataToSend))
                 if len(self.formDataToSend) == 1:
                     mb.showwarning(None,"Type a text message in the Text Area.")
                     return None
@@ -700,20 +721,21 @@ class Tab1(Frame):
             ## The double colon will be the delineator for separating the chunks
             for text_index in data_list:
                 if debug_flag:
-                    print("text_index type: ",type(text_index))
+                    print("classTab1: create_data_list: text_index type: ",type(text_index))
                 #data_list[count]= 'TAG'+mesg_tag+':'+str(count+1)+'_OF_'+str(final_count)+':'+data_list[count]
                 data_list[count]= 'TAG'+mesg_tag+':'+str(count+1)+':'+data_list[count]
                 
                 if count < final_count-1:
                     count += 1
             if debug_flag:
-                print("data_list: ",data_list)
+                print("classTab1: create_data_list: data_list: ",data_list)
             return data_list
         
         def dictionary_bubble_sort(list_dictionaries):
             n = len(list_dictionaries)
             list_dict = list_dictionaries
-            for i in range(n-1):
+            for i in range(n):
+                swapped = False
                 for j in range(0, n-i-1):
                     first_dict = list_dict[j]
                     second_dict = list_dict[j+1]
@@ -722,17 +744,19 @@ class Tab1(Frame):
                     if int(first_dict['seq']) > int(second_dict['seq']):
                         # swap dictionaries
                         list_dict[j], list_dict[j + 1] = list_dict[j + 1], list_dict[j]
+                        swapped = True
+                if not swapped:
+                    break
             return list_dict
             
             
             
 
     def quitProgram(self):
-        ## check if the temporary HTML file exists
-        if self.htmlFile:
-            ## delete it
-            os.remove(self.htmlFile)
         ## if the Henkankun widgets are showing, clear them before returning
         if self.japaneseList != []:
             ut.clearWidgetForm(self.japaneseList)
+        ## delete the temporary HTML file if it exists
+        if self.htmlFile:
+            os.remove(self.htmlFile)
         self.controller.shutting_down()

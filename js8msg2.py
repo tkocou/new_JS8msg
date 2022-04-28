@@ -39,7 +39,7 @@ class App(tk.Frame):
         ## get_socket will return either a socket or 'None'
         ## this info will help with situations where JS8call
         ## is not running
-        self.sock = df.get_socket()
+        self.sock = df.get_socket(self)
         self.receiver = None
         self.db_conn = df.get_db_connection()
         self.frame = master

@@ -13,7 +13,7 @@ import database_functions as df
 commonConfData = gv.commonConfData
 debug_flag = gv.debug_flag_Tab2
 ## settings will be a dictionary
-settings = df.get_settings()
+#settings = df.get_settings()
 
 ## Common Configuration Data
 class Tab2(Frame):
@@ -23,7 +23,8 @@ class Tab2(Frame):
         self.frame = parent
         # Keep track of widgets added to frame
         self.widgets = []
-
+        ## settings will be a dictionary
+        self.settings = df.get_settings(self)
 
         ## More variables
         self.commonConfText = gv.commonConfText

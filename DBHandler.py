@@ -1,6 +1,8 @@
 ## a class object to handle all sql processing
-
 import sqlite3
+import globalVariables as gv
+
+debug_flag = gv.debug_flag_DBHandler
 
 class DB_object():
 
@@ -30,6 +32,8 @@ class DB_object():
     def exec_SQL(self):
         try:
             self.sql_result = self.cur.execute(self.SQL_message)
+            if debug_flag:
+                print("DBHandler: exec_SQL: sql_result: ",self.sql_result)
             self.conn.commit()
             return True, self.sql_result
         except:
@@ -40,6 +44,8 @@ class DB_object():
         try:
             self.cur.execute(self.SQL_message)
             self.sql_result = self.cur.fetchall()
+            if debug_flag:
+                print("DBHandler: fetch_all_SQL: sql_result: ",self.sql_result)
             return True, self.sql_result
         except:
             ## return SQL error
@@ -47,8 +53,10 @@ class DB_object():
         
     def fetch_once_SQL(self):
         try:
-            self.cur.execute(self.SQL_message)
+            self.cur.execute(self.self.sql_message)
             self.sql_result = self.cur.fetchone()
+            if debug_flag:
+                print("DBHandler: fetch_once_SQL: sql_result: ",self.sql_result)
             return True, self.sql_result
         except:
             ## return SQL error

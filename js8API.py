@@ -8,6 +8,8 @@ import globalVariables as gv
 import utilities as ut
 from tkinter import messagebox as mb
 
+debug_flag = gv.debug_flag_JS8API
+
 def api(data):
     ## data is a tuple consisting of (command, value, dictionary)
     command  = data[0]
@@ -49,61 +51,25 @@ def getCallsigns():
 def getInbox():
     JS8command = gv.inboxGetMessages
     msgDict = gv.messageDict
-    results = api(tuple([JS8command,"", {}]))
-    print("getInbox: results: ",results)
-    if results is not None:
-        ## A list of messages are returned from JS8call
-        ## results[2] is a dictionary
-        ## extract list of messages
-        messageList = results[2]["MESSAGES"]
+    api_results = api(tuple([JS8command,"", {}]))
+    if debug_flag:
+        print("JS8API: getInbox: api_results: ",api_results,'\n\n')
+    if api_results is not None:
+        ## api_result nesting => tuple( dictionary{ ['MESSAGES']:list[ of dictionaries >>> { ['params'] : dictionary{ with keys of >>> ['FROM':""],['TEXT':""],['TO':""],['ID':""], etc.} } ] })
+        
+        ## extract dictionary of list of messages
+        ## reference 2nd element of tuple and extract the list
+        messageList = api_results[2]["MESSAGES"]
+        if debug_flag:
+            print("\nJS8API: getInbox: messageList: ",messageList)
+        
+        ## now create a list of messages
         msgList = []
         for x in messageList:
-            formDic = x
-            form = formDic['params']
-            message = ut.dictToString(form)
-            ## Parse the list of messages and extract the messages
-            try:
-                while True:
-                ## Who is the message from
-                    search = re.search('\"FROM\"\: \"', message)
-                    end = search.end()
-                ## Prune to beginning of callsign
-                    message = message[end:]
-                    search = re.search(', ', message)
-                    end = search.start()-1
-                ## extract callsign
-                    msgDict["from"] = message[:end]
-                ## lop off callsign
-                    message = message[end:]
-                    search = re.search('TEXT', message)
-                ## set the split point
-                    end = search.end()+4
-                ## prune beginning text
-                    message = message[end:]
-                ## find the end of the message
-                    search = re.search(', ', message)
-                ## set the new split point
-                    end = search.start()-1
-                ## extract 'TEXT' message
-                    textMsg = message[:end]
-
-                ## At this point, pass the message "As Is"
-                ## The display function will need the 'EMCOMMG='
-                ## to differenciate what sort of message is displayed
-                    msgDict["mesg"] = textMsg
-
-                ## prune the 'TEXT' message and start another search for 'TEXT'
-                    message = message[end:]
-                    search = re.search('\"_ID\"\: \"', message)
-                    end = search.end()
-                    message = message[end:]
-                    msgDict["iden"] = message[:12]
-                    msgList.append(msgDict)
-                    msgDict = {}
-    ## use the generated error to stop the loop
-            except:
-                pass
-        ## return the list of dictionaries
+            ## walk though list and append data dictionary of 'params' to list
+           msgList.append(x['params'])
+            
+        ## return the list of message dictionaries
         return msgList
     else:
         return None

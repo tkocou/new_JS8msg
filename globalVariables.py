@@ -81,11 +81,20 @@ japanFlag = False
 size_of_data = 26
 
 ## flags to enable print statements
-debug_flag_database_config = False
-debug_flag_Tab1 = False
+debug_flag_database_functions = False
+debug_flag_DBHandler = False
+debug_flag_JS8API = False
+debug_flag_utilities = True
+debug_flag_Tab1 = True
 debug_flag_Tab2 = False
 debug_flag_Tab3 = False
 debug_flag_Tab4 = False
+
+## these are used in tcp.py
+## Which type of port to listen/talk on
+TCP = True
+## size of receive buffer
+recv_buffer_size = 1000000
 
 
 ##

@@ -17,6 +17,7 @@ import globalVariables as gv
 import DBHandler as dbh
 import socket
 
+debug_flag = gv.debug_flag_utilities
 
 def dateAndTime(formatDate, formatTime, UTC):
     # The passed variables are the string references from the data dict.
@@ -216,9 +217,11 @@ def makeCRC32(text):
 
 def wrapMsg(text):
     crc = makeCRC32(text)
-    return 'EMCOMMG='+text+crc
+    return 'EMCOMMG^'+text+crc
 
 def unwrapMsg(text):
+    if debug_flag:
+        print("utilities: unWrapMsg: text[8:-10]", text[8:-10])
     return text[8:-10]
 
 def checkCRC32(message):
