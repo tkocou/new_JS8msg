@@ -7,3 +7,5 @@ Fixed time to ID issue during sending of ICS forms
 Found JS8Call TCP connections were maxing out causing chunk upload to be truncated. In JS8Call reporting tab, raised max connections to 99. 
 
 Fixed mixed up dechunk functionality - i.e. parts of one message being appended to another message
+
+Fixed a decoding issue with henkankun functions
