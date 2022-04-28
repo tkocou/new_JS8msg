@@ -8,6 +8,7 @@
 import DBHandler as dbh 
 import socket
 import sys
+import os
 import threaded_listening as tl
 import tkinter as tk
 from tkinter.ttk import *
@@ -106,6 +107,8 @@ class App(tk.Frame):
         ## if threaded receiver was not running, ignore error
         except:
             pass
+        if gv.html_file:
+            os.remove(gv.html_file)
         ## kill existing process
         sys.exit()
 

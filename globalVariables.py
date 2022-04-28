@@ -66,13 +66,6 @@ getStationID = 'STATION.GET_CALLSIGN'
 getRigFreq = 'RX.GET_FREQ'
 pingJS8 = 'PING'
 
-##
-## some variables for facilitating the reading of messages from JS8call
-##
-stationCallsign = ""
-messageDict = {"from":"","mesg":"","iden":""}
-messageDictKeys = ["from","mesg","iden"]
-
 ## flag for japanese use
 japanFlag = False
 
@@ -89,12 +82,27 @@ debug_flag_Tab1 = False
 debug_flag_Tab2 = False
 debug_flag_Tab3 = False
 debug_flag_Tab4 = False
+debug_flag_receiving_inbox = False
+if debug_flag_receiving_inbox:
+    debug_flag_JS8API = True
+    debug_flag_utilities = True
+    debug_flag_Tab1 = True
+## turning off flags must be done manually
+    
 
 ## these are used in tcp.py
 ## Which type of port to listen/talk on
 TCP = True
 ## size of receive buffer
 recv_buffer_size = 1000000
+##
+## some variables for facilitating the reading of messages from JS8call via JS8API
+##
+stationCallsign = ""
+messageDict = {"from":"","mesg":"","iden":""}
+messageDictKeys = ["from","mesg","iden"]
+
+html_file = ""
 
 
 ##

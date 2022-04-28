@@ -148,14 +148,14 @@ def dictToString(data):
         ## any kind of problem, return an empty dictionary string
         return "{}"
 
-def stringToDict(data):
+#def stringToDict(data):
     ## input is a string object, like "{key1:data1,key2:data2}"
-    try:
+#    try:
         ## return a dictionary
-        return json.loads(data)
-    except:
+#        return json.loads(data)
+#    except:
         ## any kind of problem, return an empty dictionary
-        return {}
+#        return {}
 
 def dictFromFile(fileName):
     with open(fileName,"r") as fh:

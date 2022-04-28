@@ -53,7 +53,7 @@ def getInbox():
     msgDict = gv.messageDict
     api_results = api(tuple([JS8command,"", {}]))
     if debug_flag:
-        print("JS8API: getInbox: api_results: ",api_results,'\n\n')
+        print("\nJS8API: getInbox: api_results: ",api_results,'\n\n')
     if api_results is not None:
         ## api_result nesting => tuple( dictionary{ ['MESSAGES']:list[ of dictionaries >>> { ['params'] : dictionary{ with keys of >>> ['FROM':""],['TEXT':""],['TO':""],['ID':""], etc.} } ] })
         

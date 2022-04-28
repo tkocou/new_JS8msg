@@ -134,6 +134,8 @@ class Tab1(Frame):
                 clearTextArea()
                 self.chooseAction.set('')
             elif selAction == "Get All Messages from Inbox":
+                if debug_flag:
+                    print("Invoking function getMessages.\n")
                 getMessages()
                 self.chooseAction.set('')
             elif selAction == "Send Text Area":
@@ -267,6 +269,7 @@ class Tab1(Frame):
                     for x in html_result:
                         fh.writelines(x)
                     fh.close()
+                    gv.html_file = self.htmlFile
 
                     ## clear out text box
                     self.messageTextBox.delete(1.0,END)
@@ -284,6 +287,13 @@ class Tab1(Frame):
                     \n\nTo make a hard copy of the report, use the print function of the web browser.
                     """
                     self.messageTextBox.insert(END,mb_text_message)
+                     ## Clear the Python console of messages from web browser
+                    x =1
+                    while x < 3:
+                        ## wait 1 second and then clear
+                        ut.clearConsole()
+                        x += 1
+
                     
                 else:
                     ## display regular text in Text box
@@ -558,9 +568,11 @@ class Tab1(Frame):
             ## getInbox returns a list of dictionaries from JS8call
             api_result = None
             try:
+                if debug_flag:
+                    print("\ninvoking JS8API.getInbox.")
                 api_result = api.getInbox()
                 if debug_flag:
-                    print("classTab1: getMessages: api_result: ",api_result)
+                    print("\nclassTab1: getMessages: api_result: ",api_result)
             except:
                 pass
             if api_result:
@@ -571,27 +583,27 @@ class Tab1(Frame):
                 mm_list = []
                 plain_list = []
                 self.chooseMessage.delete(0,END)
-                self.messageList = []
+                #self.messageList = []
                 if debug_flag:
-                    print("classTab1: getMessages: len(z): ",len(api_result))
+                    print("\n\nclassTab1: getMessages: len(z): ",len(api_result))
                 for z in api_result:
                     if debug_flag:
-                        print("classTab1: getMessages: Dict: ",z)
+                        print("\nclassTab1: getMessages: Dict: ",z)
                     if z["TEXT"][:5] == "TAG0X":
                         if debug_flag:
-                            print("classTab1: getMessages: z['TEXT']:",z["TEXT"])
+                            print("\nclassTab1: getMessages: z['TEXT']:",z["TEXT"])
                         ## we have a segmented message, process it
                         multi_message = {}
                         multi_message["from"] = z["FROM"]
                         pieces = z["TEXT"].split(":",2)
                         if debug_flag:
-                            print("classTab1: getMessages: pieces:",pieces)
+                            print("\nclassTab1: getMessages: pieces:",pieces)
                         multi_message["tag"]=pieces[0][3:]
                         multi_message["seq"]=pieces[1]
                         multi_message["tbit"]=pieces[2]
                         mm_list.append(multi_message)
                         if debug_flag:
-                            print("pieces seq",pieces[1])
+                            print("\npieces seq",pieces[1])
                     else:
                         plain_dict = {}
                         plain_dict["from"] = z["FROM"]
@@ -601,6 +613,7 @@ class Tab1(Frame):
                 ##
                 ## we have walked through the list of messages 
                 ## and ID'ed the tagged messages as well as separated the plain text messages
+                self.messageList = []
                 ##
                 ## Process plain text messages first
                 index = 0
@@ -625,30 +638,35 @@ class Tab1(Frame):
                     if x not in tags_unique:
                         tags_unique.append(x)
                 if debug_flag:
-                    print("classTab1: getMessages: Unique tags: ",tags_unique)
-                ## let's separate out all the pieces of the unique message
-                unique_message = []
+                    print("\nclassTab1: getMessages: Unique tags: ",tags_unique)
+                ## let's separate out all the pieces of each unique message
                 for tag in tags_unique:
                     message_count = 0
+                    bundle = []
+                    if debug_flag:
+                        print("\nclassTab1: getMessages: tag: ",tag)
                     for mesg in mm_list:
-                        if debug_flag:
-                            print("classTab1: getMessages: mesg in mm_list: ",mesg)
+                        #if debug_flag:
+                        #    print("\nclassTab1: getMessages: mesg in mm_list: ",mesg)
                         if mesg['tag'] == tag:
                             mesg_unique = {}
+                            from_key_data = mesg["from"]
+                            iden_key_data = tag
                             ## build a dictionary of all the pieces of a message
                             mesg_unique["tag"] = mesg["tag"]
                             mesg_unique["from"] = mesg["from"]
                             mesg_unique["seq"] = mesg["seq"]
                             mesg_unique["tbit"] = mesg["tbit"]
                             ## make a list of the dictionary segments
-                            unique_message.append(mesg_unique)
+                            if debug_flag:
+                                print("\nclassTab1: getMessages: mesg_unique: ",mesg_unique)
+                            bundle.append(mesg_unique)
                             message_count += 1
                     if debug_flag:
                         print("\nclassTab1: getMessages: message_count: ",message_count)
-                        print("\nclassTab1: getMessages: unique_message: ",unique_message)
+                        print("\nclassTab1: getMessages: bundle: ",bundle)
                     ## now sort the list of dictionaries
-                    #sorted_list = sorted(unique_message, key=unique_message['seq'])
-                    sorted_list = dictionary_bubble_sort(unique_message)
+                    sorted_list = dictionary_bubble_sort(bundle)
                     if debug_flag:
                         print("\nclassTab1: getMessages: len(sorted_list): ",len(sorted_list))
                     if debug_flag:
@@ -658,18 +676,18 @@ class Tab1(Frame):
                     ## concantanate the text pieces
                     for y in sorted_list:
                         result_text += y["tbit"]
-                    ## 'y' should contain the last dictionary in 'sorted_list' 
-                    ## 'from' and 'tag' data should be identical for all   
-                    reconstructed_mesg["from"] = y["from"]
+                           
+                    reconstructed_mesg["from"] = from_key_data
                     reconstructed_mesg["mesg"] = result_text
-                    reconstructed_mesg["iden"] = y["tag"]
+                    reconstructed_mesg["iden"] = iden_key_data
                     if debug_flag:
-                        print("classTab1: getMessage: reconstructed_mesg: ",reconstructed_mesg)
+                        print("\nclassTab1: getMessage: tag/reconstructed_mesg: ",reconstructed_mesg["iden"],' / ',reconstructed_mesg)
                     ## Let's append the recon'd message 
                     self.segmented_messages.append(reconstructed_mesg)
                     ## add the reconstructed message to the List widget
                     self.chooseMessage.insert(index,reconstructed_mesg["from"]+', '+reconstructed_mesg["iden"])
                     self.messageList.append(reconstructed_mesg)
+                    sorted_list = []
                     ## 'index' continues from the last position in 'self.chooseMessage'
                     index += 1
             else:
@@ -734,8 +752,7 @@ class Tab1(Frame):
         def dictionary_bubble_sort(list_dictionaries):
             n = len(list_dictionaries)
             list_dict = list_dictionaries
-            for i in range(n):
-                swapped = False
+            for i in range(n-1):
                 for j in range(0, n-i-1):
                     first_dict = list_dict[j]
                     second_dict = list_dict[j+1]
@@ -744,9 +761,6 @@ class Tab1(Frame):
                     if int(first_dict['seq']) > int(second_dict['seq']):
                         # swap dictionaries
                         list_dict[j], list_dict[j + 1] = list_dict[j + 1], list_dict[j]
-                        swapped = True
-                if not swapped:
-                    break
             return list_dict
             
             
