@@ -62,7 +62,8 @@ class Tab1(Frame):
         self.htmlFile = ""
         self.stationCallSign = ""
         self.japaneseList = []
-        self.japanFlag = FALSE
+        self.japanFlag = False
+        self.japan_encoded_flag = False
         self.segmented_messages = []
 
         ## build up the callsign list
@@ -342,24 +343,28 @@ class Tab1(Frame):
         def encodeTextAreaJIS():
             if self.japanFlag:
                 hn.encodeShiftJIS(self.messageTextBox)
+                self.japan_encoded_flag = True
             else:
                 pass
 
         def decodeTextAreaJIS():
             if self.japanFlag:
                 hn.decodeShiftJIS(self.messageTextBox)
+                self.japan_encoded_flag = False
             else:
                 pass
 
         def encodeTextAreaUTF8():
             if self.japanFlag:
                 hn.encodeUTF8(self.messageTextBox)
+                self.japan_encoded_flag = True
             else:
                 pass
 
         def decodeTextAreaUTF8():
             if self.japanFlag:
                 hn.decodeUTF8(self.messageTextBox)
+                self.japan_encoded_flag = False
             else:
                 pass
         
@@ -520,7 +525,7 @@ class Tab1(Frame):
             if result == None:
                 return result
             if self.callsignSelected:
-                if self.japanFlag:
+                if self.japan_encoded_flag: 
                     self.formDataToSend = "MSG "+self.formDataToSend
                 list_to_send = create_data_list(self.formDataToSend)
                 for text_mesg in list_to_send:
@@ -723,6 +728,7 @@ class Tab1(Frame):
 
         def clearTextArea():
             self.messageTextBox.delete(1.0,END)
+            self.japan_encoded_flag = False
             return
         
         def create_data_list(data_text):

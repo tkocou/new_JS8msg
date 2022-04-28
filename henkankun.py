@@ -21,7 +21,10 @@ def decodeUTF8(params):
     for i in range(x): #Repeat the indented section as many times as there are variable”x” to the right end of the sentence.
         b = etext.split('/')  #Split the string of the variable "etext" with "/".
         c = b[y].replace('/', '') # Remove the delimiter "/" from the string of variable "b".
-        d =  bytes.fromhex(c).decode("utf-8") # Consider the variable "c" as a byte character, change the hexadecimal number back to UTF-8, and decode it from the UTF-8 number to a plain text character.
+        try:
+            d =  bytes.fromhex(c).decode("utf-8") # Consider the variable "c" as a byte character, change the hexadecimal number back to UTF-8, and decode it from the UTF-8 number to a plain text character.
+        except:
+            pass
         txt_2.insert(tk.END,d)# Set the string of variable "d" to the right end of the output window "txt_2".
         y = y+1 #Shift the string to be encoded by one character to the right.
         #Repeat so far.
@@ -90,7 +93,10 @@ def decodeShiftJIS(params):
     for i in range(x): #インデント部を文の右端まで1区切りずつデコードする。それをx回繰り返す。
         b = etext.split('/')  #変数aの文字列を/で分割する。
         c = b[y].replace('/', '') #文字と文字の区切りの"/"を除去する。
-        d =  bytes.fromhex(c).decode("shift-jis", "replace") #cをバイト文字と見なし、16進数をUTF-8に戻し、UTF-8の番号から文字に戻す。
+        try:
+            d =  bytes.fromhex(c).decode("shift-jis", "replace") #cをバイト文字と見なし、16進数をUTF-8に戻し、UTF-8の番号から文字に戻す。
+        except:
+            pass
         txt_2.insert(tk.END,d)# 変数dの文字列をtxt_2の右端にセットする。
         y = y+1 #エンコードする文字を右に1文字ずらす。
         #繰り返しはここまで。
