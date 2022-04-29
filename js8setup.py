@@ -123,7 +123,7 @@ def setup():
             launcher = "JS8msg.desktop"
             desktop_launcher_path = os.path.join(desktopDir,launcher)
             ## get the path towhere js8msg2 is executing from
-            exec_path = __file__
+            exec_path = os.path.join(homeDir,"bin/js8msg2")
             icon_picture_path = os.path.join(gv.localPath,"js8msg.png")
             ## updating launcher internals
             with open(desktop_launcher_path, "w") as fh:
