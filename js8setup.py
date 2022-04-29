@@ -21,8 +21,8 @@ def setup():
     keyList = ['apidoc','copydoc','installdoc','guidedoc','deindoc']
     fileList = {'apidoc':"API.pdf",'copydoc':"COPYING",'installdoc':"INSTALL",'guidedoc':"JS8msg Guide.pdf",'deindoc':"DEINSTALL"}
 
-    keyList2 = ['ldesk','lshell','wdesk','licon','wicon']
-    fileList2 = {'ldesk':"JS8msg.desktop",'lshell':"js8msg",'wdesk':"JS8msg.lnk",'licon':"js8msg.png",'wicon':"js8msg.ico"}
+    keyList2 = ['wdesk','licon','wicon']
+    fileList2 = {'wdesk':"JS8msg.lnk",'licon':"js8msg.png",'wicon':"js8msg.ico"}
 
     keyList3 = ['25a','205','213','214']
     fileList3 = {'25a':"ics205a_template.html",'205':"ics205_template.html",'213':"ics213_template.html",'214':"ics214_templates.html"}
@@ -36,7 +36,11 @@ def setup():
     ## Path to Desktop
     desktopDir = os.path.join(homeDir,"Desktop")
 
-
+    ## make directory in home directory to hold JS8msg subdirectories
+    try:
+        os.mkdir(gv.JS8msg_dir)
+    except:
+        pass
     try:
         os.mkdir(gv.documentPath)
         #print("Created directory 'Doc'.")
@@ -109,27 +113,32 @@ def setup():
         iconCheck = os.path.join(desktopDir,iFile)
         if not os.path.exists(iconCheck):
             shutil.copy2(iconFile,desktopDir)
-            
-    if gv.project_dir == "None":
-        if sysPlatform == "Linux":
-            iFile = "JS8msg.desktop"
-            linuxLocalBinDir = os.path.join(homeDir,"bin")
-            linuxShell = os.path.join(linuxLocalBinDir,"js8msg")
-            linuxLocalDirFile = os.path.join(gv.localPath,"js8msg.sh")
-            linuxShellTunc = os.path.join(linuxLocalBinDir,"js8msg")
     
-            shell_script = "js8msg"
-            linuxShellBin = os.path.join(gv.localPath,shell_script)
-            
-            iconFile = os.path.join(gv.localPath,iFile)
-            iconCheck = os.path.join(desktopDir,iFile)
-            
-            if not os.path.exists(iconCheck):
-                shutil.copy2(iconFile,desktopDir)
-                os.chmod(iconCheck,0o755)
-            if not os.path.exists(linuxShell):
-                shutil.copy2(linuxShellBin,linuxLocalBinDir)
-                os.chmod(linuxShell,0o755)
+    ## check if we are running js8msg2 from within the development directory        
+    if gv.project_dir == "None":
+        ## we are running a live system, not development
+        ## if the target OS is not Linux, we will need another section
+        if sysPlatform == "Linux":
+            ## let's create a desktop launcher
+            launcher = "JS8msg.desktop"
+            desktop_launcher_path = os.path.join(desktopDir,launcher)
+            ## get the path towhere js8msg2 is executing from
+            exec_path = __file__
+            icon_picture_path = os.path.join(gv.localPath,"js8msg.png")
+            ## updating launcher internals
+            with open(desktop_launcher_path, "w") as fh:
+                fh.write("[Desktop Entry]")
+                fh.write("Version=1.0")
+                fh.write("Type=Application")
+                fh.write("Terminal=false")
+                fh.write("Icon="+icon_picture_path)
+                fh.write("Icon[en_US]="+icon_picture_path)
+                fh.write("Name[en_US]=JS8msg")
+                fh.write("Exec="+exec_path)
+                fh.write("Comment[en_US]=EMCOMM message support for JS8call")
+                fh.write("Name=JS8msg")
+                fh.write("Comment=EMCOMM message support for JS8call")
+            os.chmod(desktop_launcher_path,0o755)
         
     gv.js8msg_db = os.path.join(gv.localPath,gv.db_name)
     init_database()
@@ -165,5 +174,4 @@ def init_database():
                 print("Error with DB")
                 pass
 
-       
     

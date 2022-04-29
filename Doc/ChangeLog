@@ -9,3 +9,5 @@ Found JS8Call TCP connections were maxing out causing chunk upload to be truncat
 Fixed mixed up dechunk functionality - i.e. parts of one message being appended to another message
 
 Fixed a decoding issue with henkankun functions
+
+Updated installation parameters within js8msg2
