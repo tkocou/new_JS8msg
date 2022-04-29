@@ -10,4 +10,4 @@ Fixed mixed up dechunk functionality - i.e. parts of one message being appended 
 
 Fixed a decoding issue with henkankun functions
 
-Updated installation parameters within js8msg2
+Updated installation parameters within js8msg2, JS8msg Guide.pdf will need updating. future task!
