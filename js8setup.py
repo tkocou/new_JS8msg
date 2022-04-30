@@ -111,6 +111,7 @@ def setup():
         iFile = "JS8msg.lnk"
         iconFile = os.path.join(gv.localPath,iFile)
         iconCheck = os.path.join(desktopDir,iFile)
+        ## copy only if there is not desktop link (Windows)
         if not os.path.exists(iconCheck):
             shutil.copy2(iconFile,desktopDir)
     
