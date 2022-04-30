@@ -3,6 +3,9 @@
 ## JS8msg Version 2.1 is a copyrighted program written by Thomas Kocourek, N4FWD
 ## This program is released under the GPL v3 license
 ## 
+## With permission, portions of this program were borrowed from js8spotter 
+## written by Joseph D Lyman KF7MIX, MIT License, Copyright 2022
+##
 ## Main program
 
 import DBHandler as dbh 
