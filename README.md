@@ -34,3 +34,6 @@ Changes:
     be located in ~/bin. The desktop launcher will be built 'on the fly'.
 
     Some example ICS-213 messages have been included for testing purposes.
+
+    V2.1
+    Added programmable network ports like in JS8Call

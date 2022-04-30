@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 ##
-## JS8msg Version 2 is a copyrighted program written by Thomas Kocourek, N4FWD
+## JS8msg Version 2.1 is a copyrighted program written by Thomas Kocourek, N4FWD
 ## This program is released under the GPL v3 license
 ## 
 ## Main program
@@ -58,7 +58,7 @@ class App(tk.Frame):
         ## older GUI uses Notebook style of GUI
         ## switching to menu driven GUI
     
-        self.frame.title("JS8msg Version 2")
+        self.frame.title("JS8msg Version 2.1")
         self.frame.geometry('800x600')
         self.frame.resizable(width=False,height=False)
         ## create the GUI menu
@@ -72,9 +72,10 @@ class App(tk.Frame):
 
 
     def about(self):
-        info = "JS8msg Version 2 \n\n"
+        info = "JS8msg Version 2.1 \n\n"
         info += "Open Source GNU3 License\n\n"
         info += "written by Thomas Kocourek, N4FWD\n\n"
+        info += "henkankun code borrowed from Takahide Kanatake, JE6VGZ\n\n"
         info += "Parts were borrowed with permission\n\n"
         info += "from js8spotter written by\n\n"
         info += "Joseph D Lyman, KF7MIX\n\n"

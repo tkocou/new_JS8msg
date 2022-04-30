@@ -1,3 +1,7 @@
+##
+## JS8msg Version 2.1 is a copyrighted program written by Thomas Kocourek, N4FWD
+## This program is released under the GPL v3 license
+## 
 import globalVariables as gv
 import DBHandler as dbh
 from socket import socket, AF_INET, SOCK_STREAM
