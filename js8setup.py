@@ -13,6 +13,7 @@ import bz2
 import documents as doc
 import locals as lc
 import template as tp
+import message_examples as me
 import DBHandler as dbh
 import globalVariables as gv
 
@@ -26,6 +27,9 @@ def setup():
 
     keyList3 = ['25a','205','213','214']
     fileList3 = {'25a':"ics205a_template.html",'205':"ics205_template.html",'213':"ics213_template.html",'214':"ics214_templates.html"}
+    
+    keyList4 = ['example01','example02']
+    fileList4 = {'example01':'house_report.213','example02':'new_fire.213'}
 
     sysPlatform = platform.system()
 
@@ -100,6 +104,19 @@ def setup():
         if os.path.exists(fileName):
             os.remove(fileName)
         stringData = tp.templateArray[key]
+        byteData = bytes(stringData,'utf-8')
+        decodedData = base64.b64decode(byteData)
+        rawArray = bz2.decompress(decodedData)
+        #print("Updating or creating template %s." % fileName)
+        with open(fileName,"wb") as f:
+            f.write(rawArray)
+            
+    for key in keyList4:
+        fileName = os.path.join(gv.msgPath,fileList4[key])
+        ## if the file exists, remove and replace it (auto-upgrade of file)
+        if os.path.exists(fileName):
+            os.remove(fileName)
+        stringData = me.mesgArray[key]
         byteData = bytes(stringData,'utf-8')
         decodedData = base64.b64decode(byteData)
         rawArray = bz2.decompress(decodedData)

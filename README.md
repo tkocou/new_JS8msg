@@ -18,6 +18,10 @@ Changes:
     Within JS8msg directory, the JS8msg V2 program will create the support directories of Doc (for documentation), HtmlTemplates (to hold the ICS forms),
     Local (for misc. items), Messages (to hold outgoing and incoming messages) and Tmp (for temporary files)
 
-    For Windows, the executable will be installed as was previously. 
+    For Windows, the executable will be installed as was previously (in the home directory). You will have to adjust the desktop link properties to match
+    your Windows installation.
+
     For Linux, there will be an executable file called "js8msg2". The js8msg2 will need the executable property enabled and 
-    be located where js8msg2 can be found via the shell PATH variable (like ~/bin as an example).
+    be located in ~/bin. The desktop launcher will be built 'on the fly'.
+
+    Some example ICS-213 messages have been included for testing purposes.
