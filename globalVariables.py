@@ -92,7 +92,12 @@ if debug_flag_receiving_inbox:
 
 ## these are used in tcp.py
 ## Which type of port to listen/talk on
+tcp_address = ""
+tcp_port = ""
+udp_address = ""
+udp_port = ""
 TCP = True
+server_data_keys=['udp_ip','udp_port','tcp_ip','tcp_port','hide_heartbeat','dark_theme']
 ## size of receive buffer
 recv_buffer_size = 1000000
 ##

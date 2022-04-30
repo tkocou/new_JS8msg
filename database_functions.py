@@ -96,3 +96,24 @@ def check_stored_configuration():
         print("database_config: Printing records: ",records[1:])
     db_obj.close_SQL()
         
+def save_settings_to_db(self):
+    ## first retrieve the current settings
+    settings =  get_settings(self)
+     ## server settings data has been loaded into global
+    db_obj = get_db_connection()
+    ## delete old data
+    message = "DELETE FROM setting;"
+    db_obj.set_SQL(message)
+    result = db_obj.exec_SQL()
+    if debug_flag:
+        print("database_config: Delete ops result is: ",result[0])
+    ## insert settings from gv.commonConfData into SQL message
+    message = "INSERT INTO setting (name,value) VALUES ('udp_ip','{0}'),('udp_port','{1}'),('tcp_ip','{2}'),('tcp_port','{3}'),('hide_heartbeat','{4}'),('dark_theme','{5}')".format(gv.udp_address, gv.udp_port, gv.tcp_address, gv.tcp_port, settings['hide_heartbeat'], settings['dark_theme'])
+    ## write new data
+    db_obj.set_SQL(message)
+    result = db_obj.exec_SQL()
+    if debug_flag:
+        print("database_config: Insert ops result is: ",result[0])
+    db_obj.close_SQL()
+    ## return True or False
+    return result[0]

@@ -30,7 +30,10 @@ class Tab2(Frame):
         self.commonConfText = gv.commonConfText
         self.commonConfKeys = gv.commonConfKeys
         #
-        ## get initial default settings
+        ## get initial default configuration settings
+        ## loads configuration into the globalVariable
+        ## gv.commonConfData and assigns the data to
+        ## self.commonConfData
         self.loadData()
 
         ## textvariable for combobox()
@@ -47,6 +50,10 @@ class Tab2(Frame):
         self.formatTimeEntryData = StringVar()
         self.fileEntryData = StringVar()
         self.blkszEntryData = StringVar()
+        self.tcpAddress = StringVar()
+        self.tcpPort = StringVar()
+        self.udpAddress = StringVar()
+        self.udpPort = StringVar()
         self.colWidth = 40
         self.label_padx = 8
         
@@ -61,6 +68,9 @@ class Tab2(Frame):
         self.widgets.append(self.blankLabel)
         
         label_col = 0
+        entry_col = 1
+        label2_col = 2
+        entry2_col = 3
         
         colRow = 1
         self.blankLabel = Label(self.frame)
@@ -76,7 +86,7 @@ class Tab2(Frame):
 
         self.personalCallsignEntry = Entry(self.frame, textvariable = self.callsignEntryData, width=self.colWidth)
         self.widgets.append(self.personalCallsignEntry)
-        self.personalCallsignEntry.grid(column=1, row=callsignRow,  columnspan=2, sticky="w")
+        self.personalCallsignEntry.grid(column=entry_col, row=callsignRow,  columnspan=2, sticky="w")
         ## first clear any text
         self.personalCallsignEntry.delete(0,END)
         ## Insert any new text
@@ -90,7 +100,7 @@ class Tab2(Frame):
 
         self.personalNameEntry = Entry(self.frame, textvariable = self.nameEntryData, width=self.colWidth)
         self.widgets.append(self.personalNameEntry)
-        self.personalNameEntry.grid(column=1, row=nameRow,  columnspan=2, sticky="w")
+        self.personalNameEntry.grid(column=entry_col, row=nameRow,  columnspan=2, sticky="w")
         ## first clear any text
         self.personalNameEntry.delete(0,END)
         ## Insert any new text
@@ -104,7 +114,7 @@ class Tab2(Frame):
 
         self.personalPhoneEntry = Entry(self.frame, textvariable= self.phoneEntryData, width=self.colWidth)
         self.widgets.append(self.personalPhoneEntry)
-        self.personalPhoneEntry.grid(column=1, row=phoneRow, columnspan=2, sticky="w")
+        self.personalPhoneEntry.grid(column=entry_col, row=phoneRow, columnspan=2, sticky="w")
         ## first clear any text
         self.personalPhoneEntry.delete(0,END)
         ## Insert any new text
@@ -118,7 +128,7 @@ class Tab2(Frame):
 
         self.personalAddressEntry = Entry(self.frame, textvariable= self.addressEntryData, width=self.colWidth)
         self.widgets.append(self.personalAddressEntry)
-        self.personalAddressEntry.grid(column=1, row=addrRow, columnspan=2, sticky="w")
+        self.personalAddressEntry.grid(column=entry_col, row=addrRow, columnspan=2, sticky="w")
         ## first clear any text
         self.personalAddressEntry.delete(0,END)
         ## Insert any new text
@@ -132,7 +142,7 @@ class Tab2(Frame):
 
         self.personalCszEntry = Entry(self.frame, textvariable= self.cityEntryData, width=self.colWidth)
         self.widgets.append(self.personalCszEntry)
-        self.personalCszEntry.grid(column=1, row=cszRow, columnspan=2, sticky="w")
+        self.personalCszEntry.grid(column=entry_col, row=cszRow, columnspan=2, sticky="w")
         ## first clear any text
         self.personalCszEntry.delete(0,END)
         ## Insert any new text
@@ -146,7 +156,7 @@ class Tab2(Frame):
 
         self.personalEmailEntry = Entry(self.frame, textvariable= self.emailEntryData, width=self.colWidth)
         self.widgets.append(self.personalEmailEntry)
-        self.personalEmailEntry.grid(column=1, row=emailRow, columnspan=2, sticky="w")
+        self.personalEmailEntry.grid(column=entry_col, row=emailRow, columnspan=2, sticky="w")
         ## first clear any text
         self.personalEmailEntry.delete(0,END)
         ## Insert any new text
@@ -173,7 +183,7 @@ class Tab2(Frame):
         for format in dateFormatText:
             self.dateFormat = ttk.Radiobutton(self.frame, text = format[0], value = format[1], variable = self.formatDateEntryData)
             self.widgets.append(self.dateFormat)
-            self.dateFormat.grid(column=1, row=radioRow, sticky="w")
+            self.dateFormat.grid(column=entry_col, row=radioRow, sticky="w")
             radioRow += 1
         self.formatDateEntryData.set(self.commonConfData["fdate"])
 
@@ -197,11 +207,69 @@ class Tab2(Frame):
         
         self.block_size_entry = Entry(self.frame, textvariable=self.blkszEntryData)
         self.widgets.append(self.block_size_entry)
-        self.block_size_entry.grid(column=1, row=blkRow, sticky='w')
+        self.block_size_entry.grid(column=entry_col, row=blkRow, sticky='w')
         self.block_size_entry.delete(0,END)
         self.block_size_entry.insert(0,self.commonConfData["blksz"])
         gv.size_of_data = self.commonConfData["blksz"]
         
+        blankRow = dtRow+7
+        self.blank2Label = Label(self.frame)
+        self.blank2Label.config(text = '         ')
+        self.blank2Label.grid(column=label_col,row=blankRow, sticky="w")
+        self.widgets.append(self.blank2Label)
+        
+        ## Let's assign the TCP/UDP variables from the settings{}
+        tcpRow = dtRow+8
+        self.tcp_addr_label = Label(self.frame, text="TCP Address: ")
+        self.widgets.append(self.tcp_addr_label)
+        self.tcp_addr_label.grid(column=label_col, row=tcpRow, sticky="e", padx = self.label_padx)
+        
+        self.tcp_addr_entry = Entry(self.frame, textvariable=self.tcpAddress)
+        self.widgets.append(self.tcp_addr_entry)
+        self.tcp_addr_entry.grid(column=entry_col, row=tcpRow, sticky='w')
+        self.tcp_addr_entry.delete(0,END)
+        self.tcp_addr_entry.insert(0,self.settings["tcp_ip"])
+        gv.tcp_address = self.settings["tcp_ip"]
+        
+        self.tcp_port_label = Label(self.frame, text="TCP Port: ")
+        self.widgets.append(self.tcp_port_label)
+        self.tcp_port_label.grid(column=label2_col, row=tcpRow, sticky="e", padx = self.label_padx)
+        
+        self.tcp_port_entry = Entry(self.frame, textvariable=self.tcpPort)
+        self.widgets.append(self.tcp_port_entry)
+        self.tcp_port_entry.grid(column=entry2_col, row=tcpRow, sticky='w')
+        self.tcp_port_entry.delete(0,END)
+        self.tcp_port_entry.insert(0,self.settings["tcp_port"])
+        gv.tcp_port = self.settings["tcp_port"]
+        
+        blank2Row = dtRow+9
+        self.blank2Label = Label(self.frame)
+        self.blank2Label.config(text = '         ')
+        self.blank2Label.grid(column=label_col,row=blank2Row, sticky="w")
+        self.widgets.append(self.blank2Label)
+        
+        udpRow = dtRow+10
+        self.udp_addr_label = Label(self.frame, text="UDP Address: ")
+        self.widgets.append(self.udp_addr_label)
+        self.udp_addr_label.grid(column=label_col, row=udpRow, sticky="e", padx = self.label_padx)
+        
+        self.udp_addr_entry = Entry(self.frame, textvariable=self.udpAddress)
+        self.widgets.append(self.udp_addr_entry)
+        self.udp_addr_entry.grid(column=entry_col, row=udpRow, sticky='w')
+        self.udp_addr_entry.delete(0,END)
+        self.udp_addr_entry.insert(0,self.settings["udp_ip"])
+        gv.udp_address = self.settings["udp_ip"]
+        
+        self.udp_port_label = Label(self.frame, text="UDP Port: ")
+        self.widgets.append(self.udp_port_label)
+        self.udp_port_label.grid(column=label2_col, row=udpRow, sticky="e", padx = self.label_padx)
+        
+        self.udp_port_entry = Entry(self.frame, textvariable=self.udpPort)
+        self.widgets.append(self.udp_port_entry)
+        self.udp_port_entry.grid(column=entry2_col, row=udpRow, sticky='w')
+        self.udp_port_entry.delete(0,END)
+        self.udp_port_entry.insert(0,self.settings["udp_port"])
+        gv.udp_port = self.settings["udp_port"]
         
         gv.widget_list_dict["Tab2"] = self.widgets
         
@@ -255,6 +323,16 @@ class Tab2(Frame):
                 self.commonConfData[key] = self.blkszEntryData.get()
                 ## pass the setting to the globalVariables
                 gv.size_of_data = self.commonConfData[key]
+            
+        for key in gv.server_data_keys:
+            if key == 'udp_ip':
+                gv.udp_address = self.udpAddress.get()
+            elif key == 'udp_port':
+                gv.udp_port = self.udpPort.get()
+            elif key == 'tcp_ip':
+                gv.tcp_address = self.tcpAddress.get()
+            elif key == 'tcp_port':
+                gv.tcp_port = self.tcpPort.get()
         
         ## To transfer, we blank out the old dictioary
         gv.commonConfData = {}
@@ -266,6 +344,7 @@ class Tab2(Frame):
         if debug_flag:
             print("Config data saved. Re-reading data.")
         df.check_stored_configuration()
+        df.save_settings_to_db(self)
 
 
     def clearData(self):
