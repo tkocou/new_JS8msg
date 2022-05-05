@@ -13,7 +13,9 @@ project_dir = os.getcwd()
 project_dir = project_dir[10:]
 if project_dir != "Projects":
     project_dir = "None"
-#print(project_dir)
+
+## version of JS8msg
+version_text = "Version 2.2"
 
 homeDir = os.path.expanduser('~')
 os.chdir(homeDir)
@@ -50,7 +52,7 @@ js8msg_db = ""
 db_name = "js8msg.db"
 
 ## GUI tracking
-widget_list_dict = {"Tab1":[],"Tab2":[],"Tab2a":[],"Tab3":[],"Tab4":[],"Tab5":[]}
+widget_list_dict = {"Tab1":[],"Tab2":[],"Tab3":[],"Tab4":[],"Tab5":[]}
 
 ##
 ## JS8Call APIs
@@ -65,6 +67,11 @@ inboxStoreMessage = 'INBOX.STORE_MESSAGE'
 getStationID = 'STATION.GET_CALLSIGN'
 getRigFreq = 'RX.GET_FREQ'
 pingJS8 = 'PING'
+
+## background monitoring of JS8Call activity
+keep_running = False
+receiver = None
+sock = None
 
 ## flag for japanese use
 japanFlag = False
@@ -83,12 +90,13 @@ debug_flag_Tab2 = False
 debug_flag_Tab3 = False
 debug_flag_Tab4 = False
 debug_flag_receiving_inbox = False
+## turning off flags must be done manually
 if debug_flag_receiving_inbox:
     debug_flag_JS8API = True
     debug_flag_utilities = True
     debug_flag_Tab1 = True
-## turning off flags must be done manually
-    
+## flag for threaded debugging
+debug_flag_threaded = False
 
 ## these are used in tcp.py
 ## Which type of port to listen/talk on

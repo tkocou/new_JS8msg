@@ -1,5 +1,5 @@
 ##
-## JS8msg Version 2.1 is a copyrighted program written by Thomas Kocourek, N4FWD
+## JS8msg is a copyrighted program written by Thomas Kocourek, N4FWD
 ## This program is released under the GPL v3 license
 ## 
 import globalVariables as gv

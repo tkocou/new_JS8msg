@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 ##
-## JS8msg Version 2.1 is a copyrighted program written by Thomas Kocourek, N4FWD
+## JS8msg is a copyrighted program written by Thomas Kocourek, N4FWD
 ## This program is released under the GPL v3 license
 ## 
 ## With permission, portions of this program were borrowed from js8spotter 
@@ -22,6 +22,7 @@ import classTab1 as T1
 import classTab2 as T2
 import classTab3 as T3
 import classTab4 as T4
+import classTab5 as T5
 import globalVariables as gv
 import create_menu as cm
 import database_functions as df 
@@ -35,7 +36,6 @@ class App(tk.Frame):
     search_strings = []
     bgsearch_strings = []
     current_profile_id = 0
-    #self.widget_list_dict = {"Tab1":[],"Tab2":[],"Tab3":[],"Tab4":[]}
     
     def __init__(self,master):
         super().__init__(master)
@@ -43,7 +43,7 @@ class App(tk.Frame):
         ## get_socket will return either a socket or 'None'
         ## this info will help with situations where JS8call
         ## is not running
-        self.sock = df.get_socket(self)
+        gv.sock = df.get_socket(self)
         self.receiver = None
         self.db_conn = df.get_db_connection()
         self.frame = master
@@ -53,7 +53,7 @@ class App(tk.Frame):
         self.container.grid()
         ## create dictionary with frames references
         self.frames = {}
-        for F in (T1.Tab1,T2.Tab2,T3.Tab3,T4.Tab4):
+        for F in (T1.Tab1,T2.Tab2,T3.Tab3,T4.Tab4,T5.Tab5):
             page_name = F.__name__
             self.frames[page_name] = F
             
@@ -61,7 +61,7 @@ class App(tk.Frame):
         ## older GUI uses Notebook style of GUI
         ## switching to menu driven GUI
     
-        self.frame.title("JS8msg Version 2.1")
+        self.frame.title("JS8msg "+gv.version_text)
         self.frame.geometry('800x600')
         self.frame.resizable(width=False,height=False)
         ## create the GUI menu
@@ -75,10 +75,11 @@ class App(tk.Frame):
 
 
     def about(self):
-        info = "JS8msg Version 2.1 \n\n"
+        info = "JS8msg Version" +gv.version_text+ "\n\n"
         info += "Open Source GNU3 License\n\n"
         info += "written by Thomas Kocourek, N4FWD\n\n"
-        info += "henkankun code borrowed from Takahide Kanatake, JE6VGZ\n\n"
+        info += "Henkankun code borrowed with permission\n\n"
+        info += "from Takahide Kanatake, JE6VGZ\n\n"
         info += "Parts were borrowed with permission\n\n"
         info += "from js8spotter written by\n\n"
         info += "Joseph D Lyman, KF7MIX\n\n"
@@ -86,20 +87,21 @@ class App(tk.Frame):
         messagebox.showinfo("About JS8msg",info)
                 
     def start_receiver(self):
-        self.receiver = tl.TCP_rx(self.sock)
+        self.receiver = tl.TCP_rx(gv.sock)
         self.receiver.start()
         
     def stop_receiver(self):
         self.receiver.stop()
         self.receiver.join()
         self.receiver = None
+        gv.keep_running = False
         
     def mainloop(self,*args):
         ## inherit properties from tk.mainloop()
         super().mainloop(*args)
         ## if a threaded receiver is still running, kill it
-        if self.receiver:
-            self.receiver.stop()
+        if gv.receiver:
+            gv.receiver.stop()
         
     def shutting_down(self):
         ## db_conn is assigned in __init__()
@@ -107,7 +109,7 @@ class App(tk.Frame):
         self.db_conn.close_SQL()
         try:
             ## do a proper shutdown of threaded receivers
-            self.stop_receiver()
+            ut.stop_receiver(self)
         ## if threaded receiver was not running, ignore error
         except:
             pass

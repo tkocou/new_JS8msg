@@ -12,12 +12,8 @@ import time
 import database_functions as df
 import globalVariables as gv
 
-## insure that the tcp server is enabled in JS8call
-## will switch over to settings{}
-
-#server = ('127.0.0.1', 2442)
-#settings = df.get_settings()
-#server = (settings['tcp_ip'], int(settings['tcp_port']))
+## NOTE: insure that the tcp server is enabled in JS8call
+## Also increase the TCP connections to 99 in JS9Call
 
 
 def from_message(content):

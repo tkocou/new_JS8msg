@@ -14,3 +14,6 @@ Updated installation parameters within js8msg2, JS8msg Guide.pdf will need updat
 
 V2.1
 Added programmable tcp/udp ports to configuration page
+
+V2.2
+Added a webpage view of forms to JS8msg. This way one can look at forms stored locally without needing JS8Call up and running

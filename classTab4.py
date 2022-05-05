@@ -1,5 +1,5 @@
 ##
-## JS8msg Version 2.1 is a copyrighted program written by Thomas Kocourek, N4FWD
+## JS8msg is a copyrighted program written by Thomas Kocourek, N4FWD
 ## This program is released under the GPL v3 license
 ## 
 from tkinter import *
@@ -88,10 +88,7 @@ class Tab4(Frame):
                 ics.clearData(self)
                 self.update_Text_box()
                 self.chooseRespFile.set('')
-            #elif selAction == "Update":
-            #    ics.updateData(self)
-            #    self.chooseRespFile.set('')
-                
+
         self.label = Label(self.frame, text="Responder", bg="#f8d8d8")
         self.widgets.append(self.label)
         self.label.grid(column=0,row = 0, sticky="w")
@@ -113,12 +110,6 @@ class Tab4(Frame):
         self.chooseRespFile.grid(column=3, row=0, sticky="w",padx=80)
         ## callbacks must be declared before the combobox widget
         self.chooseRespFile.bind('<<ComboboxSelected>>', selectRespFileOption)
-        
-        ## Quit button
-        #self.quitButton = Button(self.frame, text="Quit", command=lambda:self.quitProgram())
-        #self.widgets.append(self.quitButton)
-        #self.quitButton.grid(column=3,row=0, sticky = "e")
-        #self.quitButton.configure(bg="blue", fg="white")
         
         #### Text sizing variable
         normText = 40

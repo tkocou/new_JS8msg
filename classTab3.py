@@ -1,5 +1,5 @@
 ##
-## JS8msg Version 2.1 is a copyrighted program written by Thomas Kocourek, N4FWD
+## JS8msg is a copyrighted program written by Thomas Kocourek, N4FWD
 ## This program is released under the GPL v3 license
 ## 
 from tkinter import *
@@ -91,10 +91,6 @@ class Tab3(Frame):
                 ics.clearData(self)
                 self.update_Text_box()
                 self.chooseFile.set('')
-                
-            #elif selAction == "Update":
-            #    ics.updateData(self)
-            #    self.chooseFile.set('')
 
 
         ## Display the current mode
@@ -120,12 +116,6 @@ class Tab3(Frame):
         ## If you change any of the 'values' list entries, you must also fix the
         ## callbacks
         self.chooseFile.bind('<<ComboboxSelected>>', selectFileOption)
-
-        ## Quit Button
-        #self.quitButton = Button(self.frame, text="Quit", command=lambda:self.quitProgram())
-        #self.widgets.append(self.quitButton)
-        #self.quitButton.grid(column=3,row=0, sticky="e")
-        #self.quitButton.configure(bg="blue", fg="white")
         
 
         #### Text sizing variables

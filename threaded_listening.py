@@ -1,5 +1,5 @@
 ##
-## JS8msg V2.1 is a copyrighted program written by Thomas Kocourek, N4FWD
+## JS8msg is a copyrighted program written by Thomas Kocourek, N4FWD
 ## This program is released under the GPL v3 license
 ##
 ## With permission, portions of this program were borrowed from js8spotter 
@@ -15,8 +15,9 @@ from threading import Thread
 from io import StringIO as S_IO
 import database_functions as df
 import DBHandler as dbh
+import globalVariables as gv
 
-
+debug_flag = gv.debug_flag_threaded
 
 class TCP_rx(Thread):
     def __init__(self,sock):
@@ -30,8 +31,8 @@ class TCP_rx(Thread):
         
     def run(self):
         ## Go to 'database_functions.py', run 'get_db_connection()' and assign returned object
-        self.db_obj = df.get_db_connection()
-        self.cur = self.db_obj.cursor()
+        db_obj = df.get_db_connection()
+        self.cur = db_obj.cursor()
         
         tracked_types = {"RX.ACTIVITY","RX.DIRECTED","RX.SPOT"}
         
@@ -44,7 +45,7 @@ class TCP_rx(Thread):
             rfds, _wfds, _xfds = select.select([self.sock], [], [], 0.5)
             if self.sock in rfds:
                 try:
-                    iodata = self.sock.recv(2048)
+                    iodata = self.sock.recv(gv.recv_buffer_size)
                     json_lines = S_IO(str(iodata,'UTF-8'))
                     ## might be multiple lines in returned data
                     for data in json_lines:
@@ -52,6 +53,9 @@ class TCP_rx(Thread):
                             data_json = json.loads(data)
                         except:
                             data_json = {'type':'error'}
+                            
+                        if debug_flag:
+                            print("threaded_listening: run: data_json: ",data_json)
 
                         if data_json['type'] in tracked_types:
                             mesg_call = ""

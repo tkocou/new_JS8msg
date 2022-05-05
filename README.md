@@ -37,3 +37,6 @@ Changes:
 
     V2.1
     Added programmable network ports like in JS8Call
+
+    V2.2
+    Added ability to look at locally stored forms as a webpage. Thus allowing one to review ICS forms

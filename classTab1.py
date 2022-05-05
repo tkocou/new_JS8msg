@@ -1,5 +1,5 @@
 ##
-## JS8msg Version 2.1 is a copyrighted program written by Thomas Kocourek, N4FWD
+## JS8msg is a copyrighted program written by Thomas Kocourek, N4FWD
 ## This program is released under the GPL v3 license
 ## 
 import tkinter as tk
@@ -56,6 +56,7 @@ class Tab1(Frame):
         self.callsignSelected = ""
         self.callsignSelIndex = 0
         self.formDataToSend = ""
+        self.webpage_display = ""
         self.labelText = "No Call"
         self.labelText2 = "No Message"
         self.groupList = ['@ALLCALL']
@@ -137,6 +138,9 @@ class Tab1(Frame):
             elif selAction == "Store Form Message to Inbox":
                 storeMessage()
                 clearTextArea()
+                self.chooseAction.set('')
+            elif selAction == "Display form in webpage":
+                webpage_form()
                 self.chooseAction.set('')
             elif selAction == "Get All Messages from Inbox":
                 if debug_flag:
@@ -394,7 +398,7 @@ class Tab1(Frame):
         self.label.grid(column=0,row=topRow, sticky="w")
         self.widgets.append(self.label)
         self.chooseAction = ttk.Combobox(self.frame, width=colWidth, textvariable = self.dropdown, background="#f8d8d8")
-        self.chooseAction['values'] = ["Load Form","Send Form Live","Store Form Message to Inbox","Get All Messages from Inbox","Send Text Area","Store Text Area to Inbox","Activate Henkankun","Deactivate Henkankun"]
+        self.chooseAction['values'] = ["Load Form","Send Form Live","Store Form Message to Inbox","Display form in webpage","Get All Messages from Inbox","Send Text Area","Store Text Area to Inbox","Activate Henkankun","Deactivate Henkankun"]
         self.chooseAction.grid(column=0,row=topRow, sticky="w", padx=80)
         ## Note: callback function must preceed the combobox widget
         self.chooseAction.bind('<<ComboboxSelected>>', selectMsgOption)
@@ -702,9 +706,46 @@ class Tab1(Frame):
             else:
                 mb.showwarning(None,"Message Inbox is empty.")
 
+        def webpage_form():
+            ## load a file and return the dictionary
+            webpage_display = loadSourceData()
+            templateFile = ""
+            if webpage_display["file"] == "213":
+                ## create a path to the appropriate html template
+                templateFile = os.path.join(gv.templatePath,"ics213_template.html")
+                keyFile = gv.totalIcs213Keys
+            ## A string is returned
+            html_result = ut.outputHtml(webpage_display, keyFile[:-1], templateFile)
+            
+            ## write the form to a file for the web browser
+            self.htmlFile = os.path.join(gv.tempPath,"temp.html")
+            fh = open(self.htmlFile,"w")
+            for x in html_result:
+                fh.writelines(x)
+            fh.close()
+            gv.html_file = self.htmlFile
+            ## build the URL for the web browser
+            url = 'file://'+os.path.realpath(self.htmlFile)
+            ## open the HTML file in a web browser
+            wb.open(url)
+            self.messageTextBox.delete(1.0,END)
+            mb_text_message = """If you do not see a webpage, check an existing, opened web browser for ICS Form.
+            \nThe web browser might print extranous messages to the Python console.
+            \nAny new reports will overwite the existing HTML file.
+            \n\nTo make a hard copy of the report, use the print function of the web browser.
+            """
+            self.messageTextBox.insert(END,mb_text_message)
+             ## Clear the Python console of messages from web browser
+            x =1
+            while x < 3:
+                ## wait 1 second and then clear
+                ut.clearConsole()
+                x += 1
 
+            
 
         def loadSourceData():
+            ## fix for additional ICS forms
             fileData = [("ICS-213 Forms","*.213")]
             funcParam = (gv.msgPath,fileData)
             ## returns a dictionary
@@ -715,6 +756,9 @@ class Tab1(Frame):
             self.messageTextBox.delete(1.0,END)
             self.messageTextBox.insert(END,formDataToSend+'\n')
             self.formDataToSend = formDataToSend
+            ## return a dictionary. 
+            ## Should be ignored for functions not looking for a returned result
+            return result
 
         def loadTextArea():
             ## fetch the text within the Text box
@@ -723,7 +767,7 @@ class Tab1(Frame):
                 if debug_flag:
                     print("classTab1: loadTextArea: Length of text: ", len(self.formDataToSend))
                 if len(self.formDataToSend) == 1:
-                    mb.showwarning(None,"Type a text message in the Text Area.")
+                    mb.showwarning(None,"Type a text message in the Text Area or Load a form.")
                     return None
                 return self.formDataToSend
             except:

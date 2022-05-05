@@ -1,5 +1,5 @@
 ##
-## JS8msg V2.1 is a copyrighted program written by Thomas Kocourek, N4FWD
+## JS8msg is a copyrighted program written by Thomas Kocourek, N4FWD
 ## This program is released under the GPL v3 license
 ##
 from datetime import timezone
@@ -16,6 +16,7 @@ import time
 import globalVariables as gv
 import DBHandler as dbh
 import socket
+import threaded_listening as tl
 
 debug_flag = gv.debug_flag_utilities
 
@@ -267,7 +268,7 @@ def outputHtml(formData, formKeys, templateFilename):
             flag=False
 
     fh.close()
-
+    ## return String format for webpage
     return outputHtml
 
 def clearConsole():
@@ -312,3 +313,16 @@ def get_socket():
         return sock
     except:
         return None
+
+## threaded listening
+def start_receiver(self):
+    gv.receiver = tl.TCP_rx(gv.sock)
+    if not gv.keep_running:
+        gv.keep_running = True
+        gv.receiver.start()
+            
+def stop_receiver(self):
+    gv.receiver.stop()
+    gv.receiver.join()
+    gv.receiver = None
+    gv.keep_running = False

@@ -1,5 +1,5 @@
 ##
-## JS8msg V2.1 is a copyrighted program written by Thomas Kocourek, N4FWD
+## JS8msgis a copyrighted program written by Thomas Kocourek, N4FWD
 ## This program is released under the GPL v3 license
 ##
 import re
