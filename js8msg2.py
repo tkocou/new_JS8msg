@@ -22,7 +22,7 @@ import classTab1 as T1
 import classTab2 as T2
 import classTab3 as T3
 import classTab4 as T4
-import classTab5 as T5
+#import classTab5 as T5
 import globalVariables as gv
 import create_menu as cm
 import database_functions as df 
@@ -53,7 +53,8 @@ class App(tk.Frame):
         self.container.grid()
         ## create dictionary with frames references
         self.frames = {}
-        for F in (T1.Tab1,T2.Tab2,T3.Tab3,T4.Tab4,T5.Tab5):
+        #for F in (T1.Tab1,T2.Tab2,T3.Tab3,T4.Tab4,T5.Tab5):
+        for F in (T1.Tab1,T2.Tab2,T3.Tab3,T4.Tab4):
             page_name = F.__name__
             self.frames[page_name] = F
             
