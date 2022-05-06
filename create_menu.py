@@ -13,7 +13,7 @@ def make_menu(self, display_frame):
     self.filemenu.add_separator()
     self.filemenu.add_command(label='JS8msg Communication', command = lambda: self.show_frame("Tab1"))
     self.filemenu.add_command(label='Config', command = lambda: self.show_frame("Tab2"))
-    self.filemenu.add_command(label='Live Net Log',command = lambda: self.show_frame("Tab5"))
+    #self.filemenu.add_command(label='Live Net Log',command = lambda: self.show_frame("Tab5"))
     self.filemenu.add_separator()
     self.sub_menu = tk.Menu(self.filemenu, tearoff=0)
     self.sub_menu.add_command(label='Originator', command = lambda: self.show_frame("Tab3"))
