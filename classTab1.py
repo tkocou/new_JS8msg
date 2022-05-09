@@ -48,7 +48,7 @@ class Tab1(Frame):
         sysPlatform = platform.system()
 
         ## Specify column width for form
-        colWidth =23
+        colWidth =26
 
         ## Some Variables for Tab1
         self.dropdown = StringVar()
@@ -70,6 +70,7 @@ class Tab1(Frame):
         self.japanFlag = False
         self.japan_encoded_flag = False
         self.segmented_messages = []
+        self.chunked = True
 
         ## build up the callsign list
         def buildCall():
@@ -147,11 +148,21 @@ class Tab1(Frame):
                     print("Invoking function getMessages.\n")
                 getMessages()
                 self.chooseAction.set('')
-            elif selAction == "Send Text Area":
+            elif selAction == "Send Text Area Chunked":
                 sendTextArea()
                 self.chooseAction.set('')
-            elif selAction == "Store Text Area to Inbox":
+            elif selAction == "Send Text Area As Is":
+                self.chunked = False
+                sendTextArea()
+                self.chunked = True
+                self.chooseAction.set('')
+            elif selAction == "Store Text Area Chunked to Inbox":
                 storeTextArea()
+                self.chooseAction.set('')
+            elif selAction == "Store Text Area As Is to Inbox":
+                self.chunked = False
+                storeTextArea()
+                self.chunked = True
                 self.chooseAction.set('')
             elif selAction == "Activate Henkankun":
                 self.japanFlag = TRUE
@@ -398,7 +409,7 @@ class Tab1(Frame):
         self.label.grid(column=0,row=topRow, sticky="w")
         self.widgets.append(self.label)
         self.chooseAction = ttk.Combobox(self.frame, width=colWidth, textvariable = self.dropdown, background="#f8d8d8")
-        self.chooseAction['values'] = ["Load Form","Send Form Live","Store Form Message to Inbox","Display form in webpage","Get All Messages from Inbox","Send Text Area","Store Text Area to Inbox","Activate Henkankun","Deactivate Henkankun"]
+        self.chooseAction['values'] = ["Load Form","Send Form Live","Store Form Message to Inbox","Display form in webpage","Get All Messages from Inbox","Send Text Area Chunked","Send Text Area As Is","Store Text Area Chunked to Inbox","Store Text Area As Is to Inbox","Activate Henkankun","Deactivate Henkankun"]
         self.chooseAction.grid(column=0,row=topRow, sticky="w", padx=80)
         ## Note: callback function must preceed the combobox widget
         self.chooseAction.bind('<<ComboboxSelected>>', selectMsgOption)
@@ -406,11 +417,11 @@ class Tab1(Frame):
 
 
         ## Add a group widgets
-        self.groupLabel = tk.Button(self.frame, text="Add Group and Click =-> ", command=getGroup)
-        self.groupLabel.grid(column=0, row=topRow, sticky="e", padx=120)
+        self.groupLabel = tk.Button(self.frame, text="Add Group and Click =->", command=getGroup)
+        self.groupLabel.grid(column=0, row=topRow, sticky="e", padx=104)
         self.widgets.append(self.groupLabel)
         
-        self.groupEntry = tk.Entry(self.frame, textvariable=self.group, width=14, bg="green1")
+        self.groupEntry = tk.Entry(self.frame, textvariable=self.group, width=12, bg="green1")
         self.groupEntry.grid(column=0, row=topRow, sticky="e")
         self.widgets.append(self.groupEntry)
 
@@ -533,13 +544,19 @@ class Tab1(Frame):
             if result == None:
                 return result
             if self.callsignSelected:
-                if self.japan_encoded_flag: 
-                    self.formDataToSend = "MSG "+self.formDataToSend
-                list_to_send = create_data_list(self.formDataToSend)
-                for text_mesg in list_to_send:
+                if self.chunked:
+                    if self.japan_encoded_flag: 
+                        self.formDataToSend = "MSG "+self.formDataToSend
+                    list_to_send = create_data_list(self.formDataToSend)
+                    for text_mesg in list_to_send:
+                        result = api.sendLive(self.callsignSelected,text_mesg)
+                        if result is None:
+                            mb.showwarning(None,"Problem with JS8call transmitting message.")
+                else:
                     result = api.sendLive(self.callsignSelected,text_mesg)
                     if result is None:
                         mb.showwarning(None,"Problem with JS8call transmitting message.")
+                mb.showinfo("Result","Text Area was sent")
             else:
                 ## remind them to select a destination callsign
                 mb.showinfo("No callsign selected","Select one from the list of callsigns.")
@@ -549,8 +566,13 @@ class Tab1(Frame):
             if result == None:
                 return result
             if self.callsignSelected:
-                list_to_send = create_data_list(self.formDataToSend)
-                for text_mesg in list_to_send:
+                if self.chunked:
+                    list_to_send = create_data_list(self.formDataToSend)
+                    for text_mesg in list_to_send:
+                        result = api.sendToInbox(self.callsignSelected,text_mesg)
+                        if result is None:
+                            mb.showwarning(None,"Problem with JS8call storing message.")
+                else:
                     result = api.sendToInbox(self.callsignSelected,text_mesg)
                     if result is None:
                         mb.showwarning(None,"Problem with JS8call storing message.")

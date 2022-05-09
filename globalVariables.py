@@ -15,7 +15,7 @@ if project_dir != "Projects":
     project_dir = "None"
 
 ## version of JS8msg
-version_text = "Version 2.2"
+version_text = "Version 2.2.1"
 
 homeDir = os.path.expanduser('~')
 os.chdir(homeDir)

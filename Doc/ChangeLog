@@ -17,3 +17,6 @@ Added programmable tcp/udp ports to configuration page
 
 V2.2
 Added a webpage view of forms to JS8msg. This way one can look at forms stored locally without needing JS8Call up and running
+
+V2.2.1
+Added ability to send text area "as is" duplicating the same function in JS8Call for convience purposes
