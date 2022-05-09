@@ -48,7 +48,7 @@ class Tab1(Frame):
         sysPlatform = platform.system()
 
         ## Specify column width for form
-        colWidth =26
+        colWidth =28
 
         ## Some Variables for Tab1
         self.dropdown = StringVar()
@@ -418,10 +418,10 @@ class Tab1(Frame):
 
         ## Add a group widgets
         self.groupLabel = tk.Button(self.frame, text="Add Group and Click =->", command=getGroup)
-        self.groupLabel.grid(column=0, row=topRow, sticky="e", padx=104)
+        self.groupLabel.grid(column=0, row=topRow, sticky="e", padx=90)
         self.widgets.append(self.groupLabel)
         
-        self.groupEntry = tk.Entry(self.frame, textvariable=self.group, width=12, bg="green1")
+        self.groupEntry = tk.Entry(self.frame, textvariable=self.group, width=10, bg="green1")
         self.groupEntry.grid(column=0, row=topRow, sticky="e")
         self.widgets.append(self.groupEntry)
 
